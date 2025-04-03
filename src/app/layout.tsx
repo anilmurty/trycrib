@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "TryCrib - Try Before You Buy",
-  description: "Experience potential homes before making an offer with TryCrib's short-term rental marketplace.",
+  description: "Experience potential homes before making an offer with TryCrib&apos;s short-term rental marketplace.",
 };
 
 export default function RootLayout({
