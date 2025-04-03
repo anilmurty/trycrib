@@ -173,7 +173,7 @@ export default function Home() {
                 <span className="text-xl font-semibold">1</span>
               </div>
               <h3 className="text-lg md:text-xl font-medium mb-2 md:mb-3">Browse Properties</h3>
-              <p className="text-gray-400 text-sm md:text-base">Search for homes currently on the market that you're interested in purchasing.</p>
+              <p className="text-gray-400 text-sm md:text-base">Search for homes currently on the market that you&apos;re interested in purchasing.</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
