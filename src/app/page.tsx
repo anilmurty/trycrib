@@ -7,56 +7,56 @@ export default function Home() {
       <Hero />
       
       {/* Property Types */}
-      <section className="py-4 bg-gray-50/30 overflow-x-auto">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 min-w-[600px]">
-            <button className="flex flex-col items-center bg-white rounded-[32px] py-3 px-4 md:px-8 hover:bg-gray-50/80 shadow-[0_1px_2px_rgba(0,0,0,0.08)]">
-              <div className="w-5 h-5 flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-4 h-4 text-gray-600 stroke-[1.25]">
+      <section className="py-2 md:py-4 bg-gray-50/30 overflow-x-auto">
+        <div className="container mx-auto px-2 md:px-4">
+          <div className="flex md:grid md:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-4">
+            <button className="flex flex-col items-center bg-white rounded-2xl md:rounded-[32px] py-2 md:py-3 px-3 md:px-4 hover:bg-gray-50/80 shadow-[0_1px_2px_rgba(0,0,0,0.08)] min-w-[80px] md:min-w-0">
+              <div className="w-4 h-4 md:w-5 md:h-5 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 md:w-4 md:h-4 text-gray-600 stroke-[1.25]">
                   <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="M12 3L4 10h16l-8-7zM4 21h16v-11H4v11z" />
                 </svg>
               </div>
-              <span className="text-xs text-gray-500 mt-2">Houses</span>
+              <span className="text-[10px] md:text-xs text-gray-500 mt-1 md:mt-2">Houses</span>
             </button>
-            <button className="flex flex-col items-center bg-white rounded-[32px] py-3 px-8 hover:bg-gray-50/80 shadow-[0_1px_2px_rgba(0,0,0,0.08)]">
-              <div className="w-5 h-5 flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-4 h-4 text-gray-600 stroke-[1.25]">
+            <button className="flex flex-col items-center bg-white rounded-2xl md:rounded-[32px] py-2 md:py-3 px-3 md:px-4 hover:bg-gray-50/80 shadow-[0_1px_2px_rgba(0,0,0,0.08)] min-w-[80px] md:min-w-0">
+              <div className="w-4 h-4 md:w-5 md:h-5 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 md:w-4 md:h-4 text-gray-600 stroke-[1.25]">
                   <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="M3 21h18V6H3v15zM8 6v15m4-15v15m4-15v15" />
                 </svg>
               </div>
-              <span className="text-xs text-gray-500 mt-2">Townhomes</span>
+              <span className="text-[10px] md:text-xs text-gray-500 mt-1 md:mt-2">Townhomes</span>
             </button>
-            <button className="flex flex-col items-center bg-white rounded-[32px] py-3 px-8 hover:bg-gray-50/80 shadow-[0_1px_2px_rgba(0,0,0,0.08)]">
-              <div className="w-5 h-5 flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-4 h-4 text-gray-600 stroke-[1.25]">
+            <button className="flex flex-col items-center bg-white rounded-2xl md:rounded-[32px] py-2 md:py-3 px-3 md:px-4 hover:bg-gray-50/80 shadow-[0_1px_2px_rgba(0,0,0,0.08)] min-w-[80px] md:min-w-0">
+              <div className="w-4 h-4 md:w-5 md:h-5 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 md:w-4 md:h-4 text-gray-600 stroke-[1.25]">
                   <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="M8 7c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm6 0c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm-3 4v10m6-10v10M7 11v10" />
                 </svg>
               </div>
-              <span className="text-xs text-gray-500 mt-2">Multi-family</span>
+              <span className="text-[10px] md:text-xs text-gray-500 mt-1 md:mt-2">Multi-family</span>
             </button>
-            <button className="flex flex-col items-center bg-white rounded-[32px] py-3 px-8 hover:bg-gray-50/80 shadow-[0_1px_2px_rgba(0,0,0,0.08)]">
-              <div className="w-5 h-5 flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-4 h-4 text-gray-600 stroke-[1.25]">
+            <button className="flex flex-col items-center bg-white rounded-2xl md:rounded-[32px] py-2 md:py-3 px-3 md:px-4 hover:bg-gray-50/80 shadow-[0_1px_2px_rgba(0,0,0,0.08)] min-w-[80px] md:min-w-0">
+              <div className="w-4 h-4 md:w-5 md:h-5 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 md:w-4 md:h-4 text-gray-600 stroke-[1.25]">
                   <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="M4 21h16V3H4v18zm3-15h3m-3 4h3m-3 4h3m-3 4h3m4-12h3m-3 4h3m-3 4h3m-3 4h3" />
                 </svg>
               </div>
-              <span className="text-xs text-gray-500 mt-2">Condos/Co-ops</span>
+              <span className="text-[10px] md:text-xs text-gray-500 mt-1 md:mt-2">Condos/Co-ops</span>
             </button>
-            <button className="flex flex-col items-center bg-white rounded-[32px] py-3 px-8 hover:bg-gray-50/80 shadow-[0_1px_2px_rgba(0,0,0,0.08)]">
-              <div className="w-5 h-5 flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-4 h-4 text-gray-600 stroke-[1.25]">
+            <button className="flex flex-col items-center bg-white rounded-2xl md:rounded-[32px] py-2 md:py-3 px-3 md:px-4 hover:bg-gray-50/80 shadow-[0_1px_2px_rgba(0,0,0,0.08)] min-w-[80px] md:min-w-0">
+              <div className="w-4 h-4 md:w-5 md:h-5 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 md:w-4 md:h-4 text-gray-600 stroke-[1.25]">
                   <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="M5 21h14V3H5v18zm3-15h8M8 9h8m-8 3h8m-8 3h8m-8 3h8" />
                 </svg>
               </div>
-              <span className="text-xs text-gray-500 mt-2">Apartments</span>
+              <span className="text-[10px] md:text-xs text-gray-500 mt-1 md:mt-2">Apartments</span>
             </button>
-            <button className="flex flex-col items-center bg-white rounded-[32px] py-3 px-8 hover:bg-gray-50/80 shadow-[0_1px_2px_rgba(0,0,0,0.08)]">
-              <div className="w-5 h-5 flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-4 h-4 text-gray-600 stroke-[1.25]">
+            <button className="flex flex-col items-center bg-white rounded-2xl md:rounded-[32px] py-2 md:py-3 px-3 md:px-4 hover:bg-gray-50/80 shadow-[0_1px_2px_rgba(0,0,0,0.08)] min-w-[80px] md:min-w-0">
+              <div className="w-4 h-4 md:w-5 md:h-5 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 md:w-4 md:h-4 text-gray-600 stroke-[1.25]">
                   <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="M12 3L4 9h16l-8-6zM4 9v12h16V9" />
                 </svg>
               </div>
-              <span className="text-xs text-gray-500 mt-2">Manufactured</span>
+              <span className="text-[10px] md:text-xs text-gray-500 mt-1 md:mt-2">Manufactured</span>
             </button>
           </div>
         </div>

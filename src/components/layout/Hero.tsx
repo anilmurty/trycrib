@@ -98,20 +98,20 @@ export function Hero() {
 
       {/* Content */}
       <div className="relative z-20 container mx-auto px-4">
-        <div className="max-w-3xl mx-auto text-center text-white mb-8 md:mb-12">
-          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-3 md:mb-4 hero-text-shadow whitespace-pre-line">
+        <div className="max-w-3xl mx-auto text-center text-white mb-4 md:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-2 md:mb-4 hero-text-shadow whitespace-pre-line">
             {content[activeTab].title}
           </h1>
-          <p className="text-base sm:text-lg md:text-xl opacity-90 hero-text-shadow whitespace-pre-line">
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl opacity-90 hero-text-shadow whitespace-pre-line">
             {content[activeTab].subtitle}
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto">
           {/* Tabs */}
-          <div className="flex justify-center mb-4 md:mb-6 space-x-2">
+          <div className="flex justify-center mb-3 md:mb-6 space-x-2">
             <button
-              className={`px-4 sm:px-6 py-2 rounded-full text-sm font-medium transition-colors ${
+              className={`px-3 sm:px-4 md:px-6 py-2 rounded-full text-sm font-medium transition-colors min-w-[90px] sm:min-w-[100px] ${
                 activeTab === 'buyers'
                   ? 'bg-[#0066FF] text-white'
                   : 'bg-white text-gray-600 hover:bg-opacity-90'
@@ -121,7 +121,7 @@ export function Hero() {
               For Buyers
             </button>
             <button
-              className={`px-4 sm:px-6 py-2 rounded-full text-sm font-medium transition-colors ${
+              className={`px-3 sm:px-4 md:px-6 py-2 rounded-full text-sm font-medium transition-colors min-w-[90px] sm:min-w-[100px] ${
                 activeTab === 'sellers'
                   ? 'bg-[#0066FF] text-white'
                   : 'bg-white text-gray-600 hover:bg-opacity-90'
@@ -133,12 +133,12 @@ export function Hero() {
           </div>
 
           {/* Search Form */}
-          <div className="bg-white rounded-lg p-2 flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
+          <div className="bg-white rounded-lg shadow-lg">
             {activeTab === 'buyers' ? (
-              <>
+              <div className="p-2 md:p-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <div className="flex-1 relative">
                   <svg
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                    className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -153,12 +153,12 @@ export function Hero() {
                   <input
                     type="text"
                     placeholder="Where are you looking?"
-                    className="w-full pl-10 pr-4 py-3 rounded-md border-0 focus:ring-0 text-gray-900 placeholder:text-gray-500"
+                    className="w-full pl-8 sm:pl-10 pr-3 py-2.5 text-sm md:text-base rounded-md border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-gray-900 placeholder:text-gray-500"
                   />
                 </div>
                 <div className="flex-1 relative">
                   <svg
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                    className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -173,7 +173,7 @@ export function Hero() {
                   <input
                     type="text"
                     placeholder="Check in"
-                    className="w-full pl-10 pr-4 py-3 rounded-md border-0 focus:ring-0 text-gray-900 placeholder:text-gray-500"
+                    className="w-full pl-8 sm:pl-10 pr-3 py-2.5 text-sm md:text-base rounded-md border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-gray-900 placeholder:text-gray-500"
                     onFocus={(e) => e.target.type = 'date'}
                     onBlur={(e) => {
                       e.target.type = 'text';
@@ -183,7 +183,7 @@ export function Hero() {
                 </div>
                 <div className="flex-1 relative">
                   <svg
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                    className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -198,7 +198,7 @@ export function Hero() {
                   <input
                     type="text"
                     placeholder="Check out"
-                    className="w-full pl-10 pr-4 py-3 rounded-md border-0 focus:ring-0 text-gray-900 placeholder:text-gray-500"
+                    className="w-full pl-8 sm:pl-10 pr-3 py-2.5 text-sm md:text-base rounded-md border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-gray-900 placeholder:text-gray-500"
                     onFocus={(e) => e.target.type = 'date'}
                     onBlur={(e) => {
                       e.target.type = 'text';
@@ -206,17 +206,15 @@ export function Hero() {
                     }}
                   />
                 </div>
-                <button
-                  className="w-full sm:w-auto bg-[#0066FF] text-white px-6 sm:px-8 py-3 rounded-md font-medium hover:bg-[#0066FF]/90 transition-colors whitespace-nowrap"
-                >
+                <button className="bg-[#0066FF] text-white px-4 py-2.5 rounded-md text-sm md:text-base font-medium hover:bg-blue-700 transition-colors w-full sm:w-auto">
                   Search
                 </button>
-              </>
+              </div>
             ) : (
-              <>
+              <div className="p-2 md:p-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <div className="flex-1 relative">
                   <svg
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                    className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -231,26 +229,24 @@ export function Hero() {
                   <input
                     type="text"
                     placeholder="Enter your property address"
-                    className="w-full pl-10 pr-4 py-3 rounded-md border-0 focus:ring-0 text-gray-900 placeholder:text-gray-500"
+                    className="w-full pl-8 sm:pl-10 pr-3 py-2.5 text-sm md:text-base rounded-md border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-gray-900 placeholder:text-gray-500"
                   />
                 </div>
-                <button
-                  className="w-full sm:w-auto bg-[#0066FF] text-white px-6 sm:px-8 py-3 rounded-md font-medium hover:bg-[#0066FF]/90 transition-colors whitespace-nowrap"
-                >
+                <button className="bg-[#0066FF] text-white px-4 py-2.5 rounded-md text-sm md:text-base font-medium hover:bg-blue-700 transition-colors w-full sm:w-auto whitespace-nowrap">
                   List Property
                 </button>
-              </>
+              </div>
             )}
           </div>
         </div>
       </div>
 
       {/* Carousel Navigation Dots */}
-      <div className="absolute bottom-4 sm:bottom-8 left-0 right-0 z-30 flex justify-center space-x-2">
+      <div className="absolute bottom-3 sm:bottom-6 left-0 right-0 z-30 flex justify-center space-x-1.5 sm:space-x-2">
         {content[activeTab].carouselImages.map((_, index) => (
           <button
             key={index}
-            className={`w-2 h-2 rounded-full transition-colors ${
+            className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-colors ${
               index === selectedIndex
                 ? 'bg-white'
                 : 'bg-white/50 hover:bg-white/75'
