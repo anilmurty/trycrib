@@ -23,7 +23,7 @@ export function Hero() {
   const content: Content = {
     buyers: {
       title: "Try Your Future Home\nBefore You Buy",
-      subtitle: "Experience living in your potential new home before making an offer.\nThe perfect way to ensure it's the right fit for you.",
+      subtitle: "Experience living in your potential new home before making an offer.\nThe perfect way to ensure it&apos;s the right fit for you.",
       carouselImages: [
         '/images/buyer-carousel/buyer-carousel-1.jpg',
         '/images/buyer-carousel/buyer-carousel-2.jpg',
