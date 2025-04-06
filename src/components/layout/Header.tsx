@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { User } from '@supabase/supabase-js';
 
@@ -11,7 +10,6 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
   const supabase = createClientComponentClient();
 
   useEffect(() => {
