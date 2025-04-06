@@ -13,42 +13,44 @@ export function Header() {
   const supabase = createClientComponentClient();
 
   useEffect(() => {
-    const getUser = async () => {
+    // Function to get and verify user session
+    const getUserSession = async () => {
       try {
-        // First check the session
+        console.log('Header - Checking session...');
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
+        console.log('Header - Session check result:', {
+          hasSession: !!session,
+          sessionError,
+          userEmail: session?.user?.email
+        });
+
         if (sessionError) {
-          console.error('Session error:', sessionError);
+          console.error('Header - Session error:', sessionError);
           setUser(null);
           return;
         }
 
         if (session?.user) {
-          // Verify the user data
-          const { data: { user: userData }, error: userError } = await supabase.auth.getUser();
-          
-          if (userError) {
-            console.error('User data error:', userError);
-            setUser(null);
-            return;
-          }
-
-          setUser(userData);
+          setUser(session.user);
         } else {
           setUser(null);
         }
       } catch (error) {
-        console.error('Auth error:', error);
+        console.error('Header - Auth error:', error);
         setUser(null);
       } finally {
         setIsLoading(false);
       }
     };
 
-    getUser();
+    // Initial session check
+    getUserSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    // Subscribe to auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Header - Auth state change:', { event, userEmail: session?.user?.email });
+      
       if (session?.user) {
         setUser(session.user);
       } else {
@@ -57,6 +59,7 @@ export function Header() {
       setIsLoading(false);
     });
 
+    // Cleanup subscription
     return () => {
       subscription.unsubscribe();
     };
@@ -64,16 +67,19 @@ export function Header() {
 
   const handleSignOut = async () => {
     try {
+      console.log('Header - Signing out...');
       const { error } = await supabase.auth.signOut();
+      
       if (error) {
-        console.error('Sign out error:', error);
+        console.error('Header - Sign out error:', error);
         return;
       }
-      
+
+      console.log('Header - Sign out successful');
       // Force a page reload to clear all state
       window.location.href = '/';
     } catch (error) {
-      console.error('Sign out error:', error);
+      console.error('Header - Sign out error:', error);
     }
   };
 
