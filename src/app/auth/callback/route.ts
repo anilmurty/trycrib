@@ -11,19 +11,19 @@ export async function GET(request: Request) {
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         cookies: {
           get(name: string) {
             return request.headers.get('cookie')?.split('; ').find(row => row.startsWith(`${name}=`))?.split('=')[1]
           },
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          set(_name: string, _value: string, _options: CookieOptions) {
+          set(name: string, value: string, options: CookieOptions) {
             // The cookie will be set by the middleware
           },
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          remove(_name: string, _options: CookieOptions) {
+          remove(name: string, options: CookieOptions) {
             // The cookie will be removed by the middleware
           },
         },
+        /* eslint-enable @typescript-eslint/no-unused-vars */
       }
     )
 
