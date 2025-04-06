@@ -18,7 +18,8 @@ export default function SignInForm() {
     setError(null)
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      // First attempt the sign in
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
@@ -32,12 +33,34 @@ export default function SignInForm() {
         return
       }
 
-      if (data?.session) {
-        // Force a hard reload to ensure all state is fresh
-        window.location.href = '/dashboard'
-      } else {
+      if (!signInData?.session) {
         setError('Failed to establish session. Please try again.')
+        return
       }
+
+      // Set the session cookie explicitly
+      const { error: cookieError } = await supabase.auth.setSession({
+        access_token: signInData.session.access_token,
+        refresh_token: signInData.session.refresh_token,
+      })
+
+      if (cookieError) {
+        console.error('Session cookie error:', cookieError)
+        setError('Error setting session. Please try again.')
+        return
+      }
+
+      // Verify the session was set
+      const { data: { session }, error: verifyError } = await supabase.auth.getSession()
+      
+      if (verifyError || !session) {
+        console.error('Session verification error:', verifyError)
+        setError('Error verifying session. Please try again.')
+        return
+      }
+
+      // If we get here, we have a valid session, so redirect
+      window.location.href = '/dashboard'
     } catch (err) {
       console.error('Sign in error:', err)
       setError('An unexpected error occurred. Please try again.')
