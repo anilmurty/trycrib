@@ -11,11 +11,13 @@ export default function SignInForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClientComponentClient()
 
   const handleSignIn = async () => {
     setLoading(true)
+    setError(null)
 
     try {
       const { error } = await supabase.auth.signInWithPassword({
@@ -23,10 +25,20 @@ export default function SignInForm() {
         password,
       })
 
-      if (error) throw error
-      router.push('/')
+      if (error) {
+        if (error.message === 'Email not confirmed') {
+          setError('Please verify your email address before signing in. Check your inbox for the verification link.')
+        } else {
+          setError(error.message)
+        }
+        return
+      }
+
+      // Redirect to dashboard after successful sign in
+      router.push('/dashboard')
     } catch (err) {
       console.error('Sign in error:', err)
+      setError('An unexpected error occurred. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -36,16 +48,10 @@ export default function SignInForm() {
     setLoading(true)
 
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
-
-      if (error) throw error
+      window.location.href = '/api/auth/google'
     } catch (err) {
       console.error('Google sign in error:', err)
+      setError('An unexpected error occurred. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -53,6 +59,12 @@ export default function SignInForm() {
 
   return (
     <div className="space-y-4">
+      {error && (
+        <div className="bg-red-50 p-4 rounded-lg">
+          <p className="text-sm text-red-700">{error}</p>
+        </div>
+      )}
+
       <div className="space-y-4">
         <div>
           <label htmlFor="email" className="mb-1.5 block text-sm text-[#344054]">

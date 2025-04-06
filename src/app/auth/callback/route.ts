@@ -1,38 +1,38 @@
-import { createServerClient } from '@supabase/ssr'
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
-import { CookieOptions } from '@supabase/ssr'
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
+  const next = requestUrl.searchParams.get('next')
 
   if (code) {
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        /* eslint-disable @typescript-eslint/no-unused-vars */
-        cookies: {
-          get(name: string) {
-            return request.headers.get('cookie')?.split('; ').find(row => row.startsWith(`${name}=`))?.split('=')[1]
-          },
-          set(name: string, value: string, options: CookieOptions) {
-            // The cookie will be set by the middleware
-          },
-          remove(name: string, options: CookieOptions) {
-            // The cookie will be removed by the middleware
-          },
-        },
-        /* eslint-enable @typescript-eslint/no-unused-vars */
-      }
-    )
+    const cookieStore = cookies()
+    const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
 
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (!error) {
-      return NextResponse.redirect(requestUrl.origin)
+    try {
+      await supabase.auth.exchangeCodeForSession(code)
+    } catch (error) {
+      console.error('Error exchanging code for session:', error)
+      return NextResponse.redirect(
+        `${requestUrl.origin}/auth/auth-code-error`
+      )
     }
+
+    // If there's a next parameter, redirect there
+    if (next) {
+      return NextResponse.redirect(new URL(next, requestUrl.origin))
+    }
+
+    // Otherwise redirect to the dashboard
+    return NextResponse.redirect(new URL('/dashboard', requestUrl.origin))
   }
 
-  // Return the user to an error page with instructions
-  return NextResponse.redirect(`${requestUrl.origin}/auth/auth-code-error`)
-} 
+  // If no code is present, redirect to auth error page
+  return NextResponse.redirect(
+    new URL('/auth/auth-code-error', requestUrl.origin)
+  )
+}
+
+export const dynamic = 'force-dynamic' 

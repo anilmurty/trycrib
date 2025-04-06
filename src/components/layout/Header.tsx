@@ -1,11 +1,40 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const router = useRouter();
+  const supabase = createClientComponentClient();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (session?.user) {
+        setUser(session.user);
+      }
+    };
+
+    getUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.push('/');
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
@@ -33,40 +62,66 @@ export function Header() {
 
         {/* Desktop Auth buttons - hidden on mobile */}
         <div className="hidden md:flex items-center space-x-6">
-          <Link 
-            href="/auth/login" 
-            className="text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            Login
-          </Link>
-          <Button 
-            asChild
-            className="bg-[#0066FF] hover:bg-[#0066FF]/90 text-white rounded-full px-6"
-          >
-            <Link href="/auth/signup">Sign Up</Link>
-          </Button>
+          {user ? (
+            <>
+              <Link 
+                href="/dashboard" 
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Dashboard
+              </Link>
+              <Button 
+                onClick={handleSignOut}
+                variant="outline"
+                className="border-[#D0D5DD] hover:bg-[#0066FF] hover:text-white hover:border-[#0066FF] cursor-pointer"
+              >
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link 
+                href="/auth/login" 
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Login
+              </Link>
+              <Button 
+                asChild
+                className="bg-[#0066FF] hover:bg-[#0066FF]/90 text-white rounded-full px-6"
+              >
+                <Link href="/auth/signup">Sign Up</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Mobile menu button */}
         <button
-          onClick={() => setIsMenuOpen(true)}
-          className="md:hidden p-2 -mr-2 text-gray-600"
-          aria-label="Open menu"
+          className="md:hidden"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
+            className="w-6 h-6"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            viewBox="0 0 24 24"
           >
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="18" x2="21" y2="18" />
+            {isMenuOpen ? (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            ) : (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            )}
           </svg>
         </button>
       </div>
@@ -121,20 +176,44 @@ export function Header() {
             How it Works
           </Link>
           <div className="pt-4 border-t border-gray-200">
-            <Link 
-              href="/auth/login" 
-              className="block text-gray-600 hover:text-gray-900 transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Login
-            </Link>
-            <Button 
-              asChild
-              className="w-full mt-2 bg-[#0066FF] hover:bg-[#0066FF]/90 text-white rounded-full"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <Link href="/auth/signup">Sign Up</Link>
-            </Button>
+            {user ? (
+              <>
+                <Link 
+                  href="/dashboard" 
+                  className="block text-gray-600 hover:text-gray-900 transition-colors py-2"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <Button 
+                  onClick={() => {
+                    handleSignOut()
+                    setIsMenuOpen(false)
+                  }}
+                  variant="outline"
+                  className="w-full mt-2 border-[#D0D5DD] hover:bg-[#0066FF] hover:text-white hover:border-[#0066FF] cursor-pointer"
+                >
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link 
+                  href="/auth/login" 
+                  className="block text-gray-600 hover:text-gray-900 transition-colors py-2"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Login
+                </Link>
+                <Button 
+                  asChild
+                  className="w-full mt-2 bg-[#0066FF] hover:bg-[#0066FF]/90 text-white rounded-full"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Link href="/auth/signup">Sign Up</Link>
+                </Button>
+              </>
+            )}
           </div>
         </nav>
       </div>

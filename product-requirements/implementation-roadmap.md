@@ -24,11 +24,11 @@ This document outlines a phased approach to building the TryCrib application.
 *   **Goal:** Implement basic authentication mechanism and user roles.
 *   **Tasks:**
     - [ ] Configure Supabase project (DB, Auth, Storage).
-    - [ ] Implement basic email/password and Google SSO authentication *logic* using Supabase Auth.
-    - [ ] Build basic Login / Sign Up page *structure/layout*.
+    - [x] Implement basic email/password and Google SSO authentication *logic* using Supabase Auth.
+    - [x] Build basic Login / Sign Up page *structure/layout*.
     - [ ] Set up basic user roles (Buyer, Seller, Admin) in the database upon signup.
     - [ ] Create basic protected routes and placeholder dashboard pages for each role.
-    - [ ] Implement form validation and error handling.
+    - [x] Implement form validation and error handling.
 
 ## Phase 3: Seller Workflow - Verification & Listing
 

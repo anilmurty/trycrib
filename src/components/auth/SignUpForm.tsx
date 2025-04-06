@@ -14,6 +14,7 @@ export default function SignUpForm() {
   const [password, setPassword] = useState('')
   const [acceptTerms, setAcceptTerms] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [verificationSent, setVerificationSent] = useState(false)
   const router = useRouter()
   const supabase = createClientComponentClient()
 
@@ -26,11 +27,16 @@ export default function SignUpForm() {
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: {
+            full_name: fullName,
+          },
         },
       })
 
       if (error) throw error
-      router.push('/')
+      
+      // Show verification message instead of redirecting
+      setVerificationSent(true)
     } catch (err) {
       console.error('Sign up error:', err)
     } finally {
@@ -42,19 +48,64 @@ export default function SignUpForm() {
     setLoading(true)
 
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
-
-      if (error) throw error
+      window.location.href = '/api/auth/google'
     } catch (err) {
       console.error('Google sign up error:', err)
     } finally {
       setLoading(false)
     }
+  }
+
+  if (verificationSent) {
+    return (
+      <div className="space-y-6 text-center">
+        <div className="space-y-2">
+          <h1 className="text-[28px] font-bold text-[#111827]">Welcome to TryCrib</h1>
+          <p className="text-sm text-[#6B7280]">Experience your future home before making an offer</p>
+        </div>
+
+        <div className="bg-blue-50 border border-blue-100 p-6 rounded-xl space-y-4">
+          <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke="#0066FF" strokeWidth="2"/>
+              <path d="M12 8V12L15 15" stroke="#0066FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-[#111827] mb-1">Check your email!</h3>
+            <p className="text-sm text-[#4B5563]">
+              We've sent a verification link to <span className="font-medium">{email}</span>
+            </p>
+          </div>
+          <p className="text-sm text-[#6B7280] pt-2">
+            Can't find the email? Check your spam folder or{' '}
+            <button
+              onClick={handleSignUp}
+              className="text-[#0066FF] hover:text-[#0052CC] font-medium"
+              disabled={loading}
+            >
+              click here to resend
+            </button>
+          </p>
+        </div>
+
+        <div className="flex justify-center space-x-4">
+          <Button
+            variant="outline"
+            onClick={() => setVerificationSent(false)}
+            className="px-6"
+          >
+            Back
+          </Button>
+          <Button
+            asChild
+            className="bg-[#0066FF] hover:bg-[#0052CC] px-6"
+          >
+            <Link href="/auth/login">Go to Login</Link>
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -107,10 +158,25 @@ export default function SignUpForm() {
         </div>
       </div>
 
+      <div className="flex items-start space-x-2">
+        <Checkbox
+          id="terms"
+          checked={acceptTerms}
+          onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
+          className="mt-0.5 h-3.5 w-3.5 rounded border-[#D0D5DD] text-[#0066FF]"
+        />
+        <label htmlFor="terms" className="text-[11px] text-[#667085]">
+          By continuing, you agree to TryCrib's{' '}
+          <Link href="/terms" className="text-[#0066FF]">Terms of Service</Link>{' '}
+          and{' '}
+          <Link href="/privacy" className="text-[#0066FF]">Privacy Policy</Link>
+        </label>
+      </div>
+
       <Button
         onClick={handleSignUp}
         className="h-10 w-full rounded-lg bg-[#0066FF] font-medium text-white"
-        disabled={loading}
+        disabled={loading || !acceptTerms}
       >
         {loading ? 'Creating account...' : 'Create Account'}
       </Button>
@@ -147,21 +213,6 @@ export default function SignUpForm() {
           Google
         </div>
       </Button>
-
-      <div className="flex items-start space-x-2">
-        <Checkbox
-          id="terms"
-          checked={acceptTerms}
-          onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
-          className="mt-0.5 h-3.5 w-3.5 rounded border-[#D0D5DD] text-[#0066FF]"
-        />
-        <label htmlFor="terms" className="text-[11px] text-[#667085]">
-          By continuing, you agree to TryCrib&apos;s{' '}
-          <Link href="/terms" className="text-[#0066FF]">Terms of Service</Link>{' '}
-          and{' '}
-          <Link href="/privacy" className="text-[#0066FF]">Privacy Policy</Link>
-        </label>
-      </div>
     </div>
   )
 } 
