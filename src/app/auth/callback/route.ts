@@ -15,9 +15,11 @@ export async function GET(request: Request) {
           get(name: string) {
             return request.headers.get('cookie')?.split('; ').find(row => row.startsWith(`${name}=`))?.split('=')[1]
           },
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           set(_name: string, _value: string, _options: CookieOptions) {
             // The cookie will be set by the middleware
           },
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           remove(_name: string, _options: CookieOptions) {
             // The cookie will be removed by the middleware
           },

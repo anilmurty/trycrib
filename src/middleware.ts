@@ -13,9 +13,11 @@ export async function middleware(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         get(_name: string) {
           return request.cookies.get(_name)?.value
         },
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         set(_name: string, _value: string, _options: CookieOptions) {
           response.cookies.set({
             name: _name,
@@ -23,6 +25,7 @@ export async function middleware(request: NextRequest) {
             ..._options,
           })
         },
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         remove(_name: string, _options: CookieOptions) {
           response.cookies.set({
             name: _name,
