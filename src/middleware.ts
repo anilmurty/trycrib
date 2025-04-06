@@ -4,11 +4,8 @@ import type { NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
   try {
-    // Create a response object that we can modify
-    const res = NextResponse.next()
-    
     // Create the Supabase client
-    const supabase = createMiddlewareClient({ req: request, res })
+    const supabase = createMiddlewareClient({ req: request, res: NextResponse.next() })
     
     // Refresh the session if it exists
     const { data: { session }, error: sessionError } = await supabase.auth.getSession()
@@ -17,13 +14,16 @@ export async function middleware(request: NextRequest) {
     console.log('Current path:', request.nextUrl.pathname)
     console.log('Session exists:', !!session)
     console.log('Session error:', sessionError)
+    console.log('Session user:', session?.user?.email)
+
+    // Create a response that we'll modify based on the session state
+    const response = NextResponse.next()
 
     if (sessionError) {
       console.error('Auth session error:', sessionError)
       // If there's a session error, clear the session and redirect to login
       await supabase.auth.signOut()
-      const redirectUrl = new URL('/auth/login', request.url)
-      return NextResponse.redirect(redirectUrl)
+      return NextResponse.redirect(new URL('/auth/login', request.url))
     }
 
     // Protected routes that require authentication
@@ -41,27 +41,30 @@ export async function middleware(request: NextRequest) {
     // If accessing a protected route without a session, redirect to login
     if (!session && isProtectedRoute) {
       console.log('Redirecting to login: No session for protected route')
-      const redirectUrl = new URL('/auth/login', request.url)
-      redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
-      return NextResponse.redirect(redirectUrl)
+      return NextResponse.redirect(new URL('/auth/login', request.url))
     }
 
     // If logged in and accessing auth routes, redirect to dashboard
     if (session && isAuthRoute) {
       console.log('Redirecting to dashboard: User is logged in')
-      const dashboardUrl = new URL('/dashboard', request.url)
-      return NextResponse.redirect(dashboardUrl)
+      return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 
     // If logged in and on home page, redirect to dashboard
     if (session && request.nextUrl.pathname === '/') {
       console.log('Redirecting to dashboard: User is logged in and on home page')
-      const dashboardUrl = new URL('/dashboard', request.url)
-      return NextResponse.redirect(dashboardUrl)
+      return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 
-    // For all other cases, return the response with the refreshed session
-    return res
+    // Set the session in the response
+    response.cookies.set('supabase-auth-token', session?.access_token || '', {
+      path: '/',
+      secure: true,
+      sameSite: 'lax',
+      httpOnly: true
+    })
+
+    return response
   } catch (e) {
     console.error('Middleware error:', e)
     // On error, proceed with the request but log the error

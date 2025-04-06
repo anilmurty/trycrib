@@ -20,7 +20,7 @@ export default function SignInForm() {
     setError(null)
 
     try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
@@ -34,24 +34,9 @@ export default function SignInForm() {
         return
       }
 
-      // Get the session to ensure it's properly set
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      
-      if (sessionError) {
-        console.error('Session error:', sessionError)
-        setError('An error occurred while signing in. Please try again.')
-        return
-      }
-
-      if (session) {
-        // Refresh the router to update the session state
-        router.refresh()
-        
-        // Small delay to ensure the session is properly propagated
-        await new Promise(resolve => setTimeout(resolve, 100))
-        
-        // Use replace instead of push to prevent back navigation to login
-        router.replace('/dashboard')
+      if (data?.session) {
+        // Force a hard reload to ensure all state is fresh
+        window.location.href = '/dashboard'
       } else {
         setError('Failed to establish session. Please try again.')
       }
