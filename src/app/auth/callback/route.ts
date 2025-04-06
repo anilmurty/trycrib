@@ -10,6 +10,7 @@ export async function GET(request: Request) {
 
   console.log('Auth Callback - Current domain:', currentDomain)
   console.log('Auth Callback - Request URL:', requestUrl.toString())
+  console.log('Auth Callback - Request headers:', Object.fromEntries(request.headers.entries()))
   console.log('Auth Callback - Code present:', !!code)
 
   if (code) {
@@ -29,15 +30,27 @@ export async function GET(request: Request) {
 
       console.log('Auth Callback - Session established:', !!session)
       
-      // If there's a next parameter, redirect there
-      if (next) {
-        console.log('Auth Callback - Redirecting to next:', next)
-        return NextResponse.redirect(new URL(next, currentDomain))
+      // Create a response that we'll modify
+      const response = NextResponse.redirect(new URL('/dashboard', currentDomain))
+      
+      // Set the session cookie explicitly
+      if (session) {
+        response.cookies.set('sb-access-token', session.access_token, {
+          path: '/',
+          secure: true,
+          sameSite: 'lax',
+          httpOnly: true
+        })
+        response.cookies.set('sb-refresh-token', session.refresh_token, {
+          path: '/',
+          secure: true,
+          sameSite: 'lax',
+          httpOnly: true
+        })
       }
 
-      // Otherwise redirect to the dashboard
       console.log('Auth Callback - Redirecting to dashboard')
-      return NextResponse.redirect(new URL('/dashboard', currentDomain))
+      return response
     } catch (error) {
       console.error('Auth Callback - Error exchanging code for session:', error)
       return NextResponse.redirect(
