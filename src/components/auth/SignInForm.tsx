@@ -44,6 +44,12 @@ export default function SignInForm() {
       }
 
       if (session) {
+        // Refresh the router to update the session state
+        router.refresh()
+        
+        // Small delay to ensure the session is properly propagated
+        await new Promise(resolve => setTimeout(resolve, 100))
+        
         // Use replace instead of push to prevent back navigation to login
         router.replace('/dashboard')
       } else {
