@@ -4,32 +4,52 @@ import type { NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
   try {
+    // Create a response object that we can modify
     const res = NextResponse.next()
+    
+    // Create the Supabase client
     const supabase = createMiddlewareClient({ req: request, res })
     
-    // Get the session once and store the result
-    const { data: { session }, error } = await supabase.auth.getSession()
+    // Refresh the session if it exists
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
 
-    if (error) {
-      console.error('Auth session error:', error)
-      return res
+    if (sessionError) {
+      console.error('Auth session error:', sessionError)
+      // If there's a session error, clear the session and redirect to login
+      await supabase.auth.signOut()
+      const redirectUrl = new URL('/auth/login', request.url)
+      return NextResponse.redirect(redirectUrl)
     }
 
-    // If trying to access a protected route and not logged in, redirect to login
-    if (!session && request.nextUrl.pathname.startsWith('/dashboard')) {
+    // Protected routes that require authentication
+    const protectedRoutes = ['/dashboard']
+    const isProtectedRoute = protectedRoutes.some(route => 
+      request.nextUrl.pathname.startsWith(route)
+    )
+
+    // Auth routes that should redirect to dashboard if logged in
+    const authRoutes = ['/auth/login', '/auth/signup']
+    const isAuthRoute = authRoutes.some(route => 
+      request.nextUrl.pathname.startsWith(route)
+    )
+
+    // If accessing a protected route without a session, redirect to login
+    if (!session && isProtectedRoute) {
       const redirectUrl = new URL('/auth/login', request.url)
       redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
       return NextResponse.redirect(redirectUrl)
     }
 
-    // If logged in and trying to access auth pages, redirect to dashboard
-    if (session && (request.nextUrl.pathname.startsWith('/auth/login') || request.nextUrl.pathname.startsWith('/auth/signup'))) {
+    // If logged in and accessing auth routes, redirect to dashboard
+    if (session && isAuthRoute) {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 
+    // For all other cases, return the response with the refreshed session
     return res
   } catch (e) {
     console.error('Middleware error:', e)
+    // On error, proceed with the request but log the error
     return NextResponse.next()
   }
 }

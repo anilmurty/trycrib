@@ -20,22 +20,35 @@ export default function SignInForm() {
     setError(null)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
-      if (error) {
-        if (error.message === 'Email not confirmed') {
+      if (signInError) {
+        if (signInError.message === 'Email not confirmed') {
           setError('Please verify your email address before signing in. Check your inbox for the verification link.')
         } else {
-          setError(error.message)
+          setError(signInError.message)
         }
         return
       }
 
-      // Redirect to dashboard after successful sign in
-      router.push('/dashboard')
+      // Get the session to ensure it's properly set
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      
+      if (sessionError) {
+        console.error('Session error:', sessionError)
+        setError('An error occurred while signing in. Please try again.')
+        return
+      }
+
+      if (session) {
+        // Use replace instead of push to prevent back navigation to login
+        router.replace('/dashboard')
+      } else {
+        setError('Failed to establish session. Please try again.')
+      }
     } catch (err) {
       console.error('Sign in error:', err)
       setError('An unexpected error occurred. Please try again.')
