@@ -10,10 +10,15 @@ export async function GET(request: Request) {
       cookies: () => cookieStore 
     })
 
+    // Get the current domain and ensure it's used for the callback
+    const currentDomain = requestUrl.origin
+    console.log('Google OAuth - Current domain:', currentDomain)
+    console.log('Google OAuth - Request URL:', requestUrl.toString())
+
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${requestUrl.origin}/auth/callback`,
+        redirectTo: `${currentDomain}/auth/callback`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -23,9 +28,10 @@ export async function GET(request: Request) {
 
     if (error || !data.url) {
       console.error('OAuth error:', error)
-      return NextResponse.redirect(`${requestUrl.origin}/auth/auth-code-error`)
+      return NextResponse.redirect(`${currentDomain}/auth/auth-code-error`)
     }
 
+    console.log('Google OAuth - Redirecting to:', data.url)
     return NextResponse.redirect(data.url)
   } catch (err) {
     console.error('Server error:', err)
