@@ -76,8 +76,9 @@ export function Header() {
       }
 
       console.log('Header - Sign out successful');
-      // Force a page reload to clear all state
-      window.location.href = '/';
+      // Force a page reload to clear all state, using current domain
+      const currentDomain = window.location.origin;
+      window.location.href = currentDomain;
     } catch (error) {
       console.error('Header - Sign out error:', error);
     }

@@ -60,7 +60,9 @@ export default function SignInForm() {
       }
 
       // If we get here, we have a valid session, so redirect
-      window.location.href = '/dashboard'
+      // Use the current domain for the redirect
+      const currentDomain = window.location.origin
+      window.location.href = `${currentDomain}/dashboard`
     } catch (err) {
       console.error('Sign in error:', err)
       setError('An unexpected error occurred. Please try again.')
@@ -73,7 +75,9 @@ export default function SignInForm() {
     setLoading(true)
 
     try {
-      window.location.href = '/api/auth/google'
+      // Use the current domain for the redirect
+      const currentDomain = window.location.origin
+      window.location.href = `${currentDomain}/api/auth/google`
     } catch (err) {
       console.error('Google sign in error:', err)
       setError('An unexpected error occurred. Please try again.')

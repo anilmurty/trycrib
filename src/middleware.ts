@@ -53,13 +53,15 @@ export async function middleware(request: NextRequest) {
     // If logged in and accessing auth routes, redirect to dashboard
     if (session && isAuthRoute) {
       console.log('Middleware - Redirecting to dashboard: User is logged in')
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+      const dashboardUrl = new URL('/dashboard', request.url)
+      return NextResponse.redirect(dashboardUrl)
     }
 
     // If logged in and on home page, redirect to dashboard
     if (session && request.nextUrl.pathname === '/') {
       console.log('Middleware - Redirecting to dashboard: User is logged in and on home page')
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+      const dashboardUrl = new URL('/dashboard', request.url)
+      return NextResponse.redirect(dashboardUrl)
     }
 
     // Return the response with the session
