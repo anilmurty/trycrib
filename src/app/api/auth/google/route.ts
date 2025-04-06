@@ -15,10 +15,23 @@ export async function GET(request: Request) {
     console.log('Google OAuth - Current domain:', currentDomain)
     console.log('Google OAuth - Request URL:', requestUrl.toString())
 
+    // Determine the correct callback URL based on the environment
+    let redirectTo
+    if (currentDomain === 'http://localhost:3000') {
+      redirectTo = 'http://localhost:3000/auth/callback'
+    } else if (currentDomain === 'https://trycrib.com') {
+      redirectTo = 'https://trycrib.com/auth/callback'
+    } else {
+      // For Vercel preview deployments
+      redirectTo = 'https://trycrib-anilmurtys-projects.vercel.app/auth/callback'
+    }
+
+    console.log('Google OAuth - Using redirect URL:', redirectTo)
+
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${currentDomain}/auth/callback`,
+        redirectTo,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -31,7 +44,13 @@ export async function GET(request: Request) {
       return NextResponse.redirect(`${currentDomain}/auth/auth-code-error`)
     }
 
-    console.log('Google OAuth - Redirecting to:', data.url)
+    // Log the full URL for debugging
+    console.log('Google OAuth - Generated URL:', data.url)
+    
+    // Parse and log the redirect_uri from the generated URL
+    const generatedUrl = new URL(data.url)
+    console.log('Google OAuth - Parsed redirect_uri:', generatedUrl.searchParams.get('redirect_uri'))
+
     return NextResponse.redirect(data.url)
   } catch (err) {
     console.error('Server error:', err)
