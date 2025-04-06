@@ -2,24 +2,21 @@
 
 import { useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
 import Link from 'next/link'
 
 export default function SignUpForm() {
-  const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [acceptTerms, setAcceptTerms] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [verificationSent, setVerificationSent] = useState(false)
-  const router = useRouter()
   const supabase = createClientComponentClient()
 
   const handleSignUp = async () => {
     setLoading(true)
+    setError(null)
 
     try {
       const { error } = await supabase.auth.signUp({
@@ -27,18 +24,18 @@ export default function SignUpForm() {
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
-          data: {
-            full_name: fullName,
-          },
         },
       })
 
-      if (error) throw error
-      
-      // Show verification message instead of redirecting
+      if (error) {
+        setError(error.message)
+        return
+      }
+
       setVerificationSent(true)
     } catch (err) {
       console.error('Sign up error:', err)
+      setError('An unexpected error occurred. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -51,6 +48,7 @@ export default function SignUpForm() {
       window.location.href = '/api/auth/google'
     } catch (err) {
       console.error('Google sign up error:', err)
+      setError('An unexpected error occurred. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -58,12 +56,7 @@ export default function SignUpForm() {
 
   if (verificationSent) {
     return (
-      <div className="space-y-6 text-center">
-        <div className="space-y-2">
-          <h1 className="text-[28px] font-bold text-[#111827]">Welcome to TryCrib</h1>
-          <p className="text-sm text-[#6B7280]">Experience your future home before making an offer</p>
-        </div>
-
+      <div className="space-y-6">
         <div className="bg-blue-50 border border-blue-100 p-6 rounded-xl space-y-4">
           <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -74,11 +67,11 @@ export default function SignUpForm() {
           <div>
             <h3 className="text-lg font-semibold text-[#111827] mb-1">Check your email!</h3>
             <p className="text-sm text-[#4B5563]">
-              We've sent a verification link to <span className="font-medium">{email}</span>
+              We&apos;ve sent a verification link to <span className="font-medium">{email}</span>
             </p>
           </div>
           <p className="text-sm text-[#6B7280] pt-2">
-            Can't find the email? Check your spam folder or{' '}
+            Can&apos;t find the email? Check your spam folder or{' '}
             <button
               onClick={handleSignUp}
               className="text-[#0066FF] hover:text-[#0052CC] font-medium"
@@ -89,43 +82,25 @@ export default function SignUpForm() {
           </p>
         </div>
 
-        <div className="flex justify-center space-x-4">
-          <Button
-            variant="outline"
-            onClick={() => setVerificationSent(false)}
-            className="px-6"
-          >
-            Back
-          </Button>
-          <Button
-            asChild
-            className="bg-[#0066FF] hover:bg-[#0052CC] px-6"
-          >
-            <Link href="/auth/login">Go to Login</Link>
-          </Button>
-        </div>
+        <Button
+          asChild
+          className="w-full bg-[#0066FF] hover:bg-[#0052CC]"
+        >
+          <Link href="/auth/login">Go to Login</Link>
+        </Button>
       </div>
     )
   }
 
   return (
     <div className="space-y-4">
-      <div className="space-y-4">
-        <div>
-          <label htmlFor="fullName" className="mb-1.5 block text-sm text-[#344054]">
-            Full Name
-          </label>
-          <Input
-            id="fullName"
-            type="text"
-            placeholder="John Smith"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            required
-            className="h-10 rounded-lg border-[#D0D5DD] bg-white px-3 py-2"
-          />
+      {error && (
+        <div className="bg-red-50 p-4 rounded-lg">
+          <p className="text-sm text-red-700">{error}</p>
         </div>
+      )}
 
+      <div className="space-y-4">
         <div>
           <label htmlFor="email" className="mb-1.5 block text-sm text-[#344054]">
             Email
@@ -154,31 +129,23 @@ export default function SignUpForm() {
             required
             className="h-10 rounded-lg border-[#D0D5DD] bg-white px-3 py-2"
           />
-          <p className="mt-1.5 text-xs text-[#667085]">Password must be at least 6 characters long</p>
         </div>
-      </div>
-
-      <div className="flex items-start space-x-2">
-        <Checkbox
-          id="terms"
-          checked={acceptTerms}
-          onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
-          className="mt-0.5 h-3.5 w-3.5 rounded border-[#D0D5DD] text-[#0066FF]"
-        />
-        <label htmlFor="terms" className="text-[11px] text-[#667085]">
-          By continuing, you agree to TryCrib's{' '}
-          <Link href="/terms" className="text-[#0066FF]">Terms of Service</Link>{' '}
-          and{' '}
-          <Link href="/privacy" className="text-[#0066FF]">Privacy Policy</Link>
-        </label>
       </div>
 
       <Button
         onClick={handleSignUp}
         className="h-10 w-full rounded-lg bg-[#0066FF] font-medium text-white"
-        disabled={loading || !acceptTerms}
+        disabled={loading}
       >
         {loading ? 'Creating account...' : 'Create Account'}
+      </Button>
+
+      <Button
+        variant="outline"
+        asChild
+        className="h-10 w-full rounded-lg border border-[#D0D5DD] bg-white font-normal"
+      >
+        <Link href="/auth/login">Already have an account? Log in</Link>
       </Button>
 
       <div className="relative py-2">
@@ -213,6 +180,10 @@ export default function SignUpForm() {
           Google
         </div>
       </Button>
+
+      <div className="text-[11px] text-gray-500 text-center">
+        By continuing, you agree to TryCrib&apos;s Terms of Service and Privacy Policy
+      </div>
     </div>
   )
 } 

@@ -42,7 +42,7 @@ export default function ForgotPasswordPage() {
         <div className="space-y-2 text-center">
           <h1 className="text-[28px] font-bold text-[#111827]">Reset your password</h1>
           <p className="text-sm text-[#6B7280]">
-            Enter your email address and we'll send you instructions to reset your password.
+            Enter your email address and we&apos;ll send you instructions to reset your password.
           </p>
         </div>
 
@@ -64,11 +64,11 @@ export default function ForgotPasswordPage() {
               <div>
                 <h3 className="text-lg font-semibold text-[#111827] mb-1">Check your email!</h3>
                 <p className="text-sm text-[#4B5563]">
-                  We've sent password reset instructions to <span className="font-medium">{email}</span>
+                  We&apos;ve sent password reset instructions to <span className="font-medium">{email}</span>
                 </p>
               </div>
               <p className="text-sm text-[#6B7280] pt-2">
-                Can't find the email? Check your spam folder or{' '}
+                Can&apos;t find the email? Check your spam folder or{' '}
                 <button
                   onClick={handleResetPassword}
                   className="text-[#0066FF] hover:text-[#0052CC] font-medium"
