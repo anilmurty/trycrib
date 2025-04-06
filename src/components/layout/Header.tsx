@@ -34,7 +34,7 @@ export function Header() {
         {/* Desktop Auth buttons - hidden on mobile */}
         <div className="hidden md:flex items-center space-x-6">
           <Link 
-            href="/login" 
+            href="/auth/login" 
             className="text-gray-600 hover:text-gray-900 transition-colors"
           >
             Login
@@ -43,7 +43,7 @@ export function Header() {
             asChild
             className="bg-[#0066FF] hover:bg-[#0066FF]/90 text-white rounded-full px-6"
           >
-            <Link href="/signup">Sign Up</Link>
+            <Link href="/auth/signup">Sign Up</Link>
           </Button>
         </div>
 
@@ -122,7 +122,7 @@ export function Header() {
           </Link>
           <div className="pt-4 border-t border-gray-200">
             <Link 
-              href="/login" 
+              href="/auth/login" 
               className="block text-gray-600 hover:text-gray-900 transition-colors py-2"
               onClick={() => setIsMenuOpen(false)}
             >
@@ -133,7 +133,7 @@ export function Header() {
               className="w-full mt-2 bg-[#0066FF] hover:bg-[#0066FF]/90 text-white rounded-full"
               onClick={() => setIsMenuOpen(false)}
             >
-              <Link href="/signup">Sign Up</Link>
+              <Link href="/auth/signup">Sign Up</Link>
             </Button>
           </div>
         </nav>

@@ -10,8 +10,8 @@ export default function SignUpPage() {
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Or{' '}
-            <a href="/auth/signin" className="font-medium text-blue-600 hover:text-blue-500">
-              sign in to your account
+            <a href="/auth/login" className="font-medium text-blue-600 hover:text-blue-500">
+              login to your account
             </a>
           </p>
         </div>
