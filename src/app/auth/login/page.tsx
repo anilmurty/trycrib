@@ -3,8 +3,6 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import SignInForm from '@/components/auth/SignInForm'
 import SignUpForm from '@/components/auth/SignUpForm'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 
 export default function LoginPage() {
   return (

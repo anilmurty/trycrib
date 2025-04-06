@@ -13,54 +13,32 @@ export default function SignUpForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [acceptTerms, setAcceptTerms] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const supabase = createClientComponentClient()
 
   const handleSignUp = async () => {
-    setError(null)
     setLoading(true)
-
-    if (!acceptTerms) {
-      setError('Please accept the Terms of Service and Privacy Policy')
-      setLoading(false)
-      return
-    }
-
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters')
-      setLoading(false)
-      return
-    }
 
     try {
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: {
-            full_name: fullName,
-          },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       })
 
-      if (error) {
-        setError(error.message)
-        return
-      }
-
+      if (error) throw error
       router.push('/')
-      router.refresh()
-    } catch (error) {
-      setError('An unexpected error occurred')
+    } catch (err) {
+      console.error('Sign up error:', err)
     } finally {
       setLoading(false)
     }
   }
 
   const handleGoogleSignUp = async () => {
-    setError(null)
     setLoading(true)
 
     try {
@@ -71,11 +49,9 @@ export default function SignUpForm() {
         },
       })
 
-      if (error) {
-        setError(error.message)
-      }
-    } catch (error) {
-      setError('An unexpected error occurred')
+      if (error) throw error
+    } catch (err) {
+      console.error('Google sign up error:', err)
     } finally {
       setLoading(false)
     }
@@ -131,10 +107,6 @@ export default function SignUpForm() {
         </div>
       </div>
 
-      {error && (
-        <div className="text-sm text-red-600 text-center">{error}</div>
-      )}
-
       <Button
         onClick={handleSignUp}
         className="h-10 w-full rounded-lg bg-[#0066FF] font-medium text-white"
@@ -184,7 +156,7 @@ export default function SignUpForm() {
           className="mt-0.5 h-3.5 w-3.5 rounded border-[#D0D5DD] text-[#0066FF]"
         />
         <label htmlFor="terms" className="text-[11px] text-[#667085]">
-          By continuing, you agree to TryCrib's{' '}
+          By continuing, you agree to TryCrib&apos;s{' '}
           <Link href="/terms" className="text-[#0066FF]">Terms of Service</Link>{' '}
           and{' '}
           <Link href="/privacy" className="text-[#0066FF]">Privacy Policy</Link>

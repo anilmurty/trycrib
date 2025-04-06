@@ -10,13 +10,11 @@ import Link from 'next/link'
 export default function SignInForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const supabase = createClientComponentClient()
 
   const handleSignIn = async () => {
-    setError(null)
     setLoading(true)
 
     try {
@@ -25,22 +23,16 @@ export default function SignInForm() {
         password,
       })
 
-      if (error) {
-        setError(error.message)
-        return
-      }
-
+      if (error) throw error
       router.push('/')
-      router.refresh()
-    } catch (error) {
-      setError('An unexpected error occurred')
+    } catch (err) {
+      console.error('Sign in error:', err)
     } finally {
       setLoading(false)
     }
   }
 
   const handleGoogleSignIn = async () => {
-    setError(null)
     setLoading(true)
 
     try {
@@ -51,11 +43,9 @@ export default function SignInForm() {
         },
       })
 
-      if (error) {
-        setError(error.message)
-      }
-    } catch (error) {
-      setError('An unexpected error occurred')
+      if (error) throw error
+    } catch (err) {
+      console.error('Google sign in error:', err)
     } finally {
       setLoading(false)
     }
@@ -94,10 +84,6 @@ export default function SignInForm() {
           />
         </div>
       </div>
-
-      {error && (
-        <div className="text-sm text-red-600 text-center">{error}</div>
-      )}
 
       <Button
         onClick={handleSignIn}
@@ -154,11 +140,8 @@ export default function SignInForm() {
         </div>
       </Button>
 
-      <div className="text-center text-[11px] text-[#667085]">
-        By continuing, you agree to TryCrib's{' '}
-        <Link href="/terms" className="text-[#0066FF]">Terms of Service</Link>{' '}
-        and{' '}
-        <Link href="/privacy" className="text-[#0066FF]">Privacy Policy</Link>
+      <div className="text-[11px] text-gray-500 text-center">
+        By continuing, you agree to TryCrib&apos;s Terms of Service and Privacy Policy
       </div>
     </div>
   )

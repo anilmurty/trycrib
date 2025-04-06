@@ -3,7 +3,6 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import SignInForm from '@/components/auth/SignInForm'
 import SignUpForm from '@/components/auth/SignUpForm'
-import Link from 'next/link'
 
 export default function SignUpPage() {
   return (
