@@ -5,44 +5,24 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
 import Link from 'next/link'
 
-export default function SignUpForm() {
-  const [fullName, setFullName] = useState('')
+export default function SignInForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [acceptTerms, setAcceptTerms] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const supabase = createClientComponentClient()
 
-  const handleSignUp = async () => {
+  const handleSignIn = async () => {
     setError(null)
     setLoading(true)
 
-    if (!acceptTerms) {
-      setError('Please accept the Terms of Service and Privacy Policy')
-      setLoading(false)
-      return
-    }
-
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters')
-      setLoading(false)
-      return
-    }
-
     try {
-      const { error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
-        options: {
-          data: {
-            full_name: fullName,
-          },
-        },
       })
 
       if (error) {
@@ -59,7 +39,7 @@ export default function SignUpForm() {
     }
   }
 
-  const handleGoogleSignUp = async () => {
+  const handleGoogleSignIn = async () => {
     setError(null)
     setLoading(true)
 
@@ -84,21 +64,6 @@ export default function SignUpForm() {
   return (
     <div className="space-y-4">
       <div className="space-y-4">
-        <div>
-          <label htmlFor="fullName" className="mb-1.5 block text-sm text-[#344054]">
-            Full Name
-          </label>
-          <Input
-            id="fullName"
-            type="text"
-            placeholder="John Smith"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            required
-            className="h-10 rounded-lg border-[#D0D5DD] bg-white px-3 py-2"
-          />
-        </div>
-
         <div>
           <label htmlFor="email" className="mb-1.5 block text-sm text-[#344054]">
             Email
@@ -127,7 +92,6 @@ export default function SignUpForm() {
             required
             className="h-10 rounded-lg border-[#D0D5DD] bg-white px-3 py-2"
           />
-          <p className="mt-1.5 text-xs text-[#667085]">Password must be at least 6 characters long</p>
         </div>
       </div>
 
@@ -136,12 +100,26 @@ export default function SignUpForm() {
       )}
 
       <Button
-        onClick={handleSignUp}
+        onClick={handleSignIn}
         className="h-10 w-full rounded-lg bg-[#0066FF] font-medium text-white"
         disabled={loading}
       >
-        {loading ? 'Creating account...' : 'Create Account'}
+        {loading ? 'Logging in...' : 'Log In'}
       </Button>
+
+      <Button
+        variant="outline"
+        asChild
+        className="h-10 w-full rounded-lg border border-[#D0D5DD] bg-white font-normal"
+      >
+        <Link href="/auth/signup">Create Account</Link>
+      </Button>
+
+      <div className="text-center">
+        <Link href="/auth/forgot-password" className="text-sm text-[#0066FF]">
+          Forgot your password?
+        </Link>
+      </div>
 
       <div className="relative py-2">
         <div className="absolute inset-0 flex items-center">
@@ -154,7 +132,7 @@ export default function SignUpForm() {
 
       <Button
         variant="outline"
-        onClick={handleGoogleSignUp}
+        onClick={handleGoogleSignIn}
         className="h-10 w-full rounded-lg border border-[#D0D5DD] bg-white font-normal"
         disabled={loading}
       >
@@ -176,19 +154,11 @@ export default function SignUpForm() {
         </div>
       </Button>
 
-      <div className="flex items-start space-x-2">
-        <Checkbox
-          id="terms"
-          checked={acceptTerms}
-          onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
-          className="mt-0.5 h-3.5 w-3.5 rounded border-[#D0D5DD] text-[#0066FF]"
-        />
-        <label htmlFor="terms" className="text-[11px] text-[#667085]">
-          By continuing, you agree to TryCrib's{' '}
-          <Link href="/terms" className="text-[#0066FF]">Terms of Service</Link>{' '}
-          and{' '}
-          <Link href="/privacy" className="text-[#0066FF]">Privacy Policy</Link>
-        </label>
+      <div className="text-center text-[11px] text-[#667085]">
+        By continuing, you agree to TryCrib's{' '}
+        <Link href="/terms" className="text-[#0066FF]">Terms of Service</Link>{' '}
+        and{' '}
+        <Link href="/privacy" className="text-[#0066FF]">Privacy Policy</Link>
       </div>
     </div>
   )

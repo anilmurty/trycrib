@@ -1,21 +1,31 @@
+'use client'
+
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import SignInForm from '@/components/auth/SignInForm'
 import SignUpForm from '@/components/auth/SignUpForm'
+import Link from 'next/link'
 
 export default function SignUpPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <a href="/auth/login" className="font-medium text-blue-600 hover:text-blue-500">
-              login to your account
-            </a>
-          </p>
+    <div className="flex min-h-screen items-center justify-center bg-[#FAFAFA]">
+      <div className="w-full max-w-[360px] space-y-6">
+        <div className="space-y-2 text-center">
+          <h1 className="text-[28px] font-bold text-[#111827]">Welcome to TryCrib</h1>
+          <p className="text-sm text-[#6B7280]">Experience your future home before making an offer</p>
         </div>
-        <SignUpForm />
+
+        <Tabs defaultValue="signup" className="w-full">
+          <TabsList>
+            <TabsTrigger value="login" className="flex-1">Log In</TabsTrigger>
+            <TabsTrigger value="signup" className="flex-1">Sign Up</TabsTrigger>
+          </TabsList>
+          <TabsContent value="login">
+            <SignInForm />
+          </TabsContent>
+          <TabsContent value="signup">
+            <SignUpForm />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   )
