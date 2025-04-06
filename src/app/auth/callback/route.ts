@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
+import { CookieOptions } from '@supabase/ssr'
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
@@ -14,10 +15,10 @@ export async function GET(request: Request) {
           get(name: string) {
             return request.headers.get('cookie')?.split('; ').find(row => row.startsWith(`${name}=`))?.split('=')[1]
           },
-          set(name: string, value: string, options: any) {
+          set(_name: string, _value: string, _options: CookieOptions) {
             // The cookie will be set by the middleware
           },
-          remove(name: string, options: any) {
+          remove(_name: string, _options: CookieOptions) {
             // The cookie will be removed by the middleware
           },
         },
