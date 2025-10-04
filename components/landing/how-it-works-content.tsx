@@ -132,7 +132,7 @@ export function HowItWorksContent() {
               Browse Properties
             </a>
             <a
-              href="/auth"
+              href="/sign-up"
               className="inline-flex items-center justify-center rounded-full border-2 border-gray-300 bg-white px-8 py-3 text-base font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-colors"
             >
               Get Started

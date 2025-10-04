@@ -1,19 +1,19 @@
 import { NextResponse } from "next/server"
 import { stripe } from "@/lib/stripe"
+import { auth } from "@clerk/nextjs/server"
 import { createClient } from "@/lib/supabase/server"
 
 export async function POST(request: Request) {
   try {
     const { propertyId, checkIn, checkOut, totalPrice } = await request.json()
 
-    const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
+    const { userId } = await auth()
 
-    if (!user) {
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
+
+    const supabase = await createClient()
 
     // Get property details
     const { data: property } = await supabase.from("properties").select("*").eq("id", propertyId).single()
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       .insert([
         {
           property_id: propertyId,
-          buyer_id: user.id,
+          buyer_id: userId,
           check_in: checkIn,
           check_out: checkOut,
           total_price: totalPrice,
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
       metadata: {
         bookingId: booking.id,
         propertyId: propertyId,
-        buyerId: user.id,
+        buyerId: userId,
       },
     })
 

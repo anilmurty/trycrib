@@ -53,7 +53,7 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
 
   const handleBooking = async () => {
     if (!userId) {
-      router.push("/auth")
+      router.push("/sign-in")
       return
     }
 

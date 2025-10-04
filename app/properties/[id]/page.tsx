@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation"
+import { auth } from "@clerk/nextjs/server"
 import { createClient } from "@/lib/supabase/server"
 import { PropertyDetails } from "@/components/buyer/property-details"
 import { Header } from "@/components/landing/header"
@@ -14,16 +15,13 @@ export default async function PropertyPage({ params }: { params: Promise<{ id: s
     notFound()
   }
 
-  // Get current user
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { userId } = await auth()
 
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <PropertyDetails property={property} userId={user?.id} />
+        <PropertyDetails property={property} userId={userId || undefined} />
       </main>
       <Footer />
     </div>
