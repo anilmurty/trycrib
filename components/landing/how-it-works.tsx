@@ -4,10 +4,6 @@ export function HowItWorks() {
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold text-white mb-3">Reduce purchase anxiety in 3 steps</h2>
-          <p className="text-base text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            Buying a home is the most expensive transaction that most people undertake. It's a shame that you don't get
-            to try-before-you-buy. That changes now.
-          </p>
         </div>
 
         <div className="grid gap-12 md:grid-cols-3">
