@@ -1,30 +1,227 @@
-# TryCrib web app
-
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+# TryCrib - Try Before You Buy Real Estate Platform
 
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/anilmurtys-projects/v0-try-crib-web-app)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/projects/ZFNlxee7qpi)
+[![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 
-## Overview
+## 🏠 Overview
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+**TryCrib** is an innovative real estate platform that allows potential home buyers to **"try before they buy"** by booking short-term stays in properties they're interested in purchasing. This addresses the anxiety of home buying by enabling buyers to experience living in a property before making an offer.
 
-## Deployment
+### The Problem We Solve
 
-Your project is live at:
+Buying a home is the most expensive transaction most people undertake, yet unlike other major purchases (like cars), you don't get to test-drive your potential new home. TryCrib changes this by allowing buyers to:
 
-**[https://vercel.com/anilmurtys-projects/v0-try-crib-web-app](https://vercel.com/anilmurtys-projects/v0-try-crib-web-app)**
+- Experience the property firsthand
+- Test the neighborhood and commute
+- Make informed decisions with confidence
+- Reduce purchase anxiety
 
-## Build your app
+## ✨ Key Features
 
-Continue building your app on:
+### For Buyers
+- 🔍 **Browse Properties**: Search and filter available properties on the market
+- 🏡 **Book Stays**: Reserve short-term stays to experience properties
+- 📅 **Manage Bookings**: View booking history and manage reservations
+- ⭐ **Leave Reviews**: Provide feedback after stays
+- 💳 **Secure Payments**: Integrated Stripe payment processing
 
-**[https://v0.app/chat/projects/ZFNlxee7qpi](https://v0.app/chat/projects/ZFNlxee7qpi)**
+### For Sellers
+- 📝 **List Properties**: Create detailed property listings for try-before-buy stays
+- 💰 **Set Pricing**: Configure per-night rates and manage availability
+- 📊 **Track Bookings**: Monitor reservations and earnings
+- 💬 **Communicate**: Message with potential buyers
+- 📈 **Analytics**: View booking performance
 
-## How It Works
+### For Admins
+- ✅ **Property Verification**: Review and approve property listings
+- 👥 **User Management**: Manage user accounts and roles
+- 📊 **Platform Analytics**: Monitor bookings and platform performance
+- 🔧 **Content Moderation**: Oversee reviews and communications
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+## 🛠 Technology Stack
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS with Radix UI components
+- **Backend**: Next.js API routes
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Supabase Auth with Google OAuth
+- **Payments**: Stripe
+- **Deployment**: Vercel
+
+## 🗄️ Database Schema
+
+The application uses a comprehensive PostgreSQL schema with the following key tables:
+
+- **profiles**: User accounts with role-based access (buyer/seller/admin)
+- **properties**: Property listings with detailed information
+- **bookings**: Short-term stay reservations
+- **reviews**: Post-stay feedback system
+- **messages**: Buyer-seller communication
+- **property_availability**: Calendar system for blocked dates
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+ 
+- pnpm (recommended) or npm
+- Supabase account
+- Stripe account
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd trycrib
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pnpm install
+   # or
+   npm install
+   ```
+
+3. **Set up environment variables**
+   
+   Create a `.env.local` file in the root directory:
+   ```env
+   # Supabase
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+   
+   # Stripe
+   STRIPE_SECRET_KEY=your_stripe_secret_key
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+   STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
+   
+   # App
+   NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL=http://localhost:3000
+   ```
+
+4. **Set up the database**
+   
+   Run the SQL scripts in the `scripts/` directory in order:
+   ```bash
+   # Execute these in your Supabase SQL editor
+   scripts/001_create_tables.sql
+   scripts/002_enable_rls.sql
+   scripts/003_create_profile_trigger.sql
+   scripts/add-stripe-session-column.sql
+   ```
+
+5. **Run the development server**
+   ```bash
+   pnpm dev
+   # or
+   npm run dev
+   ```
+
+6. **Open your browser**
+   
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## 🏗️ Build and Deployment
+
+### Local Build
+
+```bash
+# Build the application
+pnpm build
+
+# Start the production server
+pnpm start
+```
+
+### Vercel Deployment
+
+1. **Connect your repository to Vercel**
+2. **Set environment variables** in Vercel dashboard
+3. **Deploy** - Vercel will automatically build and deploy
+
+### Environment Variables for Production
+
+Ensure all environment variables are set in your deployment platform:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `STRIPE_SECRET_KEY`
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+
+## 📁 Project Structure
+
+```
+trycrib/
+├── app/                    # Next.js app router pages
+│   ├── admin/             # Admin dashboard
+│   ├── api/               # API routes
+│   ├── auth/              # Authentication pages
+│   ├── booking/           # Booking flow
+│   ├── dashboard/         # User dashboards
+│   └── properties/        # Property listings
+├── components/            # React components
+│   ├── admin/            # Admin-specific components
+│   ├── buyer/            # Buyer-specific components
+│   ├── seller/           # Seller-specific components
+│   ├── landing/          # Landing page components
+│   └── ui/               # Reusable UI components
+├── lib/                  # Utility libraries
+│   ├── supabase/         # Supabase client configuration
+│   ├── stripe.ts         # Stripe configuration
+│   └── types.ts          # TypeScript type definitions
+├── scripts/              # Database migration scripts
+└── public/               # Static assets
+```
+
+## 🔧 Available Scripts
+
+```bash
+# Development
+pnpm dev          # Start development server
+pnpm build        # Build for production
+pnpm start        # Start production server
+pnpm lint         # Run ESLint
+
+# Database
+# Run SQL scripts in Supabase dashboard
+```
+
+## 🔐 Authentication & Authorization
+
+The app uses Supabase Auth with three user roles:
+
+- **Buyer**: Can browse and book properties
+- **Seller**: Can list and manage properties
+- **Admin**: Can verify properties and manage users
+
+Users are automatically redirected to role-appropriate dashboards after authentication.
+
+## 💳 Payment Integration
+
+- **Stripe Checkout** for secure payment processing
+- **Webhook handling** for payment confirmation
+- **Fee structure**: Platform fees, agent commissions, and seller payouts
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🚀 Live Demo
+
+**[TryCrib Live Demo](https://vercel.com/anilmurtys-projects/v0-try-crib-web-app)**
+
+---
+
+*Built with ❤️ using Next.js, Supabase, and Stripe*
