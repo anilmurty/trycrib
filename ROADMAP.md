@@ -5,58 +5,58 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 ## 🎯 Core Platform Features
 
 ### Authentication & User Management
-- [x] **User Registration & Login**
-  - [x] Email/password authentication
-  - [x] Google OAuth integration
-  - [x] Role-based user accounts (buyer/seller/admin)
-  - [x] Email verification flow
-  - [x] Password reset functionality
-- [x] **User Profiles**
-  - [x] Basic profile information
-  - [x] Role-specific profile extensions
-  - [x] Profile verification system
-- [x] **Authorization & Security**
-  - [x] Route protection middleware
-  - [x] Role-based access control
-  - [x] Row-level security (RLS) policies
-  - [x] Session management
+- [ ] **User Registration & Login**
+  - [ ] Email/password authentication
+  - [ ] Google OAuth integration
+  - [ ] Role-based user accounts (buyer/seller/admin)
+  - [ ] Email verification flow
+  - [ ] Password reset functionality
+- [ ] **User Profiles**
+  - [ ] Basic profile information
+  - [ ] Role-specific profile extensions
+  - [ ] Profile verification system
+- [ ] **Authorization & Security**
+  - [ ] Route protection middleware
+  - [ ] Role-based access control
+  - [ ] Row-level security (RLS) policies
+  - [ ] Session management
 
 ### Database & Backend
-- [x] **Database Schema**
-  - [x] User profiles and roles
-  - [x] Property listings
-  - [x] Booking system
-  - [x] Reviews and ratings
-  - [x] Messaging system
-  - [x] Property availability calendar
-- [x] **API Endpoints**
-  - [x] Property CRUD operations
-  - [x] Booking management
-  - [x] Payment processing
-  - [x] User management
-- [x] **Data Security**
-  - [x] Supabase RLS policies
-  - [x] Input validation
-  - [x] SQL injection prevention
+- [ ] **Database Schema**
+  - [ ] User profiles and roles
+  - [ ] Property listings
+  - [ ] Booking system
+  - [ ] Reviews and ratings
+  - [ ] Messaging system
+  - [ ] Property availability calendar
+- [ ] **API Endpoints**
+  - [ ] Property CRUD operations
+  - [ ] Booking management
+  - [ ] Payment processing
+  - [ ] User management
+- [ ] **Data Security**
+  - [ ] Supabase RLS policies
+  - [ ] Input validation
+  - [ ] SQL injection prevention
 
 ## 🏠 Property Management
 
 ### Property Listings
-- [x] **Property Creation**
-  - [x] Detailed property form
-  - [x] Image upload support
-  - [x] Amenities management
-  - [x] Location and address details
-  - [x] Pricing configuration
-- [x] **Property Display**
-  - [x] Property listing page
-  - [x] Property detail pages
-  - [x] Image galleries
-  - [x] Property search and filtering
-- [x] **Property Management**
-  - [x] Edit property details
-  - [x] Activate/deactivate listings
-  - [x] Property verification system
+- [ ] **Property Creation**
+  - [ ] Detailed property form
+  - [ ] Image upload support
+  - [ ] Amenities management
+  - [ ] Location and address details
+  - [ ] Pricing configuration
+- [ ] **Property Display**
+  - [ ] Property listing page
+  - [ ] Property detail pages
+  - [ ] Image galleries
+  - [ ] Property search and filtering
+- [ ] **Property Management**
+  - [ ] Edit property details
+  - [ ] Activate/deactivate listings
+  - [ ] Property verification system
 - [ ] **Advanced Property Features**
   - [ ] Virtual tours integration
   - [ ] 360° photo support
@@ -66,10 +66,10 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [ ] School district information
 
 ### Search & Discovery
-- [x] **Basic Search**
-  - [x] Property listing page
-  - [x] Location-based filtering
-  - [x] Property type filtering
+- [ ] **Basic Search**
+  - [ ] Property listing page
+  - [ ] Location-based filtering
+  - [ ] Property type filtering
 - [ ] **Advanced Search**
   - [ ] Price range filtering
   - [ ] Bedroom/bathroom filters
@@ -83,20 +83,20 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 ## 🛏️ Booking System
 
 ### Booking Management
-- [x] **Booking Creation**
-  - [x] Date selection
-  - [x] Price calculation
-  - [x] Booking confirmation
-  - [x] Payment integration
-- [x] **Booking Tracking**
-  - [x] Booking status management
-  - [x] Booking history
-  - [x] Booking modifications
-- [x] **Payment Processing**
-  - [x] Stripe integration
-  - [x] Secure payment handling
-  - [x] Payment confirmation
-  - [x] Refund processing
+- [ ] **Booking Creation**
+  - [ ] Date selection
+  - [ ] Price calculation
+  - [ ] Booking confirmation
+  - [ ] Payment integration
+- [ ] **Booking Tracking**
+  - [ ] Booking status management
+  - [ ] Booking history
+  - [ ] Booking modifications
+- [ ] **Payment Processing**
+  - [ ] Stripe integration
+  - [ ] Secure payment handling
+  - [ ] Payment confirmation
+  - [ ] Refund processing
 - [ ] **Advanced Booking Features**
   - [ ] Calendar availability view
   - [ ] Recurring booking options
@@ -106,10 +106,10 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [ ] Check-in/check-out automation
 
 ### Calendar & Availability
-- [x] **Basic Availability**
-  - [x] Property availability table
-  - [x] Date blocking system
-  - [x] Booking conflict prevention
+- [ ] **Basic Availability**
+  - [ ] Property availability table
+  - [ ] Date blocking system
+  - [ ] Booking conflict prevention
 - [ ] **Advanced Calendar Features**
   - [ ] Interactive calendar UI
   - [ ] Bulk availability management
@@ -121,11 +121,11 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 ## 👥 User Dashboards
 
 ### Buyer Dashboard
-- [x] **Core Features**
-  - [x] Property browsing
-  - [x] Booking management
-  - [x] Profile management
-  - [x] Booking history
+- [ ] **Core Features**
+  - [ ] Property browsing
+  - [ ] Booking management
+  - [ ] Profile management
+  - [ ] Booking history
 - [ ] **Enhanced Features**
   - [ ] Wishlist/favorites
   - [ ] Property recommendations
@@ -136,11 +136,11 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [ ] Pre-approval letter upload
 
 ### Seller Dashboard
-- [x] **Core Features**
-  - [x] Property listing management
-  - [x] Booking overview
-  - [x] Earnings tracking
-  - [x] Property analytics
+- [ ] **Core Features**
+  - [ ] Property listing management
+  - [ ] Booking overview
+  - [ ] Earnings tracking
+  - [ ] Property analytics
 - [ ] **Enhanced Features**
   - [ ] Advanced analytics dashboard
   - [ ] Revenue forecasting
@@ -151,11 +151,11 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [ ] Automated messaging
 
 ### Admin Dashboard
-- [x] **Core Features**
-  - [x] User management
-  - [x] Property verification
-  - [x] Booking oversight
-  - [x] Platform analytics
+- [ ] **Core Features**
+  - [ ] User management
+  - [ ] Property verification
+  - [ ] Booking oversight
+  - [ ] Platform analytics
 - [ ] **Enhanced Features**
   - [ ] Advanced reporting
   - [ ] Content moderation tools
@@ -168,9 +168,9 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 ## 💬 Communication & Reviews
 
 ### Messaging System
-- [x] **Database Schema**
-  - [x] Messages table
-  - [x] User communication policies
+- [ ] **Database Schema**
+  - [ ] Messages table
+  - [ ] User communication policies
 - [ ] **Messaging Features**
   - [ ] Real-time messaging UI
   - [ ] Message threading
@@ -182,10 +182,10 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [ ] Automated responses
 
 ### Reviews & Ratings
-- [x] **Database Schema**
-  - [x] Reviews table
-  - [x] Rating system (1-5 stars)
-  - [x] Review policies
+- [ ] **Database Schema**
+  - [ ] Reviews table
+  - [ ] Rating system (1-5 stars)
+  - [ ] Review policies
 - [ ] **Review Features**
   - [ ] Review submission UI
   - [ ] Review display
@@ -232,10 +232,10 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 ## 🔧 Technical Infrastructure
 
 ### Performance & Scalability
-- [x] **Basic Performance**
-  - [x] Next.js optimization
-  - [x] Image optimization
-  - [x] Database indexing
+- [ ] **Basic Performance**
+  - [ ] Next.js optimization
+  - [ ] Image optimization
+  - [ ] Database indexing
 - [ ] **Advanced Performance**
   - [ ] CDN integration
   - [ ] Caching strategies
@@ -246,10 +246,10 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [ ] Error tracking
 
 ### Security & Compliance
-- [x] **Basic Security**
-  - [x] Authentication security
-  - [x] Data validation
-  - [x] SQL injection prevention
+- [ ] **Basic Security**
+  - [ ] Authentication security
+  - [ ] Data validation
+  - [ ] SQL injection prevention
 - [ ] **Advanced Security**
   - [ ] Rate limiting
   - [ ] DDoS protection
@@ -261,9 +261,9 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [ ] PCI DSS compliance
 
 ### Monitoring & Analytics
-- [x] **Basic Analytics**
-  - [x] Vercel Analytics
-  - [x] Basic dashboard metrics
+- [ ] **Basic Analytics**
+  - [ ] Vercel Analytics
+  - [ ] Basic dashboard metrics
 - [ ] **Advanced Monitoring**
   - [ ] Custom analytics dashboard
   - [ ] User behavior tracking
@@ -313,12 +313,13 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 
 ## 📊 Development Phases
 
-### Phase 1: MVP (Current) ✅
-- [x] Core authentication
-- [x] Basic property management
-- [x] Simple booking system
-- [x] Payment integration
-- [x] Basic dashboards
+### Phase 1: MVP (Current) 🚧
+- [x] Landing page frontend
+- [ ] Core authentication
+- [ ] Basic property management
+- [ ] Simple booking system
+- [ ] Payment integration
+- [ ] Basic dashboards
 
 ### Phase 2: Enhanced UX (Next 3 months)
 - [ ] Advanced search and filtering
@@ -345,13 +346,13 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 
 ## 📈 Progress Summary
 
-**Overall Completion: ~40%**
+**Overall Completion: ~5%**
 
-- ✅ **Completed**: 25 features
+- ✅ **Completed**: 4 features (Landing page only)
 - 🚧 **In Progress**: 0 features  
-- ⏳ **Planned**: 60+ features
+- ⏳ **Planned**: 80+ features
 
-**Next Priority**: Advanced search and filtering, real-time messaging, and review system implementation.
+**Next Priority**: Core authentication system, database setup, and basic property management.
 
 ---
 
