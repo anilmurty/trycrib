@@ -71,22 +71,22 @@ The application uses a comprehensive PostgreSQL schema with the following key ta
 ### Installation
 
 1. **Clone the repository**
-   ```bash
+   \`\`\`bash
    git clone <repository-url>
    cd trycrib
-   ```
+   \`\`\`
 
 2. **Install dependencies**
-   ```bash
+   \`\`\`bash
    pnpm install
    # or
    npm install
-   ```
+   \`\`\`
 
 3. **Set up environment variables**
    
    Create a `.env.local` file in the root directory:
-   ```env
+   \`\`\`env
    # Supabase
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
@@ -99,25 +99,25 @@ The application uses a comprehensive PostgreSQL schema with the following key ta
    
    # App
    NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL=http://localhost:3000
-   ```
+   \`\`\`
 
 4. **Set up the database**
    
    Run the SQL scripts in the `scripts/` directory in order:
-   ```bash
+   \`\`\`bash
    # Execute these in your Supabase SQL editor
    scripts/001_create_tables.sql
    scripts/002_enable_rls.sql
    scripts/003_create_profile_trigger.sql
    scripts/add-stripe-session-column.sql
-   ```
+   \`\`\`
 
 5. **Run the development server**
-   ```bash
+   \`\`\`bash
    pnpm dev
    # or
    npm run dev
-   ```
+   \`\`\`
 
 6. **Open your browser**
    
@@ -127,13 +127,13 @@ The application uses a comprehensive PostgreSQL schema with the following key ta
 
 ### Local Build
 
-```bash
+\`\`\`bash
 # Build the application
 pnpm build
 
 # Start the production server
 pnpm start
-```
+\`\`\`
 
 ### Vercel Deployment
 
@@ -154,7 +154,7 @@ Ensure all environment variables are set in your deployment platform:
 
 ## 📁 Project Structure
 
-```
+\`\`\`
 trycrib/
 ├── app/                    # Next.js app router pages
 │   ├── admin/             # Admin dashboard
@@ -175,11 +175,11 @@ trycrib/
 │   └── types.ts          # TypeScript type definitions
 ├── scripts/              # Database migration scripts
 └── public/               # Static assets
-```
+\`\`\`
 
 ## 🔧 Available Scripts
 
-```bash
+\`\`\`bash
 # Development
 pnpm dev          # Start development server
 pnpm build        # Build for production
@@ -188,7 +188,7 @@ pnpm lint         # Run ESLint
 
 # Database
 # Run SQL scripts in Supabase dashboard
-```
+\`\`\`
 
 ## 🔐 Authentication & Authorization
 

@@ -1,23 +1,21 @@
 import { redirect } from "next/navigation"
+import { auth } from "@clerk/nextjs/server"
 import { createClient } from "@/lib/supabase/server"
 import { AdminDashboard } from "@/components/admin/admin-dashboard"
 
 export default async function AdminPage() {
-  const supabase = await createClient()
+  const { userId } = await auth()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    redirect("/auth")
+  if (!userId) {
+    redirect("/sign-in")
   }
 
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single()
+  const supabase = await createClient()
+  const { data: profile } = await supabase.from("profiles").select("*").eq("id", userId).single()
 
   if (profile?.role !== "admin") {
     redirect("/")
   }
 
-  return <AdminDashboard userId={user.id} profile={profile} />
+  return <AdminDashboard userId={userId} profile={profile} />
 }

@@ -5,9 +5,10 @@ import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Home, Calendar, LogOut, Search } from "lucide-react"
+import { Home, Calendar, LogOut, Search, Settings } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useClerk } from "@clerk/nextjs"
 
 interface Booking {
   id: string
@@ -34,6 +35,7 @@ interface BuyerDashboardProps {
 
 export function BuyerDashboard({ userId, profile }: BuyerDashboardProps) {
   const router = useRouter()
+  const { signOut } = useClerk()
   const supabase = createClient()
   const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
@@ -59,7 +61,7 @@ export function BuyerDashboard({ userId, profile }: BuyerDashboardProps) {
   }, [userId, supabase])
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
+    await signOut()
     router.push("/")
   }
 
@@ -79,6 +81,12 @@ export function BuyerDashboard({ userId, profile }: BuyerDashboardProps) {
               <Button variant="outline" size="sm">
                 <Search className="h-4 w-4 mr-2" />
                 Browse Homes
+              </Button>
+            </Link>
+            <Link href="/settings">
+              <Button variant="outline" size="sm">
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
               </Button>
             </Link>
             <span className="text-sm text-slate-600">Welcome, {profile.full_name || "Buyer"}</span>

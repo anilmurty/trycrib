@@ -6,9 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { Home, Calendar, DollarSign, Plus, LogOut } from "lucide-react"
+import { Home, Calendar, DollarSign, Plus, LogOut, Settings } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useClerk } from "@clerk/nextjs"
 import { PropertyList } from "./property-list"
 import { BookingsList } from "./bookings-list"
 
@@ -22,6 +23,7 @@ interface SellerDashboardProps {
 
 export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
   const router = useRouter()
+  const { signOut } = useClerk()
   const supabase = createClient()
   const [stats, setStats] = useState({
     totalProperties: 0,
@@ -83,7 +85,7 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
   }, [userId, supabase])
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
+    await signOut()
     router.push("/")
   }
 
@@ -96,6 +98,12 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
             <span className="text-lg font-bold text-slate-900">TryCrib</span>
           </Link>
           <div className="flex items-center gap-4">
+            <Link href="/settings">
+              <Button variant="outline" size="sm">
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </Button>
+            </Link>
             <span className="text-sm text-slate-600">Welcome, {profile.full_name || "Seller"}</span>
             <Button variant="outline" size="sm" onClick={handleSignOut}>
               <LogOut className="h-4 w-4 mr-2" />

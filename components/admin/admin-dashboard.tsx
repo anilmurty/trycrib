@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Home, Users, Calendar, DollarSign, LogOut } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useClerk } from "@clerk/nextjs"
 import { PropertyVerification } from "./property-verification"
 import { UserManagement } from "./user-management"
 import { BookingsOverview } from "./bookings-overview"
@@ -22,6 +23,7 @@ interface AdminDashboardProps {
 
 export function AdminDashboard({ userId, profile }: AdminDashboardProps) {
   const router = useRouter()
+  const { signOut } = useClerk()
   const supabase = createClient()
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -61,7 +63,7 @@ export function AdminDashboard({ userId, profile }: AdminDashboardProps) {
   }, [supabase])
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
+    await signOut()
     router.push("/")
   }
 
