@@ -24,6 +24,14 @@ We're currently building a **Property Data Management System** that will:
 - Provide rich property data for better user experience
 - Support bulk property management for admins
 
+### ✅ Recently Completed
+
+**Enhanced Role System** - A comprehensive admin management system:
+- Superadmin role with elevated permissions
+- User promotion/demotion functionality
+- Role-based dashboard redirects
+- Admin management interface with visual role indicators
+
 ## ✨ Key Features
 
 ### For Buyers
@@ -53,6 +61,7 @@ We're currently building a **Property Data Management System** that will:
 - 👑 **Admin Management**: Promote/demote admin users
 - 🔧 **System Configuration**: Advanced platform settings
 - 📈 **Global Analytics**: Platform-wide performance metrics
+- 📊 **Role Change History**: Track all user role changes and audit trail
 
 ## 🛠 Technology Stack
 
@@ -75,8 +84,9 @@ The application uses a comprehensive PostgreSQL schema with the following key ta
 - **reviews**: Post-stay feedback system
 - **messages**: Buyer-seller communication
 - **property_availability**: Calendar system for blocked dates
-- **property_imports**: Import history and tracking
-- **property_claims**: Property ownership claims and verification
+- **role_changes**: User role change history and audit trail
+- **property_imports**: Import history and tracking (planned)
+- **property_claims**: Property ownership claims and verification (planned)
 
 ### Enhanced Property Schema
 

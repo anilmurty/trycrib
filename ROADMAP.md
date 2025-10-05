@@ -20,11 +20,13 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [x] Role-based access control
   - [x] Row-level security (RLS) policies
   - [x] Session management
-- [ ] **Enhanced Role System**
-  - [ ] Superadmin role implementation
-  - [ ] Admin management interface
-  - [ ] User promotion/demotion system
-  - [ ] Role-based permission controls
+- [x] **Enhanced Role System**
+  - [x] Superadmin role implementation
+  - [x] Admin management interface
+  - [x] User promotion/demotion system
+  - [x] Role-based permission controls
+  - [ ] Role change history tracking
+  - [ ] Role change audit log interface
 
 ### Database & Backend
 - [x] **Database Schema**
@@ -188,12 +190,14 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [ ] Batch processing controls
   - [ ] Import history and reporting
   - [ ] Error handling and recovery
-- [ ] **User Role Management**
-  - [ ] User list with role indicators
-  - [ ] Promote users to admin (superadmin only)
-  - [ ] Remove admin status (superadmin only)
-  - [ ] Role-based access controls
-  - [ ] User activity monitoring
+- [x] **User Role Management**
+  - [x] User list with role indicators
+  - [x] Promote users to admin (superadmin only)
+  - [x] Remove admin status (superadmin only)
+  - [x] Role-based access controls
+  - [x] User activity monitoring
+  - [ ] Role change history interface
+  - [ ] Role change audit trail
 - [ ] **Enhanced Features**
   - [ ] Advanced reporting
   - [ ] Content moderation tools
@@ -360,12 +364,13 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 - [x] Basic dashboards
 
 ### Phase 2: Property Data Management (Next 2 months) 🎯
-- [ ] Enhanced role system (superadmin)
+- [x] Enhanced role system (superadmin)
 - [ ] Database schema updates
 - [ ] Property feed import system
 - [ ] Property claiming system
 - [ ] Admin data management interface
 - [ ] Cloudinary image integration
+- [ ] Role change history tracking
 
 ### Phase 3: Enhanced UX (3-5 months)
 - [ ] Advanced search and filtering
@@ -392,13 +397,13 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 
 ## 📈 Progress Summary
 
-**Overall Completion: ~25%**
+**Overall Completion: ~30%**
 
-- ✅ **Completed**: 15+ features (Landing page, authentication, basic property management)
+- ✅ **Completed**: 20+ features (Landing page, authentication, basic property management, enhanced role system)
 - 🚧 **In Progress**: 0 features  
 - ⏳ **Planned**: 80+ features
 
-**Next Priority**: Property data management system, enhanced role system, and feed import functionality.
+**Next Priority**: Enhanced property schema, property feed import system, and property claiming functionality.
 
 ---
 
