@@ -61,8 +61,32 @@ export async function POST(request: NextRequest) {
     }
 
     if (!data) {
-      console.log("Claim returned false - property may already be claimed")
-      return NextResponse.json({ error: "Property claim failed. This property may already be claimed." }, { status: 400 })
+      console.log("Claim returned false - checking specific reason")
+      
+      // Check if user has already claimed this property
+      const { data: existingUserClaim } = await supabase
+        .from("property_claims")
+        .select("id")
+        .eq("property_id", propertyId)
+        .eq("claimant_id", userId)
+        .single()
+      
+      if (existingUserClaim) {
+        return NextResponse.json({ error: "You have already claimed this property" }, { status: 400 })
+      }
+      
+      // Check if property has been claimed by someone else
+      const { data: existingClaim } = await supabase
+        .from("property_claims")
+        .select("id")
+        .eq("property_id", propertyId)
+        .single()
+      
+      if (existingClaim) {
+        return NextResponse.json({ error: "This property has already been claimed by another user" }, { status: 400 })
+      }
+      
+      return NextResponse.json({ error: "Property claim failed. This property may not be available for claiming." }, { status: 400 })
     }
 
     console.log("Claim successful")
