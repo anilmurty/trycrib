@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { createClient } from "@/lib/supabase/server"
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth()
     
@@ -10,8 +10,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { searchParams } = new URL(request.url)
-    const propertyId = searchParams.get('propertyId')
+    const { propertyId } = await request.json()
 
     if (!propertyId) {
       return NextResponse.json({ error: "Property ID is required" }, { status: 400 })
@@ -19,15 +18,16 @@ export async function GET(request: NextRequest) {
 
     const supabase = await createClient()
 
-    // Check property details
+    // Check property details first
     const { data: property, error: propertyError } = await supabase
       .from("properties")
       .select("id, title, is_seed_property, seller_id")
       .eq("id", propertyId)
       .single()
 
+    console.log("Property details:", { property, propertyError })
+
     if (propertyError) {
-      console.error("Property error:", propertyError)
       return NextResponse.json({ error: "Property not found" }, { status: 404 })
     }
 
@@ -37,27 +37,29 @@ export async function GET(request: NextRequest) {
       .select("id, claim_status, claimant_id")
       .eq("property_id", propertyId)
 
-    if (claimsError) {
-      console.error("Claims error:", claimsError)
-      return NextResponse.json({ error: "Failed to check claims" }, { status: 500 })
-    }
+    console.log("Existing claims:", { existingClaims, claimsError })
 
-    const result = {
-      property: {
-        id: property.id,
-        title: property.title,
-        is_seed_property: property.is_seed_property,
-        seller_id: property.seller_id
-      },
-      existing_claims: existingClaims || [],
-      can_claim: property.is_seed_property && property.seller_id === null && existingClaims?.length === 0
-    }
+    // Try to manually insert a claim to see what happens
+    const { data: insertData, error: insertError } = await supabase
+      .from("property_claims")
+      .insert({
+        property_id: propertyId,
+        claimant_id: userId,
+        claim_reason: "Test claim",
+        claim_status: "pending"
+      })
+      .select()
 
-    console.log("Property check result:", result)
-    return NextResponse.json(result)
+    console.log("Manual insert result:", { insertData, insertError })
+
+    return NextResponse.json({
+      property,
+      existing_claims: existingClaims,
+      manual_insert: { insertData, insertError }
+    })
 
   } catch (error) {
-    console.error("Error in property check API:", error)
+    console.error("Error in test claim API:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
