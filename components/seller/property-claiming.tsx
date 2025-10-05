@@ -51,6 +51,24 @@ export function PropertyClaiming({ userId }: PropertyClaimingProps) {
     setMessage(null)
     
     try {
+      // First check if the property can be claimed
+      const checkResponse = await fetch(`/api/properties/check?propertyId=${propertyId}`)
+      const checkResult = await checkResponse.json()
+
+      if (!checkResult.can_claim) {
+        if (checkResult.property?.seller_id) {
+          setMessage({ type: 'error', text: 'This property is already owned by another seller.' })
+        } else if (checkResult.existing_claims?.length > 0) {
+          setMessage({ type: 'error', text: 'This property already has a pending claim.' })
+        } else if (!checkResult.property?.is_seed_property) {
+          setMessage({ type: 'error', text: 'This property is not available for claiming.' })
+        } else {
+          setMessage({ type: 'error', text: 'This property cannot be claimed at this time.' })
+        }
+        return
+      }
+
+      // If property can be claimed, submit the claim
       const response = await fetch('/api/properties/claim', {
         method: 'POST',
         headers: {
