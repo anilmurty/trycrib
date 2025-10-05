@@ -200,11 +200,10 @@ BEGIN
     RETURN FALSE;
   END IF;
   
-  -- Check if claim already exists
+  -- Check if claim already exists for this property
   SELECT EXISTS(
     SELECT 1 FROM public.property_claims 
-    WHERE property_id = target_property_id 
-    AND claimant_id = claimant_user_id
+    WHERE property_id = target_property_id
   ) INTO claim_exists;
   
   IF claim_exists THEN
