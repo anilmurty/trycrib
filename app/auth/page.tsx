@@ -85,34 +85,28 @@ export default function AuthPage() {
   }
 
   const handleGoogleSignIn = async () => {
-    console.log("[v0] Google sign in clicked")
-    console.log("[v0] signInLoaded:", signInLoaded)
-    console.log("[v0] signIn object:", signIn)
-
     if (!signInLoaded) {
-      console.log("[v0] Sign in not loaded yet")
       return
     }
 
     try {
-      console.log("[v0] Attempting authenticateWithRedirect...")
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: "/sso-callback",
         redirectUrlComplete: "/dashboard/buyer",
       })
-      console.log("[v0] authenticateWithRedirect completed")
     } catch (err: any) {
-      console.error("[v0] Google sign in error:", err)
-      console.error("[v0] Error details:", {
-        message: err.message,
-        errors: err.errors,
-        status: err.status,
-      })
-      const errorMessage =
-        err.errors?.[0]?.message ||
-        err.message ||
-        "Google sign-in is not configured. Please enable Google OAuth in your Clerk dashboard."
+      let errorMessage = "An error occurred with Google sign-in"
+
+      // Handle rate limiting specifically
+      if (err.status === 429) {
+        errorMessage = "Too many requests. Please try again in a bit."
+      } else if (err.errors?.[0]?.message) {
+        errorMessage = err.errors[0].message
+      } else if (err.message) {
+        errorMessage = err.message
+      }
+
       if (activeTab === "signup") {
         setSignUpError(errorMessage)
       } else {
