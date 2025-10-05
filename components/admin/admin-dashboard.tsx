@@ -9,6 +9,7 @@ import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 import { PropertyVerification } from "./property-verification"
 import { PropertyClaims } from "./property-claims"
+import { PropertyFeedImport } from "./property-feed-import"
 import { UserManagement } from "./user-management"
 import { BookingsOverview } from "./bookings-overview"
 import { useRouter } from "next/navigation"
@@ -135,6 +136,7 @@ export function AdminDashboard({ userId, profile }: AdminDashboardProps) {
             <TabsList>
               <TabsTrigger value="properties">Property Verification</TabsTrigger>
               <TabsTrigger value="claims">Property Claims</TabsTrigger>
+              <TabsTrigger value="import">Feed Import</TabsTrigger>
               <TabsTrigger value="users">User Management</TabsTrigger>
               <TabsTrigger value="bookings">Bookings</TabsTrigger>
             </TabsList>
@@ -145,6 +147,13 @@ export function AdminDashboard({ userId, profile }: AdminDashboardProps) {
 
             <TabsContent value="claims">
               <PropertyClaims />
+            </TabsContent>
+
+            <TabsContent value="import">
+              <PropertyFeedImport 
+                currentUserId={userId} 
+                currentUserRole={profile.role} 
+              />
             </TabsContent>
 
             <TabsContent value="users">
