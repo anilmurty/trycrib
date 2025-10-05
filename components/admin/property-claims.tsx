@@ -54,7 +54,7 @@ export function PropertyClaims() {
           bathrooms,
           square_feet
         ),
-        claimant:profiles!property_claims_claimant_id_fkey (
+        claimant:profiles (
           id,
           full_name,
           email

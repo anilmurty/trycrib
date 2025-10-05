@@ -22,6 +22,7 @@ export function PropertyClaiming({ userId }: PropertyClaimingProps) {
   const [claiming, setClaiming] = useState<string | null>(null)
   const [claimReason, setClaimReason] = useState("")
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
+  const [existingClaims, setExistingClaims] = useState<Record<string, any>>({})
   
   const supabase = createClient()
 
@@ -39,6 +40,22 @@ export function PropertyClaiming({ userId }: PropertyClaimingProps) {
       if (error) throw error
       
       setSearchResults(data || [])
+      
+      // Fetch existing claims for the found properties
+      if (data && data.length > 0) {
+        const propertyIds = data.map(p => p.id)
+        const { data: claims } = await supabase
+          .from("property_claims")
+          .select("property_id, claim_status, claimant_id")
+          .in("property_id", propertyIds)
+        
+        // Create a map of property_id to claim info
+        const claimsMap: Record<string, any> = {}
+        claims?.forEach(claim => {
+          claimsMap[claim.property_id] = claim
+        })
+        setExistingClaims(claimsMap)
+      }
     } catch (error) {
       setMessage({ type: 'error', text: 'Failed to search properties' })
     } finally {
@@ -176,9 +193,36 @@ export function PropertyClaiming({ userId }: PropertyClaimingProps) {
                         {property.address}, {property.city}, {property.state} {property.zip_code}
                       </div>
                     </div>
-                    <Badge variant={property.is_seed_property ? "default" : "secondary"}>
-                      {property.is_seed_property ? "Available to Claim" : "Already Owned"}
-                    </Badge>
+                    {(() => {
+                      const existingClaim = existingClaims[property.id]
+                      if (existingClaim) {
+                        if (existingClaim.claimant_id === userId) {
+                          return (
+                            <Badge variant="outline" className="border-orange-300 text-orange-700">
+                              Claim Pending
+                            </Badge>
+                          )
+                        } else {
+                          return (
+                            <Badge variant="secondary">
+                              Claimed by Others
+                            </Badge>
+                          )
+                        }
+                      } else if (property.is_seed_property) {
+                        return (
+                          <Badge variant="default">
+                            Available to Claim
+                          </Badge>
+                        )
+                      } else {
+                        return (
+                          <Badge variant="secondary">
+                            Already Owned
+                          </Badge>
+                        )
+                      }
+                    })()}
                   </div>
                 </CardHeader>
                 
@@ -204,28 +248,59 @@ export function PropertyClaiming({ userId }: PropertyClaimingProps) {
                   </div>
 
                   {/* Claim Form */}
-                  {property.is_seed_property && (
-                    <div className="space-y-3 pt-4 border-t">
-                      <div>
-                        <Label htmlFor={`reason-${property.id}`}>Why do you own this property?</Label>
-                        <Textarea
-                          id={`reason-${property.id}`}
-                          placeholder="Explain why you own this property (e.g., 'I am the legal owner of this property')"
-                          value={claimReason}
-                          onChange={(e) => setClaimReason(e.target.value)}
-                          rows={3}
-                        />
-                      </div>
-                      
-                      <Button
-                        onClick={() => claimProperty(property.id)}
-                        disabled={claiming === property.id || !claimReason.trim()}
-                        className="w-full"
-                      >
-                        {claiming === property.id ? 'Submitting Claim...' : 'Claim This Property'}
-                      </Button>
-                    </div>
-                  )}
+                  {(() => {
+                    const existingClaim = existingClaims[property.id]
+                    const canClaim = property.is_seed_property && !existingClaim
+                    
+                    if (canClaim) {
+                      return (
+                        <div className="space-y-3 pt-4 border-t">
+                          <div>
+                            <Label htmlFor={`reason-${property.id}`}>Why do you own this property?</Label>
+                            <Textarea
+                              id={`reason-${property.id}`}
+                              placeholder="Explain why you own this property (e.g., 'I am the legal owner of this property')"
+                              value={claimReason}
+                              onChange={(e) => setClaimReason(e.target.value)}
+                              rows={3}
+                            />
+                          </div>
+                          
+                          <Button
+                            onClick={() => claimProperty(property.id)}
+                            disabled={claiming === property.id || !claimReason.trim()}
+                            className="w-full"
+                          >
+                            {claiming === property.id ? 'Submitting Claim...' : 'Claim This Property'}
+                          </Button>
+                        </div>
+                      )
+                    } else if (existingClaim && existingClaim.claimant_id === userId) {
+                      return (
+                        <div className="pt-4 border-t">
+                          <div className="text-sm text-orange-600 bg-orange-50 p-3 rounded-lg">
+                            <strong>Claim Pending:</strong> You have already submitted a claim for this property. An admin will review it and notify you of the decision.
+                          </div>
+                        </div>
+                      )
+                    } else if (existingClaim) {
+                      return (
+                        <div className="pt-4 border-t">
+                          <div className="text-sm text-slate-600">
+                            This property has already been claimed by another user.
+                          </div>
+                        </div>
+                      )
+                    } else {
+                      return (
+                        <div className="pt-4 border-t">
+                          <div className="text-sm text-slate-600">
+                            This property is not available for claiming.
+                          </div>
+                        </div>
+                      )
+                    }
+                  })()}
                   
                   {!property.is_seed_property && (
                     <div className="text-sm text-slate-500 pt-4 border-t">
