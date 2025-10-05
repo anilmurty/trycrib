@@ -168,7 +168,7 @@ export default function AuthPage() {
           <div className="flex border-b border-slate-200">
             <button
               onClick={() => setActiveTab("login")}
-              className={`flex-1 py-3 text-center font-medium transition-colors ${
+              className={`flex-1 py-3 text-center font-medium transition-colors cursor-pointer ${
                 activeTab === "login"
                   ? "text-blue-600 border-b-2 border-blue-600"
                   : "text-slate-600 hover:text-slate-900"
@@ -178,7 +178,7 @@ export default function AuthPage() {
             </button>
             <button
               onClick={() => setActiveTab("signup")}
-              className={`flex-1 py-3 text-center font-medium transition-colors ${
+              className={`flex-1 py-3 text-center font-medium transition-colors cursor-pointer ${
                 activeTab === "signup"
                   ? "text-blue-600 border-b-2 border-blue-600"
                   : "text-slate-600 hover:text-slate-900"
