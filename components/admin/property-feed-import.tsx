@@ -108,6 +108,7 @@ export function PropertyFeedImport({ currentUserId, currentUserRole }: PropertyF
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'completed':
+      case 'success':
         return <Badge variant="default" className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />Completed</Badge>
       case 'processing':
         return <Badge variant="outline" className="border-blue-300 text-blue-700"><RefreshCw className="h-3 w-3 mr-1" />Processing</Badge>
