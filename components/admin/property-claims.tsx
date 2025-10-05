@@ -40,35 +40,78 @@ export function PropertyClaims() {
   const { user } = useUser()
 
   const fetchClaims = async () => {
-    const { data, error } = await supabase
+    // First, get all claims
+    const { data: claimsData, error: claimsError } = await supabase
       .from("property_claims")
-      .select(`
-        *,
-        property:properties (
-          id,
-          title,
-          address,
-          city,
-          state,
-          zip_code,
-          listing_price,
-          bedrooms,
-          bathrooms,
-          square_feet
-        ),
-        claimant:profiles (
-          id,
-          full_name,
-          email
-        )
-      `)
+      .select("*")
       .order("created_at", { ascending: false })
 
-    if (error) {
-      console.error("Error fetching claims:", error)
-    } else {
-      setClaims(data || [])
+    if (claimsError) {
+      console.error("Error fetching claims:", claimsError)
+      setLoading(false)
+      return
     }
+
+    if (!claimsData || claimsData.length === 0) {
+      setClaims([])
+      setLoading(false)
+      return
+    }
+
+    // Get property details for all claims
+    const propertyIds = claimsData.map(claim => claim.property_id)
+    const { data: propertiesData, error: propertiesError } = await supabase
+      .from("properties")
+      .select("id, title, address, city, state, zip_code, listing_price, bedrooms, bathrooms, square_feet")
+      .in("id", propertyIds)
+
+    if (propertiesError) {
+      console.error("Error fetching properties:", propertiesError)
+      setLoading(false)
+      return
+    }
+
+    // Get claimant details for all claims
+    const claimantIds = claimsData.map(claim => claim.claimant_id)
+    const { data: profilesData, error: profilesError } = await supabase
+      .from("profiles")
+      .select("id, full_name, email")
+      .in("id", claimantIds)
+
+    if (profilesError) {
+      console.error("Error fetching profiles:", profilesError)
+      setLoading(false)
+      return
+    }
+
+    // Combine the data
+    const claimsWithDetails = claimsData.map(claim => {
+      const property = propertiesData?.find(p => p.id === claim.property_id)
+      const claimant = profilesData?.find(p => p.id === claim.claimant_id)
+      
+      return {
+        ...claim,
+        property: property || {
+          id: claim.property_id,
+          title: 'Unknown Property',
+          address: 'Unknown Address',
+          city: '',
+          state: '',
+          zip_code: '',
+          listing_price: null,
+          bedrooms: null,
+          bathrooms: null,
+          square_feet: null
+        },
+        claimant: claimant || {
+          id: claim.claimant_id,
+          full_name: 'Unknown User',
+          email: 'unknown@example.com'
+        }
+      }
+    })
+
+    setClaims(claimsWithDetails)
     setLoading(false)
   }
 
