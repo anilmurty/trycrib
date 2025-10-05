@@ -44,16 +44,21 @@ export function PropertyClaiming({ userId }: PropertyClaimingProps) {
       // Fetch existing claims for the found properties
       if (data && data.length > 0) {
         const propertyIds = data.map(p => p.id)
-        const { data: claims } = await supabase
+        console.log("Fetching claims for property IDs:", propertyIds)
+        
+        const { data: claims, error: claimsError } = await supabase
           .from("property_claims")
           .select("property_id, claim_status, claimant_id")
           .in("property_id", propertyIds)
+        
+        console.log("Claims fetch result:", { claims, claimsError })
         
         // Create a map of property_id to claim info
         const claimsMap: Record<string, any> = {}
         claims?.forEach(claim => {
           claimsMap[claim.property_id] = claim
         })
+        console.log("Claims map:", claimsMap)
         setExistingClaims(claimsMap)
       }
     } catch (error) {
@@ -195,6 +200,8 @@ export function PropertyClaiming({ userId }: PropertyClaimingProps) {
                     </div>
                     {(() => {
                       const existingClaim = existingClaims[property.id]
+                      console.log("Status check for property:", property.id, "existingClaim:", existingClaim, "userId:", userId)
+                      
                       if (existingClaim) {
                         if (existingClaim.claimant_id === userId) {
                           return (
