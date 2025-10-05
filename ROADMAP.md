@@ -71,7 +71,7 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [x] Edit property details
   - [x] Activate/deactivate listings
   - [x] Property verification system
-- [x] **Property Data Management System**
+- [ ] **Property Data Management System** (In Testing)
   - [x] Feed data import (JSON)
   - [x] Field mapping configuration
   - [x] Batch property processing
@@ -183,7 +183,7 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [x] Property verification
   - [x] Booking oversight
   - [x] Platform analytics
-- [x] **Property Data Management**
+- [ ] **Property Data Management** (In Testing)
   - [x] Feed import interface
   - [x] Data mapping configuration
   - [x] Import preview and validation
@@ -363,12 +363,12 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 - [x] Payment integration
 - [x] Basic dashboards
 
-### Phase 2: Property Data Management ✅ COMPLETED
+### Phase 2: Property Data Management 🚧 IN TESTING
 - [x] Enhanced role system (superadmin)
 - [x] Database schema updates
-- [x] Property feed import system
+- [ ] Property feed import system (testing)
 - [x] Property claiming system
-- [x] Admin data management interface
+- [ ] Admin data management interface (testing)
 - [x] Cloudinary image integration
 - [x] Role change history tracking
 
@@ -397,13 +397,13 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 
 ## 📈 Progress Summary
 
-**Overall Completion: ~45%**
+**Overall Completion: ~40%**
 
-- ✅ **Completed**: 35+ features (Landing page, authentication, basic property management, enhanced role system, property data management system, property claiming system, feed import system)
-- 🚧 **In Progress**: 0 features  
-- ⏳ **Planned**: 60+ features
+- ✅ **Completed**: 30+ features (Landing page, authentication, basic property management, enhanced role system, property claiming system)
+- 🚧 **In Testing**: 5+ features (Property feed import system, admin data management interface)
+- ⏳ **Planned**: 65+ features
 
-**Next Priority**: Enhanced UX features, advanced search and filtering, real-time messaging, and review system.
+**Next Priority**: Complete testing of property feed import system, then move to Enhanced UX features.
 
 ---
 

@@ -29,7 +29,7 @@ We're currently building a **Property Data Management System** that will:
 - Role-based dashboard redirects
 - Admin management interface with visual role indicators
 
-**Property Data Management System** - Complete property feed import and claiming system:
+**Property Data Management System** - Property feed import and claiming system (in testing):
 - Property feed import system with JSON/CSV support
 - Smart data mapping from external feeds to database schema
 - Property claiming system for sellers to claim ownership
