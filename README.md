@@ -1,8 +1,5 @@
 # TryCrib - Try Before You Buy Real Estate Platform
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/anilmurtys-projects/v0-try-crib-web-app)
-[![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
-
 ## 🏠 Overview
 
 **TryCrib** is an innovative real estate platform that allows potential home buyers to **"try before they buy"** by booking short-term stays in properties they're interested in purchasing. This addresses the anxiety of home buying by enabling buyers to experience living in a property before making an offer.
