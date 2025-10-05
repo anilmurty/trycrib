@@ -38,7 +38,9 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
       if (!response.ok) {
         const errorText = await response.text()
         console.log("API error response:", errorText)
-        throw new Error(`Failed to set role: ${response.status}`)
+        console.log("Full response object:", response)
+        console.log("Response headers:", Object.fromEntries(response.headers.entries()))
+        throw new Error(`Failed to set role: ${response.status} - ${errorText}`)
       }
 
       console.log("API call successful, redirecting to dashboard")
