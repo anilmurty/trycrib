@@ -51,24 +51,29 @@ export function PropertyClaiming({ userId }: PropertyClaimingProps) {
     setMessage(null)
     
     try {
-      const { data, error } = await supabase.rpc('claim_property', {
-        target_property_id: propertyId,
-        claimant_user_id: userId,
-        claim_reason: claimReason || null
+      const response = await fetch('/api/properties/claim', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          propertyId,
+          claimReason
+        })
       })
-      
-      if (error) throw error
-      
-      if (data) {
+
+      const result = await response.json()
+
+      if (response.ok && result.success) {
         setMessage({ 
           type: 'success', 
-          text: 'Property claim submitted successfully! An admin will review your claim and you\'ll receive an email notification when approved. The property will then appear in your dashboard.' 
+          text: result.message || 'Property claim submitted successfully! An admin will review your claim and you\'ll receive an email notification when approved. The property will then appear in your dashboard.' 
         })
         setClaimReason("")
         // Refresh search results
         searchProperties()
       } else {
-        setMessage({ type: 'error', text: 'Failed to submit claim. This property may already be claimed.' })
+        setMessage({ type: 'error', text: result.error || 'Failed to submit claim' })
       }
     } catch (error) {
       setMessage({ type: 'error', text: 'Failed to submit claim' })
