@@ -12,10 +12,14 @@ export default async function DashboardRedirect() {
   const supabase = await createClient()
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", userId).single()
 
+  if (!profile?.role) {
+    redirect("/onboarding")
+  }
+
   // Redirect based on user role
-  if (profile?.role === "seller") {
+  if (profile.role === "seller") {
     redirect("/dashboard/seller")
-  } else if (profile?.role === "admin") {
+  } else if (profile.role === "admin") {
     redirect("/admin")
   } else {
     // Default to buyer dashboard
