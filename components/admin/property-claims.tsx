@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
+import { useUser } from "@clerk/nextjs"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -36,6 +37,7 @@ export function PropertyClaims() {
   const [processing, setProcessing] = useState<string | null>(null)
   const [verificationNotes, setVerificationNotes] = useState<Record<string, string>>({})
   const supabase = createClient()
+  const { user } = useUser()
 
   const fetchClaims = async () => {
     const { data, error } = await supabase
@@ -75,22 +77,28 @@ export function PropertyClaims() {
   }, [])
 
   const handleClaimAction = async (claimId: string, action: "approved" | "rejected") => {
+    if (!user?.id) {
+      console.error("No user ID available")
+      return
+    }
+
     setProcessing(claimId)
     
     try {
-      const { error } = await supabase.rpc('approve_property_claim', {
-        claim_id: claimId,
-        approved_by: (await supabase.auth.getUser()).data.user?.id
-      })
-
-      if (error) throw error
+      if (action === "approved") {
+        const { error } = await supabase.rpc('approve_property_claim', {
+          claim_id: claimId,
+          approved_by: user.id
+        })
+        if (error) throw error
+      }
 
       // Update the claim status
       const { error: updateError } = await supabase
         .from("property_claims")
         .update({
           claim_status: action,
-          reviewed_by: (await supabase.auth.getUser()).data.user?.id,
+          reviewed_by: user.id,
           reviewed_at: new Date().toISOString(),
           verification_notes: verificationNotes[claimId] || null
         })
