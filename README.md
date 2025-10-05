@@ -29,6 +29,15 @@ We're currently building a **Property Data Management System** that will:
 - Role-based dashboard redirects
 - Admin management interface with visual role indicators
 
+**Property Data Management System** - Complete property feed import and claiming system:
+- Property feed import system with JSON/CSV support
+- Smart data mapping from external feeds to database schema
+- Property claiming system for sellers to claim ownership
+- Admin interface for managing imports and claims
+- Enhanced property schema with rich data fields (JSONB)
+- Import history tracking and error reporting
+- Duplicate claim prevention and status tracking
+
 ## ✨ Key Features
 
 ### For Buyers
@@ -50,9 +59,11 @@ We're currently building a **Property Data Management System** that will:
 - 👥 **User Management**: Manage user accounts and roles
 - 📊 **Platform Analytics**: Monitor bookings and platform performance
 - 🔧 **Content Moderation**: Oversee reviews and communications
-- 📥 **Property Data Management**: Import and manage property feeds
+- 📥 **Property Feed Import**: Upload and process JSON/CSV property feeds
 - 🔄 **Bulk Operations**: Process large datasets efficiently
 - 👑 **Superadmin Features**: Manage admin roles and permissions
+- 📋 **Property Claims Management**: Review and approve property ownership claims
+- 📈 **Import History**: Track all property feed imports and results
 
 ### For Superadmins
 - 👑 **Admin Management**: Promote/demote admin users
@@ -82,8 +93,8 @@ The application uses a comprehensive PostgreSQL schema with the following key ta
 - **messages**: Buyer-seller communication
 - **property_availability**: Calendar system for blocked dates
 - **role_changes**: User role change history and audit trail
-- **property_imports**: Import history and tracking (planned)
-- **property_claims**: Property ownership claims and verification (planned)
+- **property_imports**: Import history and tracking
+- **property_claims**: Property ownership claims and verification
 
 ### Enhanced Property Schema
 
