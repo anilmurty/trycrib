@@ -34,7 +34,7 @@ export default function AuthPage() {
 
   useEffect(() => {
     if (userLoaded && isSignedIn) {
-      router.push("/dashboard/buyer")
+      router.push("/dashboard")
     }
   }, [isSignedIn, userLoaded, router])
 
@@ -70,7 +70,7 @@ export default function AuthPage() {
 
       if (result.status === "complete") {
         await setSignUpActive({ session: result.createdSessionId })
-        router.push("/dashboard/buyer")
+        router.push("/dashboard")
       }
     } catch (err: any) {
       setSignUpError(err.errors?.[0]?.message || "An error occurred during sign up")
@@ -94,7 +94,7 @@ export default function AuthPage() {
 
       if (result.status === "complete") {
         await setSignInActive({ session: result.createdSessionId })
-        router.push("/dashboard/buyer")
+        router.push("/dashboard")
       }
     } catch (err: any) {
       setSignInError(err.errors?.[0]?.message || "Invalid email or password")
@@ -112,7 +112,7 @@ export default function AuthPage() {
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: "/sso-callback",
-        redirectUrlComplete: "/dashboard/buyer",
+        redirectUrlComplete: "/dashboard",
       })
     } catch (err: any) {
       let errorMessage = "An error occurred with Google sign-in"
