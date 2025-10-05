@@ -1,4 +1,4 @@
-export type UserRole = "buyer" | "seller" | "admin"
+export type UserRole = "buyer" | "seller" | "admin" | "superadmin"
 export type VerificationStatus = "pending" | "approved" | "rejected"
 export type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed"
 

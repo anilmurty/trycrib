@@ -142,7 +142,7 @@ export function AdminDashboard({ userId, profile }: AdminDashboardProps) {
             </TabsContent>
 
             <TabsContent value="users">
-              <UserManagement />
+              <UserManagement currentUserId={userId} currentUserRole={profile.role} />
             </TabsContent>
 
             <TabsContent value="bookings">

@@ -1,0 +1,646 @@
+"address": "356 W W St, Washougal, WA, 98671",
+    "list_date": "2025-02-18T19:20:00Z",
+    "status": "Active",
+    "listing_price": 1999950,
+    "estimated_value": null,
+    "sf": 3950,
+    "psf": 506.32,
+    "dom": 228,
+    "property_features": {
+        "beds": 3,
+        "full_baths": 4,
+        "half_baths": null,
+        "stories": 3,
+        "basement": true,
+        "style": "DaylightRanch, Modern",
+        "new_construction": false,
+        "year_built": 2020,
+        "cooling": "CentralAir",
+        "garage": 2
+    },
+    "location_community": {
+        "property_type": "Single Family",
+        "ownership": "Other",
+        "hoa": true,
+        "hoa_fee": 25,
+        "county": "Clark",
+        "neighborhood": "_33",
+        "subdivision": "",
+        "school_district": "",
+        "structure": "",
+        "waterfront": ""
+    },
+    "building_info": {
+        "above_grade_size": 3950,
+        "below_grade_size": 0,
+        "total_size": 3950,
+        "elevator": "",
+        "foundation_details": "Slab",
+        "construction_materials": "",
+        "building_exterior_type": "Brick, CementSiding, Stucco",
+        "roof": "Composition",
+        "flooring": "",
+        "parking": "Attached, Oversized"
+    },
+    "lot": {
+        "lot_acres": 0.1599862,
+        "lot_sqft": 6969.0,
+        "fencing": "",
+        "lot_features": "BuiltinHotTub, CoveredDeck, CoveredPatio, Fenced, GasHookup, OutdoorFireplace, Porch, Sauna, Spa, Sprinkler, Yard, Road Surface Type: Paved"
+    },
+    "parking": {
+        "total_parking_spaces": "2",
+        "features": ""
+    },
+    "interior_features": [
+        "CentralVacuum",
+        "DualFlushToilet",
+        "GarageDoorOpener",
+        "HardwoodFloors",
+        "HeatedTileFloor",
+        "HighCeilings",
+        "JettedTub",
+        "Quartz",
+        "VaultedCeiling",
+        "WalltoWallCarpet",
+        "WasherDryer",
+        "WoodFloors",
+        "Window Features: DoublePaneWindows"
+    ],
+    "home_value": [
+        {
+            "month": "08",
+            "year": "2025",
+            "estimate": 1935027.94
+        },
+        {
+            "month": "07",
+            "year": "2025",
+            "estimate": 1893592.11
+        },
+        {
+            "month": "06",
+            "year": "2025",
+            "estimate": 1935208.75
+        },
+        {
+            "month": "05",
+            "year": "2025",
+            "estimate": 1897533.75
+        },
+        {
+            "month": "04",
+            "year": "2025",
+            "estimate": 1928800.96
+        },
+        {
+            "month": "03",
+            "year": "2025",
+            "estimate": 1944465.19
+        },
+        {
+            "month": "02",
+            "year": "2025",
+            "estimate": 1354071.24
+        },
+        {
+            "month": "01",
+            "year": "2025",
+            "estimate": 1306088.82
+        },
+        {
+            "month": "12",
+            "year": "2024",
+            "estimate": 1295738.97
+        },
+        {
+            "month": "11",
+            "year": "2024",
+            "estimate": 1283709.3
+        },
+        {
+            "month": "10",
+            "year": "2024",
+            "estimate": 1268089.43
+        },
+        {
+            "month": "09",
+            "year": "2024",
+            "estimate": 1247396.39
+        },
+        {
+            "month": "08",
+            "year": "2024",
+            "estimate": 1233794.37
+        },
+        {
+            "month": "07",
+            "year": "2024",
+            "estimate": 1240798.38
+        },
+        {
+            "month": "06",
+            "year": "2024",
+            "estimate": 1323334.1
+        },
+        {
+            "month": "05",
+            "year": "2024",
+            "estimate": 1245162.96
+        },
+        {
+            "month": "04",
+            "year": "2024",
+            "estimate": 1210151.37
+        },
+        {
+            "month": "03",
+            "year": "2024",
+            "estimate": 1160600.99
+        },
+        {
+            "month": "02",
+            "year": "2024",
+            "estimate": 1175927.08
+        },
+        {
+            "month": "01",
+            "year": "2024",
+            "estimate": 1111854.08
+        },
+        {
+            "month": "12",
+            "year": "2023",
+            "estimate": 1191694.97
+        },
+        {
+            "month": "11",
+            "year": "2023",
+            "estimate": 1268278.0
+        },
+        {
+            "month": "10",
+            "year": "2023",
+            "estimate": 1295470.98
+        },
+        {
+            "month": "09",
+            "year": "2023",
+            "estimate": 1261929.14
+        },
+        {
+            "month": "08",
+            "year": "2023",
+            "estimate": 1214700.57
+        },
+        {
+            "month": "07",
+            "year": "2023",
+            "estimate": 1200687.49
+        },
+        {
+            "month": "06",
+            "year": "2023",
+            "estimate": 1116274.77
+        },
+        {
+            "month": "05",
+            "year": "2023",
+            "estimate": 1096966.83
+        },
+        {
+            "month": "04",
+            "year": "2023",
+            "estimate": 1173454.52
+        },
+        {
+            "month": "03",
+            "year": "2023",
+            "estimate": 1296626.72
+        },
+        {
+            "month": "02",
+            "year": "2023",
+            "estimate": 1355560.21
+        },
+        {
+            "month": "01",
+            "year": "2023",
+            "estimate": 1343342.04
+        },
+        {
+            "month": "12",
+            "year": "2022",
+            "estimate": 1337305.19
+        },
+        {
+            "month": "11",
+            "year": "2022",
+            "estimate": 1360745.2
+        },
+        {
+            "month": "10",
+            "year": "2022",
+            "estimate": 1380273.71
+        },
+        {
+            "month": "09",
+            "year": "2022",
+            "estimate": 1403840.22
+        },
+        {
+            "month": "08",
+            "year": "2022",
+            "estimate": 1373875.79
+        },
+        {
+            "month": "07",
+            "year": "2022",
+            "estimate": 1367535.02
+        },
+        {
+            "month": "06",
+            "year": "2022",
+            "estimate": 1347922.0
+        },
+        {
+            "month": "05",
+            "year": "2022",
+            "estimate": 1362448.03
+        },
+        {
+            "month": "04",
+            "year": "2022",
+            "estimate": 1328938.42
+        },
+        {
+            "month": "03",
+            "year": "2022",
+            "estimate": 1349138.8
+        },
+        {
+            "month": "02",
+            "year": "2022",
+            "estimate": 1348573.01
+        },
+        {
+            "month": "01",
+            "year": "2022",
+            "estimate": 1351767.63
+        },
+        {
+            "month": "12",
+            "year": "2021",
+            "estimate": 1318524.1
+        },
+        {
+            "month": "11",
+            "year": "2021",
+            "estimate": 1329725.19
+        },
+        {
+            "month": "10",
+            "year": "2021",
+            "estimate": 1300534.01
+        },
+        {
+            "month": "09",
+            "year": "2021",
+            "estimate": 1288801.0
+        },
+        {
+            "month": "08",
+            "year": "2021",
+            "estimate": 1282467.27
+        },
+        {
+            "month": "07",
+            "year": "2021",
+            "estimate": 1267176.42
+        },
+        {
+            "month": "06",
+            "year": "2021",
+            "estimate": 1312000.29
+        },
+        {
+            "month": "05",
+            "year": "2021",
+            "estimate": 1294819.16
+        },
+        {
+            "month": "04",
+            "year": "2021",
+            "estimate": 1065769.84
+        },
+        {
+            "month": "03",
+            "year": "2021",
+            "estimate": 875894.48
+        },
+        {
+            "month": "09",
+            "year": "2025",
+            "estimate": 1903055.94
+        },
+        {
+            "month": "02",
+            "year": "2021",
+            "estimate": 926162.05
+        },
+        {
+            "month": "01",
+            "year": "2021",
+            "estimate": 917850.77
+        }
+    ],
+    "utilities": [
+        "Sewer: PublicSewer",
+        "Water Source: PublicWater"
+    ],
+    "listing_office": {
+        "agent_name": "Jason Mendell",
+        "agent_2_name": "",
+        "agent_email": "mail@jasonmendell.com",
+        "agent_phone_mobile": "(503) 349 4711",
+        "agent_phone_office": "(503) 349 4711",
+        "responsible_broker": "",
+        "office_address": "4800 Meadows Rd Ste 300, Lake Oswego, OR 97035",
+        "office_name": "eXp Realty, LLC",
+        "office_phone": "(888) 814 9613",
+        "office_email": null,
+        "office_website": null,
+        "office_slogan": null,
+        "mls_set": "O-PROR-EXPL05"
+    },
+    "listing_details": {
+        "type_of_sale": "Standard",
+        "zoning": "",
+        "listing_date": "2025-02-18T19:20:00Z",
+        "mls_name": "RMLS",
+        "mls_id": "185127755",
+        "tax_amt": 9252.489999999
+    },
+    "property_history": [
+        {
+            "event_name": "Listed",
+            "date": "2025-02-18",
+            "price": 1999950,
+            "price_per_sqft": 506.3164556962025,
+            "source_listing_id": "185127755",
+            "source_name": "RMLS"
+        },
+        {
+            "event_name": "Listing removed",
+            "date": "2022-09-04",
+            "price": 1351000,
+            "price_per_sqft": 422.1875,
+            "source_listing_id": "21401157",
+            "source_name": "RMLS"
+        },
+        {
+            "event_name": "Sold",
+            "date": "2022-04-04",
+            "price": 1350000,
+            "price_per_sqft": 421.875,
+            "source_listing_id": "22531109",
+            "source_name": "RMLS"
+        },
+        {
+            "event_name": "Listing removed",
+            "date": "2021-08-05",
+            "price": 975000,
+            "price_per_sqft": 290.3513996426444,
+            "source_listing_id": "20522030",
+            "source_name": "RMLS"
+        },
+        {
+            "event_name": "Sold",
+            "date": "2019-11-07",
+            "price": 310000,
+            "price_per_sqft": 99.93552546744036,
+            "source_listing_id": null,
+            "source_name": "Public Record"
+        }
+    ],
+    "school_ratings": [
+        {
+            "name": "Woodburn Elementary",
+            "rating": 8,
+            "parent_rating": 4,
+            "distance_in_miles": 0.8,
+            "grades": [
+                "K",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5"
+            ],
+            "student_count": 622,
+            "funding_type": "public",
+            "education_levels": [
+                "elementary"
+            ]
+        },
+        {
+            "name": "Liberty Middle School",
+            "rating": 6,
+            "parent_rating": 3,
+            "distance_in_miles": 1.3,
+            "grades": [
+                "6",
+                "7",
+                "8"
+            ],
+            "student_count": 681,
+            "funding_type": "public",
+            "education_levels": [
+                "middle"
+            ]
+        },
+        {
+            "name": "Camas High School",
+            "rating": 9,
+            "parent_rating": 4,
+            "distance_in_miles": 1.7,
+            "grades": [
+                "9",
+                "10",
+                "11",
+                "12"
+            ],
+            "student_count": 1964,
+            "funding_type": "public",
+            "education_levels": [
+                "high"
+            ]
+        },
+        {
+            "name": "Riverside Christian School",
+            "rating": null,
+            "parent_rating": 5,
+            "distance_in_miles": 0.4,
+            "grades": [
+                "K",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8"
+            ],
+            "student_count": 28,
+            "funding_type": "private",
+            "education_levels": [
+                "elementary",
+                "middle"
+            ]
+        }
+    ],
+    "photos": [
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW00NDg2NjIyMDBzLXcxMDI0X2g3NjhfeDIuanBn/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW02MzY1MzIxNTBzLXcxMDI0X2g3NjhfeDIuanBn/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0xNTUzODYxNTU1cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW00MTg1MzY3MTY1cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW00MTQxNTY3OTg0cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW02NzY5MzQ2NzhzLXcxMDI0X2g3NjhfeDIuanBn/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0zNDUyOTk0NTg2cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW03Njc3NDM3NzFzLXcxMDI0X2g3NjhfeDIuanBn/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0xNTgyMTE0ODg5cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0yNTEwNDM2MzQ3cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0xMzg4NzYxNDc0cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0xMTMyMzcwMTFzLXcxMDI0X2g3NjhfeDIuanBn/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0yODA5MDU4ODE4cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0xOTY3MzMzMzIxcy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0xNTAxMTI0NzUycy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0xMjc5NDAwNTg1cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0xOTQ0NDA3NjA1cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW00MDkyMzA0Njgycy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0yMjcxNDY5MjQxcy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0zNDY4ODUwMDcycy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0zOTMyMDI4NzYycy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0yNTI0MjMxNjYwcy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0zMjM5NDcyNzA4cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0yMTgwNDU1NTk4cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0zNjM1NDg4OTIxcy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0xOTEzMjQzNTlzLXcxMDI0X2g3NjhfeDIuanBn/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0zMDE2NzIyNTQycy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0xMjY5MjA4MDYxcy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0xMTQzOTI2MTkycy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0zNTczNjE5MDE4cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0xNTI4NTkxMzA4cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW03NDUzOTgxNDlzLXcxMDI0X2g3NjhfeDIuanBn/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0zMTEyMzgwNTAxcy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW05MTcyMDc2MDBzLXcxMDI0X2g3NjhfeDIuanBn/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0yMjk1MDMxNjE1cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0yNjU4OTUyNjU1cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0zMzgxMzA4ODA4cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW00MDk1NTMzNjU1cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0yMzA5NzE0MjU2cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0zNTA1MjgzMjcwcy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0yNDY4NjIxNjkxcy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0yMjc5MTQ3NDZzLXcxMDI0X2g3NjhfeDIuanBn/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0xNDM3OTY2MDEycy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0yMTE4NDU3ODMxcy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0yMjAxMTYxMjY5cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0zMDc2Nzg4NjA2cy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        },
+        {
+            "href": "https://developers.homesage.ai/api/properties/image/aHR0cDovL2FwLnJkY3BpeC5jb20vYTllZDYwZGExZDdkYjU2MjkyYTBmMWY1ZGRjZWJiYjJsLW0xMDk2ODM0NTgzcy13MTAyNF9oNzY4X3gyLmpwZw==/"
+        }
+    ]
+}

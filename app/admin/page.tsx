@@ -13,7 +13,7 @@ export default async function AdminPage() {
   const supabase = await createClient()
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", userId).single()
 
-  if (profile?.role !== "admin") {
+  if (profile?.role !== "admin" && profile?.role !== "superadmin") {
     redirect("/")
   }
 
