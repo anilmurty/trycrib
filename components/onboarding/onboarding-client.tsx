@@ -16,10 +16,14 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
   const [error, setError] = useState("")
 
   const handleRoleSelection = async (role: "buyer" | "seller") => {
+    console.log("=== ONBOARDING CLIENT: Role selection started ===")
+    console.log("Selected role:", role)
+    
     setLoading(true)
     setError("")
 
     try {
+      console.log("Making API call to /api/onboarding/set-role")
       const response = await fetch("/api/onboarding/set-role", {
         method: "POST",
         headers: {
@@ -28,13 +32,20 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
         body: JSON.stringify({ role }),
       })
 
+      console.log("API response status:", response.status)
+      console.log("API response ok:", response.ok)
+
       if (!response.ok) {
-        throw new Error("Failed to set role")
+        const errorText = await response.text()
+        console.log("API error response:", errorText)
+        throw new Error(`Failed to set role: ${response.status}`)
       }
 
+      console.log("API call successful, redirecting to dashboard")
       // Redirect to appropriate dashboard
       router.push("/dashboard")
     } catch (err) {
+      console.error("Error in handleRoleSelection:", err)
       setError("Something went wrong. Please try again.")
       setLoading(false)
     }
