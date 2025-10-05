@@ -3,9 +3,9 @@ import { auth } from "@clerk/nextjs/server"
 import { createClient } from "@/lib/supabase/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Home, ArrowLeft, CreditCard, LogOut } from "lucide-react"
-import Link from "next/link"
-import { SignOutButton } from "@clerk/nextjs"
+import { CreditCard } from "lucide-react"
+import { Header } from "@/components/landing/header"
+import { Footer } from "@/components/landing/footer"
 
 export default async function SettingsPage() {
   const { userId } = await auth()
@@ -17,41 +17,18 @@ export default async function SettingsPage() {
   const supabase = await createClient()
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", userId).single()
 
-  const dashboardUrl = profile?.role === "seller" ? "/dashboard/seller" : "/dashboard/buyer"
-
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="border-b bg-white">
-        <div className="container flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <Home className="h-5 w-5 text-slate-900" />
-            <span className="text-lg font-bold text-slate-900">TryCrib</span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <Link href={dashboardUrl}>
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Dashboard
-              </Button>
-            </Link>
-            <SignOutButton>
-              <Button variant="outline" size="sm">
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </Button>
-            </SignOutButton>
-          </div>
-        </div>
-      </header>
+    <div className="flex min-h-screen flex-col bg-slate-50">
+      <Header />
 
-      <main className="container py-8 max-w-4xl">
+      <main className="flex-1 container py-8 max-w-4xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900">Settings</h1>
           <p className="text-slate-600 mt-1">Manage your account and subscription</p>
         </div>
 
         <div className="space-y-6">
-          <Card>
+          <Card className="border-0 shadow-md hover:shadow-xl transition-shadow">
             <CardHeader>
               <CardTitle>Account Information</CardTitle>
               <CardDescription>Your profile details</CardDescription>
@@ -72,7 +49,7 @@ export default async function SettingsPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-0 shadow-md hover:shadow-xl transition-shadow">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CreditCard className="h-5 w-5" />
@@ -95,6 +72,8 @@ export default async function SettingsPage() {
           </Card>
         </div>
       </main>
+
+      <Footer />
     </div>
   )
 }

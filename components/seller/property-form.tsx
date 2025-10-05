@@ -108,7 +108,7 @@ export function PropertyForm({ userId, property }: PropertyFormProps) {
         Back to Dashboard
       </Link>
 
-      <Card>
+      <Card className="border-0 shadow-md hover:shadow-xl transition-shadow">
         <CardHeader>
           <CardTitle>{property ? "Edit Property" : "Add New Property"}</CardTitle>
           <CardDescription>Fill in the details about your property</CardDescription>

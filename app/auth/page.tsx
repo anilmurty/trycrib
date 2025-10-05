@@ -34,10 +34,7 @@ export default function AuthPage() {
 
   useEffect(() => {
     if (userLoaded && isSignedIn) {
-      // Add a small delay to prevent flash
-      setTimeout(() => {
-        router.push("/dashboard")
-      }, 100)
+      router.push("/dashboard")
     }
   }, [isSignedIn, userLoaded, router])
 
