@@ -20,15 +20,17 @@ export default async function NewPropertyPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-screen flex-col">
       <Header />
 
-      <main className="flex-1 container py-8 max-w-3xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900">List Your Property</h1>
-          <p className="text-slate-600 mt-1">Add your home to TryCrib and start earning</p>
+      <main className="flex-1 py-12 bg-slate-50">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-slate-900">List Your Property</h1>
+            <p className="text-slate-600 mt-2">Add your home to TryCrib and start earning</p>
+          </div>
+          <PropertyForm userId={userId} />
         </div>
-        <PropertyForm userId={userId} />
       </main>
 
       <Footer />
