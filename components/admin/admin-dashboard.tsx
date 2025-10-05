@@ -8,6 +8,7 @@ import { Home, Users, Calendar, DollarSign } from "lucide-react"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 import { PropertyVerification } from "./property-verification"
+import { PropertyClaims } from "./property-claims"
 import { UserManagement } from "./user-management"
 import { BookingsOverview } from "./bookings-overview"
 import { useRouter } from "next/navigation"
@@ -133,12 +134,17 @@ export function AdminDashboard({ userId, profile }: AdminDashboardProps) {
           <Tabs defaultValue="properties" className="space-y-6">
             <TabsList>
               <TabsTrigger value="properties">Property Verification</TabsTrigger>
+              <TabsTrigger value="claims">Property Claims</TabsTrigger>
               <TabsTrigger value="users">User Management</TabsTrigger>
               <TabsTrigger value="bookings">Bookings</TabsTrigger>
             </TabsList>
 
             <TabsContent value="properties">
               <PropertyVerification />
+            </TabsContent>
+
+            <TabsContent value="claims">
+              <PropertyClaims />
             </TabsContent>
 
             <TabsContent value="users">
