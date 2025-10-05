@@ -12,6 +12,7 @@ import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 import { PropertyList } from "./property-list"
 import { BookingsList } from "./bookings-list"
+import { PropertyClaiming } from "./property-claiming"
 import { useClerk } from "@clerk/clerk-react"
 import { useRouter } from "next/navigation"
 
@@ -159,11 +160,16 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
           <Tabs defaultValue="properties" className="space-y-6">
             <TabsList>
               <TabsTrigger value="properties">My Properties</TabsTrigger>
+              <TabsTrigger value="claim">Claim Property</TabsTrigger>
               <TabsTrigger value="bookings">Bookings</TabsTrigger>
             </TabsList>
 
             <TabsContent value="properties">
               <PropertyList userId={userId} />
+            </TabsContent>
+
+            <TabsContent value="claim">
+              <PropertyClaiming userId={userId} />
             </TabsContent>
 
             <TabsContent value="bookings">
