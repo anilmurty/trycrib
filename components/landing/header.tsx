@@ -109,10 +109,10 @@ export function Header() {
           ) : (
             // Unauthenticated state - keep original auth links
             <>
-              <Link href="/auth" className="text-sm text-gray-600 hover:text-gray-900">
+              <Link href="/auth?tab=login" className="text-sm text-gray-600 hover:text-gray-900">
                 Login
               </Link>
-              <Link href="/auth">
+              <Link href="/auth?tab=signup">
                 <Button className="rounded-full bg-blue-600 px-6 hover:bg-blue-700">Sign Up</Button>
               </Link>
             </>

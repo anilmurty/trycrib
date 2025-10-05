@@ -4,19 +4,29 @@ import type React from "react"
 
 import { useState, useEffect } from "react"
 import { useSignIn, useSignUp, useUser } from "@clerk/nextjs"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Header } from "@/components/landing/header"
 import Link from "next/link"
 
 export default function AuthPage() {
+  const searchParams = useSearchParams()
   const [activeTab, setActiveTab] = useState<"login" | "signup">("signup")
   const { isLoaded: signInLoaded, signIn, setActive: setSignInActive } = useSignIn()
   const { isLoaded: signUpLoaded, signUp, setActive: setSignUpActive } = useSignUp()
   const { isSignedIn, isLoaded: userLoaded } = useUser()
   const router = useRouter()
+
+  // Set initial tab based on URL parameter
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+    if (tab === 'login' || tab === 'signup') {
+      setActiveTab(tab)
+    }
+  }, [searchParams])
 
   // Sign Up state
   const [signUpEmail, setSignUpEmail] = useState("")
@@ -145,8 +155,10 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-white flex flex-col">
+      <Header />
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome to TryCrib</h1>
           <p className="text-slate-600">Experience your future home before making an offer</p>
@@ -366,6 +378,7 @@ export default function AuthPage() {
             </Button>
           </form>
         )}
+        </div>
       </div>
     </div>
   )
