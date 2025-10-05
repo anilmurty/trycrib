@@ -158,7 +158,9 @@ export function PropertyVerification() {
                   <p className="text-sm text-slate-600">
                     {property.city}, {property.state}
                   </p>
-                  <p className="text-sm text-slate-600">{property.profiles.email}</p>
+                  <p className="text-sm text-slate-600">
+                    {property.profiles?.email || 'No seller assigned'}
+                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -180,7 +182,9 @@ export function PropertyVerification() {
                   <p className="text-sm text-slate-600">
                     {property.city}, {property.state}
                   </p>
-                  <p className="text-sm text-slate-600">{property.profiles.email}</p>
+                  <p className="text-sm text-slate-600">
+                    {property.profiles?.email || 'No seller assigned'}
+                  </p>
                 </CardContent>
               </Card>
             ))}

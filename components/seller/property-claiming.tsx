@@ -60,7 +60,10 @@ export function PropertyClaiming({ userId }: PropertyClaimingProps) {
       if (error) throw error
       
       if (data) {
-        setMessage({ type: 'success', text: 'Property claim submitted successfully! An admin will review your claim.' })
+        setMessage({ 
+          type: 'success', 
+          text: 'Property claim submitted successfully! An admin will review your claim and you\'ll receive an email notification when approved. The property will then appear in your dashboard.' 
+        })
         setClaimReason("")
         // Refresh search results
         searchProperties()
@@ -81,6 +84,16 @@ export function PropertyClaiming({ userId }: PropertyClaimingProps) {
         <p className="text-slate-600 mt-2">
           Search for properties you own and claim them to start managing them on TryCrib.
         </p>
+        <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <h3 className="font-semibold text-blue-900 mb-2">How Property Claiming Works:</h3>
+          <ul className="text-sm text-blue-800 space-y-1">
+            <li>• Search for properties by entering the address</li>
+            <li>• Submit a claim with your reason for ownership</li>
+            <li>• An admin will review and approve your claim</li>
+            <li>• You'll receive an email notification when approved</li>
+            <li>• Once approved, the property will appear in your dashboard</li>
+          </ul>
+        </div>
       </div>
 
       {/* Search Form */}
