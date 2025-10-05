@@ -10,7 +10,7 @@ import { Footer } from "@/components/landing/footer"
 import { PropertyVerification } from "./property-verification"
 import { UserManagement } from "./user-management"
 import { BookingsOverview } from "./bookings-overview"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 import { useClerk } from "@clerk/nextjs"
 
 interface AdminDashboardProps {
