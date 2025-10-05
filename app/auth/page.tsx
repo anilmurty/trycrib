@@ -2,8 +2,8 @@
 
 import type React from "react"
 
-import { useState } from "react"
-import { useSignIn, useSignUp } from "@clerk/nextjs"
+import { useState, useEffect } from "react"
+import { useSignIn, useSignUp, useUser } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,6 +15,7 @@ export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("signup")
   const { isLoaded: signInLoaded, signIn, setActive: setSignInActive } = useSignIn()
   const { isLoaded: signUpLoaded, signUp, setActive: setSignUpActive } = useSignUp()
+  const { isSignedIn, isLoaded: userLoaded } = useUser()
   const router = useRouter()
 
   // Sign Up state
@@ -30,6 +31,24 @@ export default function AuthPage() {
   const [signInPassword, setSignInPassword] = useState("")
   const [signInError, setSignInError] = useState("")
   const [signInLoading, setSignInLoading] = useState(false)
+
+  useEffect(() => {
+    if (userLoaded && isSignedIn) {
+      router.push("/dashboard/buyer")
+    }
+  }, [isSignedIn, userLoaded, router])
+
+  // If still checking auth status or already signed in, show loading
+  if (!userLoaded || isSignedIn) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-slate-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
