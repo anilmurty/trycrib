@@ -50,6 +50,7 @@ export function PropertyClaiming({ userId }: PropertyClaimingProps) {
           .from("property_claims")
           .select("property_id, claim_status, claimant_id")
           .in("property_id", propertyIds)
+          .eq("claimant_id", userId)
         
         console.log("Claims fetch result:", { claims, claimsError })
         
