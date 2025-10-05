@@ -12,7 +12,23 @@ export default async function OnboardingPage() {
   }
 
   const supabase = await createClient()
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", userId).single()
+  
+  // Add retry logic for profile check
+  let profile = null
+  let retries = 0
+  const maxRetries = 3
+
+  while (!profile && retries < maxRetries) {
+    const { data, error } = await supabase.from("profiles").select("role").eq("id", userId).single()
+    
+    if (data) {
+      profile = data
+    } else if (error) {
+      console.log("Profile not found in onboarding, attempt", retries + 1)
+      await new Promise((resolve) => setTimeout(resolve, 300))
+      retries++
+    }
+  }
 
   // If user already has a role, redirect to dashboard
   if (profile?.role) {
