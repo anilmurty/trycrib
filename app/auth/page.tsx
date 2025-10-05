@@ -85,16 +85,39 @@ export default function AuthPage() {
   }
 
   const handleGoogleSignIn = async () => {
-    if (!signInLoaded) return
+    console.log("[v0] Google sign in clicked")
+    console.log("[v0] signInLoaded:", signInLoaded)
+    console.log("[v0] signIn object:", signIn)
+
+    if (!signInLoaded) {
+      console.log("[v0] Sign in not loaded yet")
+      return
+    }
 
     try {
+      console.log("[v0] Attempting authenticateWithRedirect...")
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: "/sso-callback",
         redirectUrlComplete: "/dashboard/buyer",
       })
+      console.log("[v0] authenticateWithRedirect completed")
     } catch (err: any) {
       console.error("[v0] Google sign in error:", err)
+      console.error("[v0] Error details:", {
+        message: err.message,
+        errors: err.errors,
+        status: err.status,
+      })
+      const errorMessage =
+        err.errors?.[0]?.message ||
+        err.message ||
+        "Google sign-in is not configured. Please enable Google OAuth in your Clerk dashboard."
+      if (activeTab === "signup") {
+        setSignUpError(errorMessage)
+      } else {
+        setSignInError(errorMessage)
+      }
     }
   }
 
