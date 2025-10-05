@@ -108,22 +108,23 @@ The properties table includes rich data fields:
 ### Installation
 
 1. **Clone the repository**
-   \`\`\`bash
-   git clone <repository-url>
-   cd trycrib
-   \`\`\`
 
-2. **Install dependencies**
-   \`\`\`bash
-   pnpm install
-   # or
-   npm install
-   \`\`\`
-
-3. **Set up environment variables**
+   `git clone <repository-url>`
    
-   Create a `.env.local` file in the root directory:
-   \`\`\`env
+   `cd trycrib`
+
+3. **Install dependencies**
+   
+   pnpm install
+
+    # or
+
+   npm install
+   
+5. **Set up environment variables**
+   
+   Create a `.env.local` file in the root directory and put these in it:
+
    # Supabase
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
@@ -145,27 +146,28 @@ The properties table includes rich data fields:
    
    # App
    NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL=http://localhost:3000
-   \`\`\`
 
-4. **Set up the database**
-   
+6. **Set up the database**
+
+   ONLY DO THIS IF STARTED WITH AN EMPLTY POSTRESQL DB
+
    Run the SQL scripts in the `scripts/` directory in order:
-   \`\`\`bash
+   
    # Execute these in your Supabase SQL editor
    scripts/001_create_tables.sql
    scripts/002_enable_rls.sql
    scripts/003_create_profile_trigger.sql
    scripts/add-stripe-session-column.sql
-   \`\`\`
 
-5. **Run the development server**
-   \`\`\`bash
-   pnpm dev
+8. **Run the development server**
+   
+   `pnpm dev`
+
    # or
-   npm run dev
-   \`\`\`
 
-6. **Open your browser**
+   `npm run dev`
+
+10. **Open your browser**
    
    Navigate to [http://localhost:3000](http://localhost:3000)
 
