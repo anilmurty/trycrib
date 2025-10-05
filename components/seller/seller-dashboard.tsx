@@ -34,50 +34,54 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
 
   useEffect(() => {
     async function fetchStats() {
-      // Get properties count
-      const { count: totalProperties } = await supabase
-        .from("properties")
-        .select("*", { count: "exact", head: true })
-        .eq("seller_id", userId)
-
-      const { count: activeProperties } = await supabase
-        .from("properties")
-        .select("*", { count: "exact", head: true })
-        .eq("seller_id", userId)
-        .eq("is_active", true)
-
-      // Get bookings
-      const { data: properties } = await supabase.from("properties").select("id").eq("seller_id", userId)
-
-      const propertyIds = properties?.map((p) => p.id) || []
-
-      if (propertyIds.length > 0) {
-        const { count: totalBookings } = await supabase
-          .from("bookings")
+      try {
+        // Get properties count
+        const { count: totalProperties } = await supabase
+          .from("properties")
           .select("*", { count: "exact", head: true })
-          .in("property_id", propertyIds)
+          .eq("seller_id", userId)
 
-        const { data: bookings } = await supabase
-          .from("bookings")
-          .select("total_price")
-          .in("property_id", propertyIds)
-          .eq("status", "confirmed")
+        const { count: activeProperties } = await supabase
+          .from("properties")
+          .select("*", { count: "exact", head: true })
+          .eq("seller_id", userId)
+          .eq("is_active", true)
 
-        const totalEarnings = bookings?.reduce((sum, booking) => sum + (booking.total_price || 0), 0) || 0
+        // Get bookings
+        const { data: properties } = await supabase.from("properties").select("id").eq("seller_id", userId)
 
-        setStats({
-          totalProperties: totalProperties || 0,
-          activeProperties: activeProperties || 0,
-          totalBookings: totalBookings || 0,
-          totalEarnings,
-        })
-      } else {
-        setStats({
-          totalProperties: totalProperties || 0,
-          activeProperties: activeProperties || 0,
-          totalBookings: 0,
-          totalEarnings: 0,
-        })
+        const propertyIds = properties?.map((p) => p.id) || []
+
+        if (propertyIds.length > 0) {
+          const { count: totalBookings } = await supabase
+            .from("bookings")
+            .select("*", { count: "exact", head: true })
+            .in("property_id", propertyIds)
+
+          const { data: bookings } = await supabase
+            .from("bookings")
+            .select("total_price")
+            .in("property_id", propertyIds)
+            .eq("status", "confirmed")
+
+          const totalEarnings = bookings?.reduce((sum, booking) => sum + (booking.total_price || 0), 0) || 0
+
+          setStats({
+            totalProperties: totalProperties || 0,
+            activeProperties: activeProperties || 0,
+            totalBookings: totalBookings || 0,
+            totalEarnings,
+          })
+        } else {
+          setStats({
+            totalProperties: totalProperties || 0,
+            activeProperties: activeProperties || 0,
+            totalBookings: 0,
+            totalEarnings: 0,
+          })
+        }
+      } catch (error) {
+        console.error("Error fetching stats:", error)
       }
     }
 

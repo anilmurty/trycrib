@@ -12,7 +12,7 @@ export default function SSOCallback() {
     const handleCallback = async () => {
       try {
         await handleRedirectCallback()
-        router.push("/dashboard/buyer")
+        router.push("/dashboard")
       } catch (err) {
         console.error("[v0] SSO callback error:", err)
         router.push("/auth")

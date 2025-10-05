@@ -23,8 +23,8 @@ export default function RootLayout({
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
       signInUrl="/auth"
       signUpUrl="/auth"
-      afterSignInUrl="/dashboard/buyer"
-      afterSignUpUrl="/dashboard/buyer"
+      afterSignInUrl="/dashboard"
+      afterSignUpUrl="/dashboard"
     >
       <html lang="en">
         <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>

@@ -36,7 +36,7 @@ export default function SignInPage() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId })
-        router.push("/dashboard/buyer")
+        router.push("/dashboard")
       }
     } catch (err: any) {
       console.error("[v0] Sign in error:", err)

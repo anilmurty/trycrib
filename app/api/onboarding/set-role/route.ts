@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
+import { auth, currentUser } from "@clerk/nextjs/server"
 import { createClient } from "@/lib/supabase/server"
 
 export async function POST(request: Request) {
@@ -18,12 +18,40 @@ export async function POST(request: Request) {
 
     const supabase = await createClient()
 
-    // Update the user's role in the profiles table
-    const { error: updateError } = await supabase.from("profiles").update({ role }).eq("id", userId)
+    // First, check if the profile exists
+    const { data: existingProfile } = await supabase.from("profiles").select("id").eq("id", userId).single()
 
-    if (updateError) {
-      console.error("Error updating profile role:", updateError)
-      return NextResponse.json({ error: "Failed to update role" }, { status: 500 })
+    if (!existingProfile) {
+      // Profile doesn't exist, create it first
+      console.log("Profile not found, creating profile for user", userId)
+      
+      // Get user details from Clerk
+      const user = await currentUser()
+      const userEmail = user?.emailAddresses?.[0]?.emailAddress || "unknown@example.com"
+      const userFullName = user?.firstName && user?.lastName 
+        ? `${user.firstName} ${user.lastName}` 
+        : user?.firstName || user?.lastName || null
+
+      const { error: createError } = await supabase.from("profiles").insert({
+        id: userId,
+        email: userEmail,
+        full_name: userFullName,
+        role: role,
+        verification_status: "pending",
+      })
+
+      if (createError) {
+        console.error("Error creating profile:", createError)
+        return NextResponse.json({ error: "Failed to create profile" }, { status: 500 })
+      }
+    } else {
+      // Profile exists, update the role
+      const { error: updateError } = await supabase.from("profiles").update({ role }).eq("id", userId)
+
+      if (updateError) {
+        console.error("Error updating profile role:", updateError)
+        return NextResponse.json({ error: "Failed to update role" }, { status: 500 })
+      }
     }
 
     // Create the appropriate profile (buyer_profiles or seller_profiles)

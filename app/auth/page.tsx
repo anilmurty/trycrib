@@ -104,16 +104,26 @@ export default function AuthPage() {
   }
 
   const handleGoogleSignIn = async () => {
-    if (!signInLoaded) {
-      return
-    }
-
     try {
-      await signIn.authenticateWithRedirect({
-        strategy: "oauth_google",
-        redirectUrl: "/sso-callback",
-        redirectUrlComplete: "/dashboard",
-      })
+      if (activeTab === "signup") {
+        // For sign up, use signUp.authenticateWithRedirect
+        if (!signUpLoaded) return
+        
+        await signUp.authenticateWithRedirect({
+          strategy: "oauth_google",
+          redirectUrl: "/sso-callback",
+          redirectUrlComplete: "/dashboard",
+        })
+      } else {
+        // For sign in, use signIn.authenticateWithRedirect
+        if (!signInLoaded) return
+        
+        await signIn.authenticateWithRedirect({
+          strategy: "oauth_google",
+          redirectUrl: "/sso-callback",
+          redirectUrlComplete: "/dashboard",
+        })
+      }
     } catch (err: any) {
       let errorMessage = "An error occurred with Google sign-in"
 

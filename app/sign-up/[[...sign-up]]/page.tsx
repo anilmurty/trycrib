@@ -43,7 +43,7 @@ export default function SignUpPage() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId })
-        router.push("/dashboard/buyer")
+        router.push("/dashboard")
       } else {
         // Handle email verification if needed
         console.log("[v0] Sign up result:", result)
