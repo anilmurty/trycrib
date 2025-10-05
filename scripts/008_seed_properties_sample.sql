@@ -133,7 +133,7 @@ INSERT INTO public.properties (
   '{"beds": 2, "full_baths": 2, "half_baths": 0, "garage": 1, "style": "Modern", "year_built": 2018}'::jsonb,
   '{"property_type": "Condo", "hoa": true, "hoa_fee": 450, "county": "San Francisco", "neighborhood": "Financial District"}'::jsonb,
   '{"above_grade_size": 1800, "total_size": 1800, "foundation_details": "Concrete", "building_exterior_type": "Glass, Steel"}'::jsonb,
-  '{"lot_acres": NULL, "lot_sqft": NULL, "lot_features": "City Views, Balcony"}'::jsonb,
+  '{"lot_features": "City Views, Balcony"}'::jsonb,
   '["Hardwood Floors", "Granite Countertops", "Stainless Steel Appliances", "In-Unit Laundry", "Floor-to-Ceiling Windows"]'::jsonb,
   ARRAY['https://example.com/condo1.jpg', 'https://example.com/condo2.jpg'],
   ARRAY['https://original-feed.com/condo1.jpg', 'https://original-feed.com/condo2.jpg'],
