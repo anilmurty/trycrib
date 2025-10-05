@@ -3,8 +3,9 @@ import { auth } from "@clerk/nextjs/server"
 import { createClient } from "@/lib/supabase/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Home, ArrowLeft, CreditCard } from "lucide-react"
+import { Home, ArrowLeft, CreditCard, LogOut } from "lucide-react"
 import Link from "next/link"
+import { SignOutButton } from "@clerk/nextjs"
 
 export default async function SettingsPage() {
   const { userId } = await auth()
@@ -26,12 +27,20 @@ export default async function SettingsPage() {
             <Home className="h-5 w-5 text-slate-900" />
             <span className="text-lg font-bold text-slate-900">TryCrib</span>
           </Link>
-          <Link href={dashboardUrl}>
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link href={dashboardUrl}>
+              <Button variant="outline" size="sm">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Dashboard
+              </Button>
+            </Link>
+            <SignOutButton>
+              <Button variant="outline" size="sm">
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </SignOutButton>
+          </div>
         </div>
       </header>
 

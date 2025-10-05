@@ -104,7 +104,7 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
                 Settings
               </Button>
             </Link>
-            <span className="text-sm text-slate-600">Welcome, {profile.full_name || "Seller"}</span>
+            <span className="text-sm text-slate-600">Welcome, {profile?.full_name || "Seller"}</span>
             <Button variant="outline" size="sm" onClick={handleSignOut}>
               <LogOut className="h-4 w-4 mr-2" />
               Sign Out

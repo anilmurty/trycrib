@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation"
-import { auth } from "@clerk/nextjs/server"
+import { auth, currentUser } from "@clerk/nextjs/server"
 import { createClient } from "@/lib/supabase/server"
 import { BuyerDashboard } from "@/components/buyer/buyer-dashboard"
 
@@ -31,17 +31,41 @@ export default async function BuyerDashboardPage() {
 
   if (!profile) {
     console.log("[v0] Creating profile manually for user", userId)
-    const { data: newProfile } = await supabase
+    
+    // Get user details from Clerk
+    const user = await currentUser()
+    const userEmail = user?.emailAddresses?.[0]?.emailAddress || "unknown@example.com"
+    const userFullName = user?.firstName && user?.lastName 
+      ? `${user.firstName} ${user.lastName}` 
+      : user?.firstName || user?.lastName || null
+
+    const { data: newProfile, error: insertError } = await supabase
       .from("profiles")
       .insert({
         id: userId,
+        email: userEmail,
+        full_name: userFullName,
         role: "buyer",
         verification_status: "pending",
       })
       .select()
       .single()
 
-    profile = newProfile
+    if (insertError) {
+      console.error("[v0] Failed to create profile:", insertError)
+      // Create a fallback profile object to prevent null errors
+      profile = {
+        id: userId,
+        email: userEmail,
+        full_name: userFullName,
+        role: "buyer",
+        verification_status: "pending",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+    } else {
+      profile = newProfile
+    }
   }
 
   if (profile?.role === "seller") {
