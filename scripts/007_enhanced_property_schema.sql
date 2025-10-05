@@ -15,6 +15,10 @@ ADD COLUMN IF NOT EXISTS is_seed_property BOOLEAN DEFAULT false,
 ADD COLUMN IF NOT EXISTS last_feed_update TIMESTAMPTZ,
 ADD COLUMN IF NOT EXISTS last_user_update TIMESTAMPTZ;
 
+-- Allow seller_id to be NULL for seed properties
+ALTER TABLE public.properties 
+ALTER COLUMN seller_id DROP NOT NULL;
+
 -- Add rich data fields as JSONB for flexible property information
 ALTER TABLE public.properties 
 ADD COLUMN IF NOT EXISTS property_features JSONB,
