@@ -74,6 +74,7 @@ ALTER TABLE public.property_imports ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.property_claims ENABLE ROW LEVEL SECURITY;
 
 -- RLS policies for property_imports (only admins and superadmins can view)
+DROP POLICY IF EXISTS "Admins can view property imports" ON public.property_imports;
 CREATE POLICY "Admins can view property imports"
   ON public.property_imports FOR SELECT
   USING (
@@ -84,6 +85,7 @@ CREATE POLICY "Admins can view property imports"
     )
   );
 
+DROP POLICY IF EXISTS "Admins can insert property imports" ON public.property_imports;
 CREATE POLICY "Admins can insert property imports"
   ON public.property_imports FOR INSERT
   WITH CHECK (
@@ -95,6 +97,7 @@ CREATE POLICY "Admins can insert property imports"
   );
 
 -- RLS policies for property_claims (sellers can view their own claims, admins can view all)
+DROP POLICY IF EXISTS "Users can view own property claims" ON public.property_claims;
 CREATE POLICY "Users can view own property claims"
   ON public.property_claims FOR SELECT
   USING (
@@ -106,6 +109,7 @@ CREATE POLICY "Users can view own property claims"
     )
   );
 
+DROP POLICY IF EXISTS "Sellers can insert property claims" ON public.property_claims;
 CREATE POLICY "Sellers can insert property claims"
   ON public.property_claims FOR INSERT
   WITH CHECK (
@@ -117,6 +121,7 @@ CREATE POLICY "Sellers can insert property claims"
     )
   );
 
+DROP POLICY IF EXISTS "Admins can update property claims" ON public.property_claims;
 CREATE POLICY "Admins can update property claims"
   ON public.property_claims FOR UPDATE
   USING (
@@ -128,6 +133,7 @@ CREATE POLICY "Admins can update property claims"
   );
 
 -- Create function to get properties by address (for property claiming)
+DROP FUNCTION IF EXISTS get_properties_by_address(TEXT);
 CREATE OR REPLACE FUNCTION get_properties_by_address(search_address TEXT)
 RETURNS TABLE(
   id UUID,
@@ -165,6 +171,7 @@ AS $$
 $$;
 
 -- Create function to claim a property
+DROP FUNCTION IF EXISTS claim_property(UUID, TEXT, TEXT);
 CREATE OR REPLACE FUNCTION claim_property(
   target_property_id UUID,
   claimant_user_id TEXT,
@@ -218,6 +225,7 @@ END;
 $$;
 
 -- Create function to approve a property claim
+DROP FUNCTION IF EXISTS approve_property_claim(UUID, TEXT);
 CREATE OR REPLACE FUNCTION approve_property_claim(
   claim_id UUID,
   approved_by TEXT
