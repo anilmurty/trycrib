@@ -16,6 +16,14 @@ Buying a home is the most expensive transaction most people undertake, yet unlik
 - Make informed decisions with confidence
 - Reduce purchase anxiety
 
+### 🎯 Current Development Focus
+
+We're currently building a **Property Data Management System** that will:
+- Import property feeds from external data sources
+- Enable sellers to claim ownership of properties
+- Provide rich property data for better user experience
+- Support bulk property management for admins
+
 ## ✨ Key Features
 
 ### For Buyers
@@ -37,6 +45,14 @@ Buying a home is the most expensive transaction most people undertake, yet unlik
 - 👥 **User Management**: Manage user accounts and roles
 - 📊 **Platform Analytics**: Monitor bookings and platform performance
 - 🔧 **Content Moderation**: Oversee reviews and communications
+- 📥 **Property Data Management**: Import and manage property feeds
+- 🔄 **Bulk Operations**: Process large datasets efficiently
+- 👑 **Superadmin Features**: Manage admin roles and permissions
+
+### For Superadmins
+- 👑 **Admin Management**: Promote/demote admin users
+- 🔧 **System Configuration**: Advanced platform settings
+- 📈 **Global Analytics**: Platform-wide performance metrics
 
 ## 🛠 Technology Stack
 
@@ -44,20 +60,32 @@ Buying a home is the most expensive transaction most people undertake, yet unlik
 - **Styling**: Tailwind CSS with Radix UI components
 - **Backend**: Next.js API routes
 - **Database**: Supabase (PostgreSQL)
-- **Authentication**: Supabase Auth with Google OAuth
+- **Authentication**: Clerk.dev with Google OAuth
 - **Payments**: Stripe
+- **Images**: Cloudinary (planned)
 - **Deployment**: Vercel
 
 ## 🗄️ Database Schema
 
 The application uses a comprehensive PostgreSQL schema with the following key tables:
 
-- **profiles**: User accounts with role-based access (buyer/seller/admin)
-- **properties**: Property listings with detailed information
+- **profiles**: User accounts with role-based access (buyer/seller/admin/superadmin)
+- **properties**: Property listings with detailed information and rich data (JSONB)
 - **bookings**: Short-term stay reservations
 - **reviews**: Post-stay feedback system
 - **messages**: Buyer-seller communication
 - **property_availability**: Calendar system for blocked dates
+- **property_imports**: Import history and tracking
+- **property_claims**: Property ownership claims and verification
+
+### Enhanced Property Schema
+
+The properties table includes rich data fields:
+- **Core fields**: address, price, bedrooms, bathrooms, square footage
+- **Feed data**: MLS ID, listing date, days on market, property type
+- **Rich data**: Property features, location details, building info (JSONB)
+- **Images**: Cloudinary URLs with original feed references
+- **Ownership**: Seller assignment and claiming system
 
 ## 🚀 Getting Started
 
@@ -66,7 +94,9 @@ The application uses a comprehensive PostgreSQL schema with the following key ta
 - Node.js 18+ 
 - pnpm (recommended) or npm
 - Supabase account
+- Clerk.dev account
 - Stripe account
+- Cloudinary account (for image processing)
 
 ### Installation
 
@@ -92,10 +122,19 @@ The application uses a comprehensive PostgreSQL schema with the following key ta
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
    SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
    
+   # Clerk Authentication
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+   CLERK_SECRET_KEY=your_clerk_secret_key
+   
    # Stripe
    STRIPE_SECRET_KEY=your_stripe_secret_key
    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
    STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
+   
+   # Cloudinary (for image processing)
+   CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+   CLOUDINARY_API_KEY=your_cloudinary_api_key
+   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
    
    # App
    NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL=http://localhost:3000
@@ -148,9 +187,14 @@ Ensure all environment variables are set in your deployment platform:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+- `CLERK_SECRET_KEY`
 - `STRIPE_SECRET_KEY`
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 - `STRIPE_WEBHOOK_SECRET`
+- `CLOUDINARY_CLOUD_NAME`
+- `CLOUDINARY_API_KEY`
+- `CLOUDINARY_API_SECRET`
 
 ## 📁 Project Structure
 
@@ -192,13 +236,14 @@ pnpm lint         # Run ESLint
 
 ## 🔐 Authentication & Authorization
 
-The app uses Supabase Auth with three user roles:
+The app uses Clerk.dev authentication with four user roles:
 
 - **Buyer**: Can browse and book properties
-- **Seller**: Can list and manage properties
-- **Admin**: Can verify properties and manage users
+- **Seller**: Can list and manage properties, claim ownership of properties
+- **Admin**: Can verify properties, manage users, and import property data
+- **Superadmin**: Can manage admin roles and system configuration
 
-Users are automatically redirected to role-appropriate dashboards after authentication.
+Users are automatically redirected to role-appropriate dashboards after authentication, with an onboarding flow for new users to select their role.
 
 ## 💳 Payment Integration
 
