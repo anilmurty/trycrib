@@ -9,7 +9,7 @@ ALTER TYPE user_role ADD VALUE 'superadmin';
 
 -- Create a function to get the first user (for initial superadmin setup)
 CREATE OR REPLACE FUNCTION get_first_user()
-RETURNS TABLE(user_id UUID, email TEXT, full_name TEXT)
+RETURNS TABLE(user_id TEXT, email TEXT, full_name TEXT)
 LANGUAGE SQL
 AS $$
   SELECT id, email, full_name 
@@ -19,7 +19,7 @@ AS $$
 $$;
 
 -- Create a function to promote a user to superadmin
-CREATE OR REPLACE FUNCTION promote_to_superadmin(target_user_id UUID)
+CREATE OR REPLACE FUNCTION promote_to_superadmin(target_user_id TEXT)
 RETURNS BOOLEAN
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -36,7 +36,7 @@ END;
 $$;
 
 -- Create a function to promote a user to admin (superadmin only)
-CREATE OR REPLACE FUNCTION promote_to_admin(target_user_id UUID, promoted_by UUID)
+CREATE OR REPLACE FUNCTION promote_to_admin(target_user_id TEXT, promoted_by TEXT)
 RETURNS BOOLEAN
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -65,7 +65,7 @@ END;
 $$;
 
 -- Create a function to demote an admin (superadmin only)
-CREATE OR REPLACE FUNCTION demote_admin(target_user_id UUID, demoted_by UUID)
+CREATE OR REPLACE FUNCTION demote_admin(target_user_id TEXT, demoted_by TEXT)
 RETURNS BOOLEAN
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -102,10 +102,10 @@ $$;
 -- Create role change history table
 CREATE TABLE IF NOT EXISTS public.role_changes (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  user_id TEXT NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   old_role user_role,
   new_role user_role NOT NULL,
-  changed_by UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  changed_by TEXT NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   reason TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );

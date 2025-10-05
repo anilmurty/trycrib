@@ -5,7 +5,7 @@
 -- Get the first user and promote them to superadmin
 DO $$
 DECLARE
-    first_user_id UUID;
+    first_user_id TEXT;
     first_user_email TEXT;
 BEGIN
     -- Get the first user
