@@ -102,10 +102,10 @@ $$;
 -- Create role change history table
 CREATE TABLE IF NOT EXISTS public.role_changes (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id TEXT NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  user_id TEXT NOT NULL,
   old_role user_role,
   new_role user_role NOT NULL,
-  changed_by TEXT NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  changed_by TEXT NOT NULL,
   reason TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
