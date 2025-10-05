@@ -3,15 +3,15 @@
 import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Home, Users, Calendar, DollarSign, LogOut } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useClerk } from "@clerk/nextjs"
+import { Home, Users, Calendar, DollarSign } from "lucide-react"
+import { Header } from "@/components/landing/header"
+import { Footer } from "@/components/landing/footer"
 import { PropertyVerification } from "./property-verification"
 import { UserManagement } from "./user-management"
 import { BookingsOverview } from "./bookings-overview"
+import { useRouter } from "next/router"
+import { useClerk } from "@clerk/nextjs"
 
 interface AdminDashboardProps {
   userId: string
@@ -68,101 +68,91 @@ export function AdminDashboard({ userId, profile }: AdminDashboardProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="border-b bg-white">
-        <div className="container flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <Home className="h-5 w-5 text-slate-900" />
-            <span className="text-lg font-bold text-slate-900">TryCrib Admin</span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-slate-600">Welcome, {profile.full_name || "Admin"}</span>
-            <Button variant="outline" size="sm" onClick={handleSignOut}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
+    <div className="flex min-h-screen flex-col">
+      <Header />
+
+      <main className="flex-1 py-12 bg-slate-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-slate-900">Admin Dashboard</h1>
+            <p className="text-slate-600 mt-2">Manage properties, users, and platform operations</p>
           </div>
+
+          <div className="grid gap-6 md:grid-cols-5 mb-8">
+            <Card className="border-0 shadow-md">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+                <Users className="h-4 w-4 text-slate-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalUsers}</div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-md">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
+                <Home className="h-4 w-4 text-slate-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalProperties}</div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-md">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Pending Verifications</CardTitle>
+                <div className="h-4 w-4 rounded-full bg-yellow-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.pendingVerifications}</div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-md">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
+                <Calendar className="h-4 w-4 text-slate-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalBookings}</div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-md">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                <DollarSign className="h-4 w-4 text-slate-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">${stats.totalRevenue.toLocaleString()}</div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Tabs defaultValue="properties" className="space-y-6">
+            <TabsList>
+              <TabsTrigger value="properties">Property Verification</TabsTrigger>
+              <TabsTrigger value="users">User Management</TabsTrigger>
+              <TabsTrigger value="bookings">Bookings</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="properties">
+              <PropertyVerification />
+            </TabsContent>
+
+            <TabsContent value="users">
+              <UserManagement />
+            </TabsContent>
+
+            <TabsContent value="bookings">
+              <BookingsOverview />
+            </TabsContent>
+          </Tabs>
         </div>
-      </header>
-
-      <main className="container py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900">Admin Dashboard</h1>
-          <p className="text-slate-600 mt-1">Manage properties, users, and platform operations</p>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-5 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-              <Users className="h-4 w-4 text-slate-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalUsers}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
-              <Home className="h-4 w-4 text-slate-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalProperties}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending Verifications</CardTitle>
-              <div className="h-4 w-4 rounded-full bg-yellow-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.pendingVerifications}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
-              <Calendar className="h-4 w-4 text-slate-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalBookings}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-              <DollarSign className="h-4 w-4 text-slate-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">${stats.totalRevenue.toLocaleString()}</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Tabs defaultValue="properties" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="properties">Property Verification</TabsTrigger>
-            <TabsTrigger value="users">User Management</TabsTrigger>
-            <TabsTrigger value="bookings">Bookings</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="properties">
-            <PropertyVerification />
-          </TabsContent>
-
-          <TabsContent value="users">
-            <UserManagement />
-          </TabsContent>
-
-          <TabsContent value="bookings">
-            <BookingsOverview />
-          </TabsContent>
-        </Tabs>
       </main>
+
+      <Footer />
     </div>
   )
 }

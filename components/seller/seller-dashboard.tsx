@@ -6,12 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { Home, Calendar, DollarSign, Plus, LogOut, Settings } from "lucide-react"
+import { Home, Calendar, DollarSign, Plus } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useClerk } from "@clerk/nextjs"
+import { Header } from "@/components/landing/header"
+import { Footer } from "@/components/landing/footer"
 import { PropertyList } from "./property-list"
 import { BookingsList } from "./bookings-list"
+import { useClerk } from "@clerk/clerk-react"
+import { useRouter } from "next/navigation"
 
 interface SellerDashboardProps {
   userId: string
@@ -94,100 +96,84 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="border-b bg-white">
-        <div className="container flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <Home className="h-5 w-5 text-slate-900" />
-            <span className="text-lg font-bold text-slate-900">TryCrib</span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/settings">
-              <Button variant="outline" size="sm">
-                <Settings className="h-4 w-4 mr-2" />
-                Settings
+    <div className="flex min-h-screen flex-col">
+      <Header />
+
+      <main className="flex-1 py-12 bg-slate-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900">Seller Dashboard</h1>
+              <p className="text-slate-600 mt-2">Manage your properties and bookings</p>
+            </div>
+            <Link href="/dashboard/seller/properties/new">
+              <Button className="rounded-lg bg-blue-600 hover:bg-blue-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Property
               </Button>
             </Link>
-            <span className="text-sm text-slate-600">Welcome, {profile?.full_name || "Seller"}</span>
-            <Button variant="outline" size="sm" onClick={handleSignOut}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
           </div>
-        </div>
-      </header>
 
-      <main className="container py-8">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-slate-900">Seller Dashboard</h1>
-            <p className="text-slate-600 mt-1">Manage your properties and bookings</p>
+          <div className="grid gap-6 md:grid-cols-4 mb-8">
+            <Card className="border-0 shadow-md">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
+                <Home className="h-4 w-4 text-slate-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalProperties}</div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-md">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Active Listings</CardTitle>
+                <Badge variant="secondary">{stats.activeProperties}</Badge>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.activeProperties}</div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-md">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
+                <Calendar className="h-4 w-4 text-slate-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalBookings}</div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-md">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
+                <DollarSign className="h-4 w-4 text-slate-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">${stats.totalEarnings.toLocaleString()}</div>
+              </CardContent>
+            </Card>
           </div>
-          <Link href="/dashboard/seller/properties/new">
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Property
-            </Button>
-          </Link>
+
+          <Tabs defaultValue="properties" className="space-y-6">
+            <TabsList>
+              <TabsTrigger value="properties">My Properties</TabsTrigger>
+              <TabsTrigger value="bookings">Bookings</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="properties">
+              <PropertyList userId={userId} />
+            </TabsContent>
+
+            <TabsContent value="bookings">
+              <BookingsList userId={userId} />
+            </TabsContent>
+          </Tabs>
         </div>
-
-        <div className="grid gap-6 md:grid-cols-4 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
-              <Home className="h-4 w-4 text-slate-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalProperties}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Listings</CardTitle>
-              <Badge variant="secondary">{stats.activeProperties}</Badge>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.activeProperties}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
-              <Calendar className="h-4 w-4 text-slate-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalBookings}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
-              <DollarSign className="h-4 w-4 text-slate-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">${stats.totalEarnings.toLocaleString()}</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Tabs defaultValue="properties" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="properties">My Properties</TabsTrigger>
-            <TabsTrigger value="bookings">Bookings</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="properties">
-            <PropertyList userId={userId} />
-          </TabsContent>
-
-          <TabsContent value="bookings">
-            <BookingsList userId={userId} />
-          </TabsContent>
-        </Tabs>
       </main>
+
+      <Footer />
     </div>
   )
 }
