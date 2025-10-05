@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { useUser } from "@clerk/nextjs"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -25,17 +25,25 @@ export function PropertyFeedImport({ currentUserId, currentUserRole }: PropertyF
   const supabase = createClient()
   const { user } = useUser()
 
+  useEffect(() => {
+    fetchImports()
+  }, [])
+
   const fetchImports = async () => {
+    console.log("Fetching property imports...")
     try {
       const { data, error } = await supabase
         .from("property_imports")
         .select("*")
         .order("created_at", { ascending: false })
 
+      console.log("Imports fetch result:", { data, error })
+
       if (error) {
         console.error("Error fetching imports:", error)
       } else {
         setImports(data || [])
+        console.log("Imports set:", data || [])
       }
     } catch (error) {
       console.error("Error fetching imports:", error)
