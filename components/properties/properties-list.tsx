@@ -35,6 +35,7 @@ export function PropertiesList() {
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
   const [searchTerm, setSearchTerm] = useState("")
   const [sortBy, setSortBy] = useState<"created_at" | "listing_price" | "price_per_night">("created_at")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
@@ -72,6 +73,7 @@ export function PropertiesList() {
       }
 
       setProperties(data || [])
+      setTotalCount(count || 0)
       setTotalPages(Math.ceil((count || 0) / ITEMS_PER_PAGE))
     } catch (error) {
       console.error("Error:", error)
