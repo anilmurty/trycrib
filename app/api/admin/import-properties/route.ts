@@ -260,40 +260,77 @@ async function processImages(imageUrls: any[]): Promise<string[] | null> {
 
 // Helper function to map property data from feed to our schema
 async function mapPropertyData(propertyData: any) {
-  // Extract city, state, zip from address string
-  // Format: "356 W W St, Washougal, WA, 98671"
-  const addressParts = propertyData.address?.split(', ') || []
-  const city = addressParts[1] || ''
-  const state = addressParts[2] || ''
-  const zip_code = addressParts[3] || ''
+  // Handle new format (washougal-full-oct-5.json) vs old format
+  const isNewFormat = propertyData.address && typeof propertyData.address === 'object'
+  
+  let city, state, zip_code, address, title, listing_price, bedrooms, bathrooms, square_feet, year_built, lot_acres, property_type, description
+
+  if (isNewFormat) {
+    // New format: address is an object
+    city = propertyData.address.city || ''
+    state = propertyData.address.state_code || propertyData.address.state || ''
+    zip_code = propertyData.address.postal_code || ''
+    address = propertyData.address.line || ''
+    
+    // Property details from description object
+    listing_price = parseFloat(propertyData.list_price || 0)
+    bedrooms = parseInt(propertyData.description?.beds || 0)
+    bathrooms = parseFloat(propertyData.description?.baths_consolidated || propertyData.description?.baths || 0)
+    square_feet = parseInt(propertyData.description?.sqft || 0)
+    year_built = parseInt(propertyData.description?.year_built || 0) || null
+    lot_acres = parseFloat(propertyData.description?.lot_sqft || 0) / 43560 || null // Convert sqft to acres
+    property_type = propertyData.description?.type || 'single_family'
+    description = propertyData.description?.text || ''
+    
+    // Generate title from property details
+    title = `${bedrooms} bed, ${bathrooms} bath ${property_type.replace('_', ' ')} in ${city}`
+  } else {
+    // Old format: address is a string
+    const addressParts = propertyData.address?.split(', ') || []
+    city = addressParts[1] || ''
+    state = addressParts[2] || ''
+    zip_code = addressParts[3] || ''
+    address = propertyData.address || propertyData.street_address || ''
+    
+    listing_price = parseFloat(propertyData.listing_price || propertyData.price || propertyData.list_price || 0)
+    bedrooms = parseInt(propertyData.property_features?.beds || propertyData.bedrooms || propertyData.beds || 0)
+    bathrooms = parseFloat(propertyData.property_features?.full_baths || propertyData.bathrooms || propertyData.baths || 0)
+    square_feet = parseInt(propertyData.sf || propertyData.square_feet || propertyData.sqft || propertyData.area || 0)
+    year_built = parseInt(propertyData.property_features?.year_built || propertyData.year_built || propertyData.year_constructed || 0) || null
+    lot_acres = parseFloat(propertyData.lot?.lot_acres || propertyData.lot_acres || propertyData.acres || 0) || null
+    property_type = propertyData.location_community?.property_type || propertyData.property_type || propertyData.type || 'Single Family'
+    description = propertyData.description || propertyData.remarks || propertyData.notes || ''
+    
+    title = propertyData.title || propertyData.name || propertyData.property_title || 
+           `${bedrooms} bed, ${bathrooms} bath ${propertyData.property_features?.style || 'home'} in ${city}`
+  }
 
   return {
-    title: propertyData.title || propertyData.name || propertyData.property_title || 
-           `${propertyData.property_features?.beds || 0} bed, ${propertyData.property_features?.full_baths || 0} bath ${propertyData.property_features?.style || 'home'} in ${city}`,
-    address: propertyData.address || propertyData.street_address || '',
-    city: city,
-    state: state,
-    zip_code: zip_code,
-    listing_price: parseFloat(propertyData.listing_price || propertyData.price || propertyData.list_price || 0),
-    bedrooms: parseInt(propertyData.property_features?.beds || propertyData.bedrooms || propertyData.beds || 0),
-    bathrooms: parseFloat(propertyData.property_features?.full_baths || propertyData.bathrooms || propertyData.baths || 0),
-    square_feet: parseInt(propertyData.sf || propertyData.square_feet || propertyData.sqft || propertyData.area || 0),
-    year_built: parseInt(propertyData.property_features?.year_built || propertyData.year_built || propertyData.year_constructed || 0) || null,
-    lot_acres: parseFloat(propertyData.lot?.lot_acres || propertyData.lot_acres || propertyData.acres || 0) || null,
+    title,
+    address,
+    city,
+    state,
+    zip_code,
+    listing_price,
+    bedrooms,
+    bathrooms,
+    square_feet,
+    year_built,
+    lot_acres,
     hoa_fee: parseFloat(propertyData.location_community?.hoa_fee || propertyData.hoa_fee || propertyData.hoa || 0) || null,
-    property_type: propertyData.location_community?.property_type || propertyData.property_type || propertyData.type || 'Single Family',
+    property_type: property_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
     mls_id: propertyData.mls_id || propertyData.mls_number || propertyData.listing_id || null,
     source_feed_id: propertyData.id || propertyData.property_id || null,
     list_date: propertyData.list_date || propertyData.date_listed || null,
     days_on_market: parseInt(propertyData.dom || propertyData.days_on_market || 0) || null,
-    property_features: propertyData.property_features || null,
+    property_features: isNewFormat ? propertyData.description : propertyData.property_features,
     location_community: propertyData.location_community || null,
     building_info: propertyData.building_info || null,
-    lot_info: propertyData.lot || null,
+    lot_info: isNewFormat ? { lot_sqft: propertyData.description?.lot_sqft } : propertyData.lot,
     interior_features: propertyData.interior_features || null,
     original_image_urls: await processOriginalImageUrls(propertyData.images || propertyData.photos || propertyData.image_urls || []),
     images: await processImages(propertyData.images || propertyData.photos || propertyData.image_urls || []),
-    description: propertyData.description || propertyData.remarks || propertyData.notes || '',
+    description,
     status: propertyData.status || propertyData.listing_status || 'active',
     price_per_night: propertyData.price_per_night || propertyData.nightly_rate || 0
   }
