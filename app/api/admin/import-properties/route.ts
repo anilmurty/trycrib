@@ -202,29 +202,36 @@ export async function POST(request: NextRequest) {
 
 // Helper function to map property data from feed to our schema
 function mapPropertyData(propertyData: any) {
+  // Extract city, state, zip from address string
+  const addressParts = propertyData.address?.split(', ') || []
+  const city = addressParts[1] || ''
+  const stateZip = addressParts[2]?.split(' ') || []
+  const state = stateZip[0] || ''
+  const zip_code = stateZip[1] || ''
+
   return {
     title: propertyData.title || propertyData.name || propertyData.property_title || 'Untitled Property',
     address: propertyData.address || propertyData.street_address || '',
-    city: propertyData.city || '',
-    state: propertyData.state || propertyData.state_code || '',
-    zip_code: propertyData.zip_code || propertyData.zip || propertyData.postal_code || '',
+    city: city,
+    state: state,
+    zip_code: zip_code,
     listing_price: parseFloat(propertyData.listing_price || propertyData.price || propertyData.list_price || 0),
-    bedrooms: parseInt(propertyData.bedrooms || propertyData.beds || 0),
-    bathrooms: parseFloat(propertyData.bathrooms || propertyData.baths || 0),
-    square_feet: parseInt(propertyData.square_feet || propertyData.sqft || propertyData.area || 0),
-    year_built: parseInt(propertyData.year_built || propertyData.year_constructed || 0) || null,
-    lot_acres: parseFloat(propertyData.lot_acres || propertyData.acres || 0) || null,
-    hoa_fee: parseFloat(propertyData.hoa_fee || propertyData.hoa || 0) || null,
-    property_type: propertyData.property_type || propertyData.type || 'Single Family',
+    bedrooms: parseInt(propertyData.property_features?.beds || propertyData.bedrooms || propertyData.beds || 0),
+    bathrooms: parseFloat(propertyData.property_features?.full_baths || propertyData.bathrooms || propertyData.baths || 0),
+    square_feet: parseInt(propertyData.sf || propertyData.square_feet || propertyData.sqft || propertyData.area || 0),
+    year_built: parseInt(propertyData.property_features?.year_built || propertyData.year_built || propertyData.year_constructed || 0) || null,
+    lot_acres: parseFloat(propertyData.lot?.lot_acres || propertyData.lot_acres || propertyData.acres || 0) || null,
+    hoa_fee: parseFloat(propertyData.location_community?.hoa_fee || propertyData.hoa_fee || propertyData.hoa || 0) || null,
+    property_type: propertyData.location_community?.property_type || propertyData.property_type || propertyData.type || 'Single Family',
     mls_id: propertyData.mls_id || propertyData.mls_number || propertyData.listing_id || null,
     source_feed_id: propertyData.id || propertyData.property_id || null,
     list_date: propertyData.list_date || propertyData.date_listed || null,
-    days_on_market: parseInt(propertyData.days_on_market || propertyData.dom || 0) || null,
-    property_features: propertyData.features || propertyData.amenities || null,
-    location_community: propertyData.location || propertyData.community || null,
-    building_info: propertyData.building || propertyData.construction || null,
-    lot_info: propertyData.lot || propertyData.lot_details || null,
-    interior_features: propertyData.interior_features || propertyData.interior || null,
+    days_on_market: parseInt(propertyData.dom || propertyData.days_on_market || 0) || null,
+    property_features: propertyData.property_features || null,
+    location_community: propertyData.location_community || null,
+    building_info: propertyData.building_info || null,
+    lot_info: propertyData.lot || null,
+    interior_features: propertyData.interior_features || null,
     original_image_urls: propertyData.images || propertyData.photos || propertyData.image_urls || null,
     description: propertyData.description || propertyData.remarks || propertyData.notes || '',
     status: propertyData.status || propertyData.listing_status || 'active',
