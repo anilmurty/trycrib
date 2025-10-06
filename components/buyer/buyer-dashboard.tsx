@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation"
 import { useClerk } from "@clerk/nextjs"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
+import VerificationBanner from "@/components/verification/verification-banner"
 
 interface Booking {
   id: string
@@ -76,6 +77,9 @@ export function BuyerDashboard({ userId, profile }: BuyerDashboardProps) {
 
       <main className="flex-1 py-12 bg-slate-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          {/* Verification Banner */}
+          <VerificationBanner userRole="buyer" className="mb-6" />
+          
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-slate-900">My Bookings</h1>
             <p className="text-slate-600 mt-2">View and manage your property stays</p>
