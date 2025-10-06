@@ -281,7 +281,7 @@ export function PropertiesList() {
 
           {/* Results Info */}
           <div className="text-center text-sm text-gray-500">
-            Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, properties.length)} of {properties.length} properties
+            Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of {totalCount} properties
           </div>
         </>
       )}
