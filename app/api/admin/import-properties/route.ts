@@ -91,14 +91,16 @@ export async function POST(request: NextRequest) {
           processed++
 
           // Map the property data to our schema
-          const mappedProperty = mapPropertyData(propertyData)
+          const mappedProperty = await mapPropertyData(propertyData)
           
           // Check if property already exists (by address or MLS ID)
-          const { data: existingProperty } = await supabase
+          const { data: existingProperties } = await supabase
             .from('properties')
             .select('id, seller_id')
             .or(`address.eq.${mappedProperty.address},mls_id.eq.${mappedProperty.mls_id}`)
-            .single()
+            .limit(1)
+          
+          const existingProperty = existingProperties?.[0]
 
           if (existingProperty) {
             // Update existing property (only if it's a seed property or owned by the same seller)
@@ -200,8 +202,27 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// Helper function to process images and upload to Cloudinary
+async function processImages(imageUrls: any[]): Promise<string[] | null> {
+  if (!imageUrls || imageUrls.length === 0) return null
+  
+  // For now, just return the original URLs
+  // TODO: Implement Cloudinary upload when env vars are configured
+  const processedImages: string[] = []
+  
+  for (const imageUrl of imageUrls) {
+    if (typeof imageUrl === 'string') {
+      processedImages.push(imageUrl)
+    } else if (imageUrl && typeof imageUrl === 'object' && imageUrl.href) {
+      processedImages.push(imageUrl.href)
+    }
+  }
+  
+  return processedImages.length > 0 ? processedImages : null
+}
+
 // Helper function to map property data from feed to our schema
-function mapPropertyData(propertyData: any) {
+async function mapPropertyData(propertyData: any) {
   // Extract city, state, zip from address string
   const addressParts = propertyData.address?.split(', ') || []
   const city = addressParts[1] || ''
@@ -210,7 +231,8 @@ function mapPropertyData(propertyData: any) {
   const zip_code = stateZip[1] || ''
 
   return {
-    title: propertyData.title || propertyData.name || propertyData.property_title || 'Untitled Property',
+    title: propertyData.title || propertyData.name || propertyData.property_title || 
+           `${propertyData.property_features?.beds || 0} bed, ${propertyData.property_features?.full_baths || 0} bath ${propertyData.property_features?.style || 'home'} in ${city}`,
     address: propertyData.address || propertyData.street_address || '',
     city: city,
     state: state,
@@ -233,6 +255,7 @@ function mapPropertyData(propertyData: any) {
     lot_info: propertyData.lot || null,
     interior_features: propertyData.interior_features || null,
     original_image_urls: propertyData.images || propertyData.photos || propertyData.image_urls || null,
+    images: await processImages(propertyData.images || propertyData.photos || propertyData.image_urls || []),
     description: propertyData.description || propertyData.remarks || propertyData.notes || '',
     status: propertyData.status || propertyData.listing_status || 'active',
     price_per_night: propertyData.price_per_night || propertyData.nightly_rate || 0
