@@ -60,12 +60,13 @@ export default function VerificationBanner({ userRole, className = "" }: Verific
     if (verificationStatus === 'pending') {
       return {
         icon: <Clock className="h-5 w-5 text-blue-500" />,
-        title: 'Verification Under Review',
-        description: 'Your verification document is being reviewed. You can still browse properties but cannot schedule visits until approved.',
+        title: 'Verification Pending',
+        description: 'Thank you for submitting your document(s) for verification. They are under review and will be approved soon.',
         color: 'border-blue-200 bg-blue-50',
         textColor: 'text-blue-800',
         actionText: 'View Status',
-        actionVariant: 'outline' as const
+        actionVariant: 'outline' as const,
+        showAction: false // Don't show action button for pending
       }
     } else if (verificationStatus === 'rejected') {
       return {
@@ -75,7 +76,8 @@ export default function VerificationBanner({ userRole, className = "" }: Verific
         color: 'border-red-200 bg-red-50',
         textColor: 'text-red-800',
         actionText: 'Try Again',
-        actionVariant: 'default' as const
+        actionVariant: 'default' as const,
+        showAction: true
       }
     } else {
       // Not verified or expired
@@ -88,7 +90,8 @@ export default function VerificationBanner({ userRole, className = "" }: Verific
         color: 'border-orange-200 bg-orange-50',
         textColor: 'text-orange-800',
         actionText: 'Verify Now',
-        actionVariant: 'default' as const
+        actionVariant: 'default' as const,
+        showAction: true
       }
     }
   }
@@ -110,15 +113,17 @@ export default function VerificationBanner({ userRole, className = "" }: Verific
               </p>
             </div>
           </div>
-          <Button
-            onClick={handleVerifyNow}
-            variant={content.actionVariant}
-            size="sm"
-            className="flex items-center gap-2"
-          >
-            {content.actionText}
-            <ArrowRight className="h-4 w-4" />
-          </Button>
+          {content.showAction && (
+            <Button
+              onClick={handleVerifyNow}
+              variant={content.actionVariant}
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              {content.actionText}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

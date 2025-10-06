@@ -89,6 +89,11 @@ export default function VerificationPage() {
       setShowUpload(false)
       setUploadCompleted(true)
       
+      // Show appropriate message for duplicate uploads
+      if (result.isDuplicate) {
+        console.log('Document already uploaded - no duplicate created')
+      }
+      
       // Refresh verification status
       await fetchVerificationStatus()
       
@@ -212,21 +217,16 @@ export default function VerificationPage() {
                   Your verification document has been uploaded and is now under review. 
                   You'll receive an email notification once the verification is complete.
                 </p>
-                <div className="flex gap-4 justify-center">
-                  <Button onClick={handleContinue} className="bg-green-600 hover:bg-green-700">
-                    Continue to Dashboard
-                  </Button>
-                  <Button variant="outline" onClick={() => setUploadCompleted(false)}>
-                    View Status
-                  </Button>
-                </div>
+                <Button onClick={handleContinue} className="bg-green-600 hover:bg-green-700">
+                  Continue to Dashboard
+                </Button>
               </div>
             </CardContent>
           </Card>
         )}
 
         {/* Verification Status or Upload Form */}
-        {showUpload ? (
+        {!uploadCompleted && showUpload && (
           <div className="space-y-6">
             <DocumentUpload
               userRole={userRole}
@@ -245,7 +245,9 @@ export default function VerificationPage() {
               </Button>
             </div>
           </div>
-        ) : !uploadCompleted ? (
+        )}
+        
+        {!uploadCompleted && !showUpload && (
           <VerificationStatus
             userRole={userRole}
             verificationStatus={verificationData?.verificationStatus || null}
@@ -255,7 +257,7 @@ export default function VerificationPage() {
             onRetry={handleRetry}
             onViewDocument={verificationData?.documentUrl ? handleViewDocument : undefined}
           />
-        ) : null}
+        )}
 
         {/* Additional Information */}
         {verificationData?.preapprovalAmount && userRole === 'buyer' && (
