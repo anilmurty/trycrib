@@ -22,6 +22,14 @@ export function PropertyFeedImport({ currentUserId, currentUserRole, onImportCom
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [importType, setImportType] = useState<"json" | "csv">("json")
   const [uploadProgress, setUploadProgress] = useState(0)
+  const [validationResult, setValidationResult] = useState<{
+    isValid: boolean
+    propertyCount: number
+    dataQuality: number
+    issues: string[]
+    warnings: string[]
+  } | null>(null)
+  const [validating, setValidating] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const supabase = createClient()
   const { user } = useUser()
@@ -53,6 +61,87 @@ export function PropertyFeedImport({ currentUserId, currentUserRole, onImportCom
     }
   }
 
+  const validateFile = async (file: File) => {
+    setValidating(true)
+    setValidationResult(null)
+    
+    try {
+      const text = await file.text()
+      const data = JSON.parse(text)
+      
+      if (!Array.isArray(data)) {
+        setValidationResult({
+          isValid: false,
+          propertyCount: 0,
+          dataQuality: 0,
+          issues: ["File must contain an array of properties"],
+          warnings: []
+        })
+        return
+      }
+
+      const propertyCount = data.length
+      const issues: string[] = []
+      const warnings: string[] = []
+
+      // Check for empty dataset
+      if (propertyCount === 0) {
+        issues.push("Dataset is empty")
+      }
+
+      // Analyze first property structure
+      if (propertyCount > 0) {
+        const firstProperty = data[0]
+        
+        // Check for essential fields
+        const hasAddress = firstProperty.address
+        const hasDescription = firstProperty.description
+        const hasPhotos = firstProperty.photos && Array.isArray(firstProperty.photos) && firstProperty.photos.length > 0
+        const hasPrice = firstProperty.list_price && firstProperty.list_price > 0
+
+        if (!hasAddress) issues.push("Properties missing address information")
+        if (!hasDescription) issues.push("Properties missing description information")
+        if (!hasPhotos) warnings.push("Properties missing photos")
+        if (!hasPrice) warnings.push("Properties missing pricing information")
+
+        // Check format compatibility
+        const isNewFormat = firstProperty.address && typeof firstProperty.address === 'object'
+        if (!isNewFormat && !hasAddress) {
+          issues.push("Address format not recognized")
+        }
+      }
+
+      // Calculate data quality score
+      const qualityChecks = [
+        propertyCount > 0,
+        data.length > 0 && data[0].address,
+        data.length > 0 && data[0].description,
+        data.length > 0 && data[0].photos && Array.isArray(data[0].photos),
+        data.length > 0 && data[0].list_price
+      ]
+      const dataQuality = Math.round((qualityChecks.filter(Boolean).length / qualityChecks.length) * 100)
+
+      setValidationResult({
+        isValid: issues.length === 0,
+        propertyCount,
+        dataQuality,
+        issues,
+        warnings
+      })
+
+    } catch (error) {
+      setValidationResult({
+        isValid: false,
+        propertyCount: 0,
+        dataQuality: 0,
+        issues: [`Invalid JSON: ${error instanceof Error ? error.message : 'Unknown error'}`],
+        warnings: []
+      })
+    } finally {
+      setValidating(false)
+    }
+  }
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
@@ -64,11 +153,24 @@ export function PropertyFeedImport({ currentUserId, currentUserRole, onImportCom
       } else {
         setImportType('json')
       }
+      
+      setValidationResult(null) // Clear previous validation
+      
+      // Auto-validate JSON files
+      if (extension === 'json') {
+        validateFile(file)
+      }
     }
   }
 
   const handleUpload = async () => {
     if (!selectedFile || !user?.id) return
+
+    // Check validation result before proceeding
+    if (validationResult && !validationResult.isValid) {
+      alert("Please fix the validation issues before uploading.")
+      return
+    }
 
     setUploading(true)
     setUploadProgress(0)
@@ -174,6 +276,79 @@ export function PropertyFeedImport({ currentUserId, currentUserRole, onImportCom
                 <span className="text-sm text-slate-600">Size: {(selectedFile.size / 1024).toFixed(1)} KB</span>
               </div>
 
+              {/* Validation Results */}
+              {validating && (
+                <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg">
+                  <RefreshCw className="h-4 w-4 animate-spin text-blue-600" />
+                  <span className="text-sm text-blue-700">Validating file...</span>
+                </div>
+              )}
+
+              {validationResult && (
+                <div className={`p-4 rounded-lg border ${
+                  validationResult.isValid 
+                    ? 'bg-green-50 border-green-200' 
+                    : 'bg-red-50 border-red-200'
+                }`}>
+                  <div className="flex items-center gap-2 mb-3">
+                    {validationResult.isValid ? (
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                    ) : (
+                      <AlertCircle className="h-5 w-5 text-red-600" />
+                    )}
+                    <span className={`font-medium ${
+                      validationResult.isValid ? 'text-green-800' : 'text-red-800'
+                    }`}>
+                      {validationResult.isValid ? 'File Validated Successfully' : 'Validation Failed'}
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Database className="h-4 w-4 text-slate-500" />
+                      <span>Properties: {validationResult.propertyCount}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-slate-500">Data Quality:</span>
+                      <span className={`font-medium ${
+                        validationResult.dataQuality >= 90 ? 'text-green-600' :
+                        validationResult.dataQuality >= 75 ? 'text-yellow-600' : 'text-red-600'
+                      }`}>
+                        {validationResult.dataQuality}%
+                      </span>
+                    </div>
+                  </div>
+
+                  {validationResult.issues.length > 0 && (
+                    <div className="mt-3">
+                      <p className="text-sm font-medium text-red-800 mb-2">Issues:</p>
+                      <ul className="text-sm text-red-700 space-y-1">
+                        {validationResult.issues.map((issue, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <span className="text-red-500 mt-0.5">•</span>
+                            <span>{issue}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {validationResult.warnings.length > 0 && (
+                    <div className="mt-3">
+                      <p className="text-sm font-medium text-yellow-800 mb-2">Warnings:</p>
+                      <ul className="text-sm text-yellow-700 space-y-1">
+                        {validationResult.warnings.map((warning, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <span className="text-yellow-500 mt-0.5">•</span>
+                            <span>{warning}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {uploading && (
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
@@ -191,7 +366,7 @@ export function PropertyFeedImport({ currentUserId, currentUserRole, onImportCom
 
               <Button
                 onClick={handleUpload}
-                disabled={uploading}
+                disabled={uploading || (validationResult && !validationResult.isValid)}
                 className="w-full"
               >
                 {uploading ? "Processing..." : "Import Properties"}
