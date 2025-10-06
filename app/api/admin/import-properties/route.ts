@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { createClient } from "@/lib/supabase/server"
+import { calculatePricingTier, calculatePricePerNight } from "@/lib/pricing"
 
 export async function POST(request: NextRequest) {
   try {
@@ -305,6 +306,10 @@ async function mapPropertyData(propertyData: any) {
            `${bedrooms} bed, ${bathrooms} bath ${propertyData.property_features?.style || 'home'} in ${city}`
   }
 
+  // Calculate pricing tier and nightly rate
+  const pricing_tier = calculatePricingTier(listing_price)
+  const calculated_price_per_night = calculatePricePerNight(pricing_tier)
+
   return {
     title,
     address,
@@ -332,6 +337,11 @@ async function mapPropertyData(propertyData: any) {
     images: await processImages(propertyData.images || propertyData.photos || propertyData.image_urls || []),
     description,
     status: propertyData.status || propertyData.listing_status || 'active',
-    price_per_night: propertyData.price_per_night || propertyData.nightly_rate || 0
+    price_per_night: propertyData.price_per_night || propertyData.nightly_rate || calculated_price_per_night || 0,
+    // Pricing system fields
+    pricing_tier,
+    calculated_price_per_night,
+    pricing_override: false,
+    custom_price_per_night: null
   }
 }

@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
-import { ChevronLeft, ChevronRight, Search, Filter } from "lucide-react"
+import { ChevronLeft, ChevronRight, Search, Filter, DollarSign } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { formatPricingDisplay, getPricingTierInfo } from "@/lib/pricing"
 
 interface Property {
   id: string
@@ -26,6 +28,11 @@ interface Property {
   is_active: boolean
   verification_status: string
   created_at: string
+  // Pricing system fields
+  pricing_tier?: 'under_500k' | '500k_1m' | '1m_1_5m' | '1_5m_3m' | '3m_5m' | 'over_5m' | null
+  calculated_price_per_night?: number | null
+  pricing_override?: boolean
+  custom_price_per_night?: number | null
 }
 
 const ITEMS_PER_PAGE = 12
@@ -204,26 +211,89 @@ export function PropertiesList() {
                   <p className="text-sm text-gray-600 mt-0.5">
                     {property.city}, {property.state}
                   </p>
-                  <div className="flex items-center justify-between mt-2">
+                  
+                  {/* Pricing Information */}
+                  <div className="mt-2 space-y-1">
                     {property.listing_price && (
-                      <p className="text-lg font-bold text-gray-900">${property.listing_price.toLocaleString()}</p>
+                      <div className="flex items-center gap-2">
+                        <DollarSign className="h-4 w-4 text-gray-500" />
+                        <span className="text-sm text-gray-600">
+                          Listed at ${property.listing_price.toLocaleString()}
+                        </span>
+                      </div>
                     )}
+                    
+                    {/* Nightly Rate */}
+                    {(() => {
+                      const effectivePricePerNight = property.pricing_override 
+                        ? property.custom_price_per_night 
+                        : property.calculated_price_per_night
+                      
+                      if (effectivePricePerNight) {
+                        return (
+                          <div className="flex items-center gap-2">
+                            <DollarSign className="h-4 w-4 text-blue-600" />
+                            <span className="text-lg font-bold text-blue-600">
+                              ${effectivePricePerNight.toLocaleString()}/night
+                            </span>
+                          </div>
+                        )
+                      } else if (property.pricing_tier === 'over_5m') {
+                        return (
+                          <div className="flex items-center gap-2">
+                            <DollarSign className="h-4 w-4 text-gray-500" />
+                            <span className="text-sm text-gray-600 italic">
+                              Contact Seller for pricing
+                            </span>
+                          </div>
+                        )
+                      }
+                      return null
+                    })()}
+                    
+                    {/* Pricing Tier Badge */}
+                    {property.pricing_tier && (
+                      <div className="flex items-center gap-2">
+                        {(() => {
+                          const tierInfo = getPricingTierInfo(property.pricing_tier)
+                          if (!tierInfo) return null
+                          
+                          const colorClasses = {
+                            green: 'bg-green-100 text-green-800',
+                            blue: 'bg-blue-100 text-blue-800',
+                            purple: 'bg-purple-100 text-purple-800',
+                            orange: 'bg-orange-100 text-orange-800',
+                            red: 'bg-red-100 text-red-800',
+                            gray: 'bg-gray-100 text-gray-800'
+                          }
+                          
+                          return (
+                            <Badge className={`text-xs ${colorClasses[tierInfo.color] || 'bg-gray-100 text-gray-800'}`}>
+                              {tierInfo.name}
+                            </Badge>
+                          )
+                        })()}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center justify-between mt-3">
+                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                      {property.bedrooms && (
+                        <span>{property.bedrooms} beds</span>
+                      )}
+                      {property.bathrooms && (
+                        <span>{property.bathrooms} baths</span>
+                      )}
+                      {property.square_feet && (
+                        <span>{property.square_feet.toLocaleString()} sqft</span>
+                      )}
+                    </div>
                     <Link href={`/properties/${property.id}`}>
                       <Button className="rounded-lg bg-blue-600 hover:bg-blue-700 px-4 py-1.5 text-sm">
                         View Details
                       </Button>
                     </Link>
-                  </div>
-                  <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-                    {property.bedrooms && (
-                      <span>{property.bedrooms} beds</span>
-                    )}
-                    {property.bathrooms && (
-                      <span>{property.bathrooms} baths</span>
-                    )}
-                    {property.square_feet && (
-                      <span>{property.square_feet.toLocaleString()} sqft</span>
-                    )}
                   </div>
                 </CardContent>
               </Card>
