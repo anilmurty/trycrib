@@ -175,7 +175,7 @@ export default async function PropertiesPage() {
     .from("properties")
     .select("*")
     .eq("is_active", true)
-    .eq("verification_status", "approved")
+    .in("verification_status", ["approved", "pending"])
     .order("created_at", { ascending: false })
 
   const displayProperties = properties && properties.length > 0 ? properties : placeholderProperties
