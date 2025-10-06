@@ -15,15 +15,24 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // For now, return mock data since we haven't created the tables yet
-    // In production, this would query the verification tables
+    // Check if user has uploaded any documents by looking in storage
+    const { data: userFiles } = await supabase.storage
+      .from('verification-documents')
+      .list('', {
+        search: userId
+      })
+
+    // If user has uploaded files, return pending status
+    // Otherwise return null (not verified)
+    const hasUploadedDocuments = userFiles && userFiles.length > 0
     
     const mockVerificationData = {
-      verificationStatus: null, // 'pending' | 'approved' | 'rejected' | 'expired' | null
-      lastAttempt: null,
+      verificationStatus: hasUploadedDocuments ? 'pending' : null,
+      lastAttempt: hasUploadedDocuments ? new Date().toISOString() : null,
       rejectionReason: null,
       verificationNotes: null,
-      documentUrl: null,
+      documentUrl: hasUploadedDocuments && userFiles[0] ? 
+        supabase.storage.from('verification-documents').getPublicUrl(userFiles[0].name).data.publicUrl : null,
       preapprovalAmount: null,
       propertyAddress: null
     }
