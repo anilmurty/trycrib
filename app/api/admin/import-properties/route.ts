@@ -216,7 +216,20 @@ async function processOriginalImageUrls(imageUrls: any[]): Promise<string[] | nu
   
   for (const imageUrl of imageUrls) {
     if (typeof imageUrl === 'string') {
-      processedUrls.push(imageUrl)
+      // Check if it's a JSON string that needs parsing
+      if (imageUrl.startsWith('{') && imageUrl.includes('href')) {
+        try {
+          const parsed = JSON.parse(imageUrl)
+          if (parsed.href) {
+            processedUrls.push(parsed.href)
+          }
+        } catch (e) {
+          // If parsing fails, use the string as-is
+          processedUrls.push(imageUrl)
+        }
+      } else {
+        processedUrls.push(imageUrl)
+      }
     } else if (imageUrl && typeof imageUrl === 'object' && imageUrl.href) {
       processedUrls.push(imageUrl.href)
     }
