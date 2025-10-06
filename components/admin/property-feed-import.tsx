@@ -245,9 +245,30 @@ export function PropertyFeedImport({ currentUserId, currentUserRole }: PropertyF
 
                   {importRecord.error_details && (
                     <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded">
-                      <p className="text-sm text-red-700">
-                        <strong>Error:</strong> {JSON.stringify(importRecord.error_details)}
-                      </p>
+                      <p className="text-sm text-red-700 font-semibold mb-2">Import Errors:</p>
+                      <div className="space-y-2">
+                        {Array.isArray(importRecord.error_details) ? (
+                          importRecord.error_details.map((error: any, index: number) => (
+                            <div key={index} className="text-xs bg-red-100 p-2 rounded border-l-2 border-red-400">
+                              <div className="font-medium text-red-800">
+                                Property: {error.property?.title || error.property?.address || 'Unknown'}
+                              </div>
+                              <div className="text-red-700 mt-1">
+                                {error.error || error.message || 'Unknown error'}
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-xs bg-red-100 p-2 rounded border-l-2 border-red-400">
+                            <div className="text-red-700">
+                              {typeof importRecord.error_details === 'string' 
+                                ? importRecord.error_details 
+                                : JSON.stringify(importRecord.error_details, null, 2)
+                              }
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
