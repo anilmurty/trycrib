@@ -36,25 +36,6 @@ ALTER TABLE public.properties
 ADD CONSTRAINT check_custom_price_positive 
 CHECK (custom_price_per_night IS NULL OR custom_price_per_night > 0);
 
--- Update existing properties with calculated pricing before adding constraint
-UPDATE public.properties 
-SET 
-  pricing_tier = calculate_pricing_tier(listing_price),
-  calculated_price_per_night = calculate_price_per_night(calculate_pricing_tier(listing_price)),
-  pricing_override = false
-WHERE listing_price IS NOT NULL AND listing_price > 0;
-
--- For properties without listing_price, set default values
-UPDATE public.properties 
-SET 
-  pricing_tier = NULL,
-  calculated_price_per_night = NULL,
-  pricing_override = false
-WHERE listing_price IS NULL OR listing_price <= 0;
-
--- Note: We'll rely on application-level validation for pricing logic
--- The database will allow flexible pricing configurations
-
 -- Create function to calculate pricing tier based on listing price
 CREATE OR REPLACE FUNCTION calculate_pricing_tier(listing_price INTEGER)
 RETURNS pricing_tier AS $$
@@ -93,7 +74,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Note: Properties have already been updated above
+-- Update existing properties with calculated pricing
+UPDATE public.properties 
+SET 
+  pricing_tier = calculate_pricing_tier(listing_price),
+  calculated_price_per_night = calculate_price_per_night(calculate_pricing_tier(listing_price)),
+  pricing_override = false
+WHERE listing_price IS NOT NULL AND listing_price > 0;
+
+-- For properties without listing_price, set default values
+UPDATE public.properties 
+SET 
+  pricing_tier = NULL,
+  calculated_price_per_night = NULL,
+  pricing_override = false
+WHERE listing_price IS NULL OR listing_price <= 0;
 
 -- Add comments for documentation
 COMMENT ON COLUMN public.properties.pricing_tier IS 'Pricing tier based on listing price: under_500k, 500k_1m, 1m_1_5m, 1_5m_3m, 3m_5m, over_5m';
