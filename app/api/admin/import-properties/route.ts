@@ -227,6 +227,7 @@ function mapPropertyData(propertyData: any) {
     interior_features: propertyData.interior_features || propertyData.interior || null,
     original_image_urls: propertyData.images || propertyData.photos || propertyData.image_urls || null,
     description: propertyData.description || propertyData.remarks || propertyData.notes || '',
-    status: propertyData.status || propertyData.listing_status || 'active'
+    status: propertyData.status || propertyData.listing_status || 'active',
+    price_per_night: propertyData.price_per_night || propertyData.nightly_rate || 0
   }
 }
