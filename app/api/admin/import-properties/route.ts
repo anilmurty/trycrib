@@ -94,11 +94,14 @@ export async function POST(request: NextRequest) {
           const mappedProperty = await mapPropertyData(propertyData)
           
           // Check if property already exists (by address or MLS ID)
-          const { data: existingProperties } = await supabase
+          const { data: existingProperties, error: queryError } = await supabase
             .from('properties')
             .select('id, seller_id')
-            .or(`address.eq.${mappedProperty.address},mls_id.eq.${mappedProperty.mls_id}`)
+            .or(`address.eq."${mappedProperty.address}",mls_id.eq."${mappedProperty.mls_id}"`)
             .limit(1)
+          
+          console.log(`Query error:`, queryError)
+          console.log(`Query result:`, existingProperties)
           
           const existingProperty = existingProperties?.[0]
           
@@ -205,6 +208,23 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// Helper function to process original image URLs (extract href from JSON objects)
+async function processOriginalImageUrls(imageUrls: any[]): Promise<string[] | null> {
+  if (!imageUrls || imageUrls.length === 0) return null
+  
+  const processedUrls: string[] = []
+  
+  for (const imageUrl of imageUrls) {
+    if (typeof imageUrl === 'string') {
+      processedUrls.push(imageUrl)
+    } else if (imageUrl && typeof imageUrl === 'object' && imageUrl.href) {
+      processedUrls.push(imageUrl.href)
+    }
+  }
+  
+  return processedUrls.length > 0 ? processedUrls : null
+}
+
 // Helper function to process images and upload to Cloudinary
 async function processImages(imageUrls: any[]): Promise<string[] | null> {
   if (!imageUrls || imageUrls.length === 0) return null
@@ -258,7 +278,7 @@ async function mapPropertyData(propertyData: any) {
     building_info: propertyData.building_info || null,
     lot_info: propertyData.lot || null,
     interior_features: propertyData.interior_features || null,
-    original_image_urls: propertyData.images || propertyData.photos || propertyData.image_urls || null,
+    original_image_urls: await processOriginalImageUrls(propertyData.images || propertyData.photos || propertyData.image_urls || []),
     images: await processImages(propertyData.images || propertyData.photos || propertyData.image_urls || []),
     description: propertyData.description || propertyData.remarks || propertyData.notes || '',
     status: propertyData.status || propertyData.listing_status || 'active',
