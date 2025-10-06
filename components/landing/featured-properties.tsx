@@ -6,13 +6,14 @@ import { createClient } from "@/lib/supabase/server"
 export async function FeaturedProperties() {
   const supabase = await createClient()
 
-  // Fetch the 3 most expensive properties
+  // Fetch the 3 most expensive single-family properties
   const { data: properties } = await supabase
     .from("properties")
     .select("*")
     .eq("is_active", true)
     .in("verification_status", ["approved", "pending"])
     .not("listing_price", "is", null)
+    .eq("property_type", "Single Family")
     .order("listing_price", { ascending: false })
     .limit(3)
 
