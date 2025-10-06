@@ -194,9 +194,9 @@ export default async function PropertiesPage() {
             {displayProperties.map((property) => (
               <Card key={property.id} className="overflow-hidden border-0 shadow-md hover:shadow-xl transition-shadow">
                 <div className="aspect-[16/9] relative bg-gray-200 rounded-t-lg overflow-hidden">
-                  {property.images && property.images.length > 0 ? (
+                  {(property.images && property.images.length > 0) || (property.original_image_urls && property.original_image_urls.length > 0) ? (
                     <img
-                      src={property.images[0] || "/placeholder.svg"}
+                      src={property.images?.[0] || property.original_image_urls?.[0] || "/placeholder.svg"}
                       alt={property.title}
                       className="object-cover w-full h-full"
                     />
