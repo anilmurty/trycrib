@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { currentUser } from '@clerk/nextjs'
+import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -9,9 +9,9 @@ const supabase = createClient(supabaseUrl, serviceRoleKey)
 
 export async function GET(request: NextRequest) {
   try {
-    const user = await currentUser()
+    const { userId } = await auth()
     
-    if (!user) {
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
