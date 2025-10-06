@@ -19,6 +19,7 @@ interface Property {
   price_per_night: number
   listing_price: number | null
   images: string[] | null
+  original_image_urls: string[] | null
   verification_status: string
   profiles: {
     full_name: string | null
@@ -88,9 +89,9 @@ export function PropertyVerification() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="aspect-[16/9] rounded-lg overflow-hidden bg-slate-200">
-                    {property.images && property.images.length > 0 ? (
+                    {(property.images && property.images.length > 0) || (property.original_image_urls && property.original_image_urls.length > 0) ? (
                       <img
-                        src={property.images[0] || "/placeholder.svg"}
+                        src={property.images?.[0] || property.original_image_urls?.[0] || "/placeholder.svg"}
                         alt={property.title}
                         className="object-cover w-full h-full"
                       />

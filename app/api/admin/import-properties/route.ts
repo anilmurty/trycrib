@@ -101,6 +101,9 @@ export async function POST(request: NextRequest) {
             .limit(1)
           
           const existingProperty = existingProperties?.[0]
+          
+          console.log(`Property ${processed}: ${mappedProperty.address}`)
+          console.log(`Existing property found:`, existingProperty)
 
           if (existingProperty) {
             // Update existing property (only if it's a seed property or owned by the same seller)
@@ -206,9 +209,19 @@ export async function POST(request: NextRequest) {
 async function processImages(imageUrls: any[]): Promise<string[] | null> {
   if (!imageUrls || imageUrls.length === 0) return null
   
-  // For now, return null to indicate no processed images
-  // TODO: Implement Cloudinary upload when env vars are configured
-  // This will be different from original_image_urls once Cloudinary is set up
+  // Check if Cloudinary is configured
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME
+  const apiKey = process.env.CLOUDINARY_API_KEY
+  const apiSecret = process.env.CLOUDINARY_API_SECRET
+  
+  if (!cloudName || !apiKey || !apiSecret) {
+    console.log('Cloudinary not configured, returning null for processed images')
+    return null
+  }
+  
+  // For now, return null until we implement actual Cloudinary upload
+  // TODO: Implement actual Cloudinary upload logic
+  console.log('Cloudinary configured but upload not implemented yet')
   return null
 }
 
