@@ -43,10 +43,14 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    // Generate unique filename
-    const timestamp = Date.now()
+    // Generate filename with hash to prevent duplicates
     const fileExtension = file.name.split('.').pop()
-    const fileName = `${userId}_${timestamp}.${fileExtension}`
+    const fileHash = await crypto.subtle.digest('SHA-256', await file.arrayBuffer())
+    const hashString = Array.from(new Uint8Array(fileHash))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('')
+      .substring(0, 16) // Use first 16 characters for shorter filename
+    const fileName = `${userId}_${hashString}.${fileExtension}`
 
     // Try to upload to Supabase Storage
     // First, try to create the bucket if it doesn't exist
@@ -59,6 +63,28 @@ export async function POST(request: NextRequest) {
     // If bucket already exists, we'll get an error but that's okay
     if (bucketError && !bucketError.message.includes('already exists')) {
       console.error('Bucket creation error:', bucketError)
+    }
+
+    // Check if file already exists
+    const { data: existingFile } = await supabase.storage
+      .from('verification-documents')
+      .list('', {
+        search: fileName
+      })
+
+    if (existingFile && existingFile.length > 0) {
+      // File already exists, return the existing URL
+      const { data: urlData } = supabase.storage
+        .from('verification-documents')
+        .getPublicUrl(fileName)
+
+      return NextResponse.json({
+        success: true,
+        documentUrl: urlData.publicUrl,
+        fileName: fileName,
+        message: 'Document already uploaded. Verification is pending review.',
+        isDuplicate: true
+      })
     }
 
     const { data: uploadData, error: uploadError } = await supabase.storage
