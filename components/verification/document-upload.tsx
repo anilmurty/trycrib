@@ -93,7 +93,7 @@ export default function DocumentUpload({ userRole, onUpload, isUploading, upload
         title: "Loan Pre-Approval Verification",
         description: "Upload your loan pre-approval letter",
         requirements: [
-          "Pre-approval letter issued within the last 3 months",
+          "Pre-approval letter (within the last 3 months - NOT ENFORCED for testing)",
           "Must show pre-approval amount and lender name",
           "Document must be clear and readable",
           "File formats: PDF, JPG, or PNG (max 10MB)"
@@ -164,10 +164,10 @@ export default function DocumentUpload({ userRole, onUpload, isUploading, upload
             <div className="space-y-4">
               <Upload className="h-12 w-12 text-gray-400 mx-auto" />
               <div>
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-base font-medium text-gray-900">
                   Drop your document here, or{' '}
                   <button
-                    className="text-blue-600 hover:text-blue-500"
+                    className="text-blue-600 hover:text-blue-500 text-lg font-semibold cursor-pointer underline"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     browse
