@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { useUser } from '@clerk/nextjs'
+import { createClient } from '@/lib/supabase/client'
 import DocumentUpload from './document-upload'
 import VerificationStatus from './verification-status'
 import { Header } from '@/components/landing/header'
@@ -24,21 +25,42 @@ interface VerificationData {
 export default function VerificationPage() {
   const { user, isLoaded } = useUser()
   const router = useRouter()
+  const supabase = createClient()
   const [verificationData, setVerificationData] = useState<VerificationData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [showUpload, setShowUpload] = useState(false)
   const [uploadCompleted, setUploadCompleted] = useState(false)
-
-  // Determine user role from user metadata
-  const userRole = user?.publicMetadata?.role as 'buyer' | 'seller' || 'buyer'
+  const [userRole, setUserRole] = useState<'buyer' | 'seller'>('buyer')
 
   useEffect(() => {
     if (isLoaded && user) {
-      fetchVerificationStatus()
+      fetchUserRole()
     }
   }, [isLoaded, user])
+
+  const fetchUserRole = async () => {
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user?.id)
+        .single()
+
+      if (profile?.role) {
+        setUserRole(profile.role as 'buyer' | 'seller')
+      }
+      
+      // Fetch verification status after getting role
+      await fetchVerificationStatus()
+    } catch (error) {
+      console.error('Error fetching user role:', error)
+      // Default to buyer if error
+      setUserRole('buyer')
+      await fetchVerificationStatus()
+    }
+  }
 
   const fetchVerificationStatus = async () => {
     try {
