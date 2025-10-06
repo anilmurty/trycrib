@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Home, Users, Calendar, DollarSign } from "lucide-react"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
-import { PropertyVerification } from "./property-verification"
+import { PropertyVerificationPaginated } from "./property-verification-paginated"
 import { PropertyClaims } from "./property-claims"
 import { PropertyFeedImport } from "./property-feed-import"
 import { UserManagement } from "./user-management"
@@ -142,7 +142,7 @@ export function AdminDashboard({ userId, profile }: AdminDashboardProps) {
             </TabsList>
 
             <TabsContent value="properties">
-              <PropertyVerification />
+              <PropertyVerificationPaginated />
             </TabsContent>
 
             <TabsContent value="claims">
