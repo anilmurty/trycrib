@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Bed, Bath, Square, MapPin, DollarSign, ChevronLeft, ChevronRight } from "lucide-react"
 import { loadStripe } from "@stripe/stripe-js"
+import { formatPricingDisplay, getPricingTierInfo } from "@/lib/pricing"
 
 interface Property {
   id: string
@@ -29,6 +30,11 @@ interface Property {
   original_image_urls: string[] | null
   is_active: boolean
   verification_status: string
+  // Pricing system fields
+  pricing_tier?: 'under_500k' | '500k_1m' | '1m_1_5m' | '1_5m_3m' | '3m_5m' | 'over_5m' | null
+  calculated_price_per_night?: number | null
+  pricing_override?: boolean
+  custom_price_per_night?: number | null
 }
 
 interface PropertyDetailsProps {
@@ -63,7 +69,13 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
     const start = new Date(checkIn)
     const end = new Date(checkOut)
     const nights = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
-    return nights > 0 ? nights * property.price_per_night : 0
+    
+    // Use effective price per night (calculated or custom)
+    const effectivePricePerNight = property.pricing_override 
+      ? property.custom_price_per_night 
+      : property.calculated_price_per_night || property.price_per_night
+    
+    return nights > 0 && effectivePricePerNight ? nights * effectivePricePerNight : 0
   }
 
   const handleBooking = async () => {
@@ -258,10 +270,58 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
             <Card className="sticky top-4">
               <CardHeader>
                 <CardTitle>Book Your Stay</CardTitle>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold text-slate-900">${property.price_per_night}</span>
-                  <span className="text-slate-600">/ night</span>
-                </div>
+                {(() => {
+                  const effectivePricePerNight = property.pricing_override 
+                    ? property.custom_price_per_night 
+                    : property.calculated_price_per_night || property.price_per_night
+                  
+                  if (effectivePricePerNight) {
+                    return (
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-3xl font-bold text-slate-900">${effectivePricePerNight.toLocaleString()}</span>
+                        <span className="text-slate-600">/ night</span>
+                      </div>
+                    )
+                  } else if (property.pricing_tier === 'over_5m') {
+                    return (
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg font-semibold text-slate-600">Contact Seller for Pricing</span>
+                      </div>
+                    )
+                  } else {
+                    return (
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-3xl font-bold text-slate-900">${property.price_per_night.toLocaleString()}</span>
+                        <span className="text-slate-600">/ night</span>
+                      </div>
+                    )
+                  }
+                })()}
+                
+                {/* Pricing Tier Badge */}
+                {property.pricing_tier && (
+                  <div className="mt-2">
+                    {(() => {
+                      const tierInfo = getPricingTierInfo(property.pricing_tier)
+                      if (!tierInfo) return null
+                      
+                      const colorClasses = {
+                        green: 'bg-green-100 text-green-800',
+                        blue: 'bg-blue-100 text-blue-800',
+                        purple: 'bg-purple-100 text-purple-800',
+                        orange: 'bg-orange-100 text-orange-800',
+                        red: 'bg-red-100 text-red-800',
+                        gray: 'bg-gray-100 text-gray-800'
+                      }
+                      
+                      return (
+                        <Badge className={`text-xs ${colorClasses[tierInfo.color] || 'bg-gray-100 text-gray-800'}`}>
+                          {tierInfo.name}
+                        </Badge>
+                      )
+                    })()}
+                  </div>
+                )}
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -290,7 +350,12 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
                   <div className="pt-4 border-t">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-slate-600">
-                        ${property.price_per_night} x{" "}
+                        ${(() => {
+                          const effectivePricePerNight = property.pricing_override 
+                            ? property.custom_price_per_night 
+                            : property.calculated_price_per_night || property.price_per_night
+                          return effectivePricePerNight?.toLocaleString() || '0'
+                        })()} x{" "}
                         {Math.ceil(
                           (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24),
                         )}{" "}

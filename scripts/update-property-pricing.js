@@ -6,7 +6,28 @@
  */
 
 const { createClient } = require('@supabase/supabase-js')
-require('dotenv').config({ path: '.env.local' })
+
+// Read environment variables from .env.local
+const fs = require('fs')
+const path = require('path')
+
+function loadEnvFile() {
+  const envPath = path.join(__dirname, '..', '.env.local')
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8')
+    const envLines = envContent.split('\n')
+    
+    envLines.forEach(line => {
+      const [key, ...valueParts] = line.split('=')
+      if (key && valueParts.length > 0) {
+        const value = valueParts.join('=').trim()
+        process.env[key.trim()] = value
+      }
+    })
+  }
+}
+
+loadEnvFile()
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
