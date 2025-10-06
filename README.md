@@ -254,19 +254,6 @@ trycrib/
 └── public/               # Static assets
 \`\`\`
 
-## 🔧 Available Scripts
-
-\`\`\`bash
-# Development
-pnpm dev          # Start development server
-pnpm build        # Build for production
-pnpm start        # Start production server
-pnpm lint         # Run ESLint
-
-# Database
-# Run SQL scripts in Supabase dashboard
-\`\`\`
-
 ## 🔐 Authentication & Authorization
 
 The app uses Clerk.dev authentication with four user roles:
