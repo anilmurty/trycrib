@@ -9,12 +9,22 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [x] Email/password authentication
   - [x] Google OAuth integration
   - [x] Role-based user accounts (buyer/seller/admin)
-  - [ ] Email verification flow
+  - [x] Email verification flow with code input
+  - [x] CAPTCHA integration and duplicate signup prevention
   - [ ] Password reset functionality
 - [x] **User Profiles**
   - [x] Basic profile information
   - [x] Role-specific profile extensions
   - [x] Profile verification system
+- [x] **User Verification System** (✅ COMPLETED)
+  - [x] Document upload system with drag-and-drop interface
+  - [x] Role-specific verification requirements (buyers: pre-approval letters, sellers: property tax statements)
+  - [x] File deduplication and secure storage
+  - [x] Verification status tracking (pending, approved, rejected)
+  - [x] Dashboard integration with verification banners
+  - [x] Onboarding flow integration
+  - [x] Mobile-responsive verification pages
+  - [x] Skip verification option with persistent reminders
 - [x] **Authorization & Security**
   - [x] Route protection middleware
   - [x] Role-based access control
@@ -118,6 +128,22 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [x] Real-time data from database
   - [x] Consistent styling across pages
   - [x] Fast loading with lazy loading
+
+### Pricing System
+- [ ] **Tiered Pricing Structure** (Next Priority)
+  - [ ] Property value-based pricing tiers
+  - [ ] Under $500K: $500/night
+  - [ ] $500K-$1M: $750/night
+  - [ ] $1M-$1.5M: $1250/night
+  - [ ] $1.5M-$3M: $1500/night
+  - [ ] $3M-$5M: $2000/night
+  - [ ] Over $5M: "Contact Seller" pricing
+- [ ] **Pricing Integration**
+  - [ ] Dynamic price calculation based on property value
+  - [ ] Price display on property listings
+  - [ ] Price integration with booking flow
+  - [ ] Admin pricing management interface
+  - [ ] Price validation and error handling
 
 ### Search & Discovery
 - [ ] **Basic Search**
@@ -424,19 +450,21 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 
 ## 📈 Progress Summary
 
-**Overall Completion: ~55%**
+**Overall Completion: ~60%**
 
-- ✅ **Completed**: 40+ features (Landing page, authentication, property management, enhanced role system, property claiming system, property data management system, pagination & performance system)
+- ✅ **Completed**: 45+ features (Landing page, authentication, property management, enhanced role system, property claiming system, property data management system, pagination & performance system, user verification system)
 - 🚧 **In Testing**: 2+ features (Cloudinary integration, advanced search)
 - ⏳ **Planned**: 50+ features
 
 **Recent Major Accomplishments**:
+- ✅ **User Verification System** - Complete identity verification for buyers and sellers with document upload, status tracking, and dashboard integration
+- ✅ **Enhanced Authentication** - Fixed CAPTCHA, email verification, and mobile navigation issues
 - ✅ **Property Data Management System** - Successfully tested with 85 properties
 - ✅ **Pagination & Performance** - High-performance browsing with search/filtering
 - ✅ **Large Dataset Support** - Handles 200+ properties efficiently
 - ✅ **Rich Property Data** - 40+ images per property, detailed descriptions
 
-**Next Priority**: Cloudinary integration for image optimization, then booking system implementation.
+**Next Priority**: Tiered pricing system implementation, then Cloudinary integration and booking system.
 
 ---
 
