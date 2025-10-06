@@ -81,7 +81,7 @@ export function PropertyVerification() {
                       <p className="text-sm text-slate-600 mt-1">
                         {property.city}, {property.state}
                       </p>
-                      <p className="text-sm text-slate-600">Seller: {property.profiles.email}</p>
+                      <p className="text-sm text-slate-600">Seller: {property.profiles?.email || 'No seller assigned'}</p>
                     </div>
                     <Badge variant="secondary">Pending</Badge>
                   </div>
