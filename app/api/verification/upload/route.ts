@@ -48,7 +48,19 @@ export async function POST(request: NextRequest) {
     const fileExtension = file.name.split('.').pop()
     const fileName = `${userId}_${timestamp}.${fileExtension}`
 
-    // Upload to Supabase Storage
+    // Try to upload to Supabase Storage
+    // First, try to create the bucket if it doesn't exist
+    const { error: bucketError } = await supabase.storage.createBucket('verification-documents', {
+      public: false,
+      allowedMimeTypes: ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'],
+      fileSizeLimit: 10485760 // 10MB
+    })
+
+    // If bucket already exists, we'll get an error but that's okay
+    if (bucketError && !bucketError.message.includes('already exists')) {
+      console.error('Bucket creation error:', bucketError)
+    }
+
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('verification-documents')
       .upload(fileName, buffer, {
@@ -60,7 +72,7 @@ export async function POST(request: NextRequest) {
     if (uploadError) {
       console.error('Upload error:', uploadError)
       return NextResponse.json({ 
-        error: 'Failed to upload file' 
+        error: `Failed to upload file: ${uploadError.message}` 
       }, { status: 500 })
     }
 
