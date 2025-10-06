@@ -4,9 +4,12 @@ import React, { useState, useEffect } from 'react'
 import { useUser } from '@clerk/nextjs'
 import DocumentUpload from './document-upload'
 import VerificationStatus from './verification-status'
+import Header from '@/components/landing/header'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Shield, FileText, DollarSign } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Shield, FileText, DollarSign, ArrowLeft, CheckCircle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 interface VerificationData {
   verificationStatus: 'pending' | 'approved' | 'rejected' | 'expired' | null
@@ -20,11 +23,13 @@ interface VerificationData {
 
 export default function VerificationPage() {
   const { user, isLoaded } = useUser()
+  const router = useRouter()
   const [verificationData, setVerificationData] = useState<VerificationData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [showUpload, setShowUpload] = useState(false)
+  const [uploadCompleted, setUploadCompleted] = useState(false)
 
   // Determine user role from user metadata
   const userRole = user?.publicMetadata?.role as 'buyer' | 'seller' || 'buyer'
@@ -82,6 +87,7 @@ export default function VerificationPage() {
       })
       
       setShowUpload(false)
+      setUploadCompleted(true)
       
       // Refresh verification status
       await fetchVerificationStatus()
@@ -97,6 +103,15 @@ export default function VerificationPage() {
   const handleRetry = () => {
     setShowUpload(true)
     setUploadError(null)
+    setUploadCompleted(false)
+  }
+
+  const handleSkip = () => {
+    router.push('/dashboard')
+  }
+
+  const handleContinue = () => {
+    router.push('/dashboard')
   }
 
   const handleViewDocument = () => {
@@ -117,18 +132,32 @@ export default function VerificationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Shield className="h-8 w-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">Identity Verification</h1>
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      <div className="py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Back Button */}
+          <div className="mb-6">
+            <Button
+              variant="ghost"
+              onClick={() => router.back()}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Button>
           </div>
-          <p className="text-lg text-gray-600">
-            Verify your identity to access all platform features
-          </p>
-        </div>
+
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Shield className="h-8 w-8 text-blue-600" />
+              <h1 className="text-3xl font-bold text-gray-900">Identity Verification</h1>
+            </div>
+            <p className="text-lg text-gray-600">
+              Verify your identity to access all platform features
+            </p>
+          </div>
 
         {/* Role-specific information */}
         <Card className="mb-8">
@@ -170,15 +199,53 @@ export default function VerificationPage() {
           </CardContent>
         </Card>
 
+        {/* Upload Completion Success */}
+        {uploadCompleted && (
+          <Card className="mb-8 border-green-200 bg-green-50">
+            <CardContent className="p-6">
+              <div className="text-center">
+                <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-green-800 mb-2">
+                  Document Uploaded Successfully!
+                </h3>
+                <p className="text-green-700 mb-6">
+                  Your verification document has been uploaded and is now under review. 
+                  You'll receive an email notification once the verification is complete.
+                </p>
+                <div className="flex gap-4 justify-center">
+                  <Button onClick={handleContinue} className="bg-green-600 hover:bg-green-700">
+                    Continue to Dashboard
+                  </Button>
+                  <Button variant="outline" onClick={() => setUploadCompleted(false)}>
+                    View Status
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Verification Status or Upload Form */}
         {showUpload ? (
-          <DocumentUpload
-            userRole={userRole}
-            onUpload={handleUpload}
-            isUploading={isUploading}
-            uploadError={uploadError}
-          />
-        ) : (
+          <div className="space-y-6">
+            <DocumentUpload
+              userRole={userRole}
+              onUpload={handleUpload}
+              isUploading={isUploading}
+              uploadError={uploadError}
+            />
+            
+            {/* Skip Option */}
+            <div className="text-center">
+              <p className="text-sm text-gray-600 mb-4">
+                You can skip verification for now and complete it later from your dashboard.
+              </p>
+              <Button variant="outline" onClick={handleSkip}>
+                Skip for Now
+              </Button>
+            </div>
+          </div>
+        ) : !uploadCompleted ? (
           <VerificationStatus
             userRole={userRole}
             verificationStatus={verificationData?.verificationStatus || null}
@@ -188,7 +255,7 @@ export default function VerificationPage() {
             onRetry={handleRetry}
             onViewDocument={verificationData?.documentUrl ? handleViewDocument : undefined}
           />
-        )}
+        ) : null}
 
         {/* Additional Information */}
         {verificationData?.preapprovalAmount && userRole === 'buyer' && (
@@ -227,6 +294,7 @@ export default function VerificationPage() {
             </CardContent>
           </Card>
         )}
+        </div>
       </div>
     </div>
   )
