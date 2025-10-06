@@ -35,33 +35,33 @@ export function AdminDashboard({ userId, profile }: AdminDashboardProps) {
     totalRevenue: 0,
   })
 
+  const refreshStats = async () => {
+    const { count: totalUsers } = await supabase.from("profiles").select("*", { count: "exact", head: true })
+
+    const { count: totalProperties } = await supabase.from("properties").select("*", { count: "exact", head: true })
+
+    const { count: pendingVerifications } = await supabase
+      .from("properties")
+      .select("*", { count: "exact", head: true })
+      .eq("verification_status", "pending")
+
+    const { count: totalBookings } = await supabase.from("bookings").select("*", { count: "exact", head: true })
+
+    const { data: bookings } = await supabase.from("bookings").select("total_price").eq("status", "confirmed")
+
+    const totalRevenue = bookings?.reduce((sum, booking) => sum + (booking.total_price || 0), 0) || 0
+
+    setStats({
+      totalUsers: totalUsers || 0,
+      totalProperties: totalProperties || 0,
+      pendingVerifications: pendingVerifications || 0,
+      totalBookings: totalBookings || 0,
+      totalRevenue,
+    })
+  }
+
   useEffect(() => {
-    async function fetchStats() {
-      const { count: totalUsers } = await supabase.from("profiles").select("*", { count: "exact", head: true })
-
-      const { count: totalProperties } = await supabase.from("properties").select("*", { count: "exact", head: true })
-
-      const { count: pendingVerifications } = await supabase
-        .from("properties")
-        .select("*", { count: "exact", head: true })
-        .eq("verification_status", "pending")
-
-      const { count: totalBookings } = await supabase.from("bookings").select("*", { count: "exact", head: true })
-
-      const { data: bookings } = await supabase.from("bookings").select("total_price").eq("status", "confirmed")
-
-      const totalRevenue = bookings?.reduce((sum, booking) => sum + (booking.total_price || 0), 0) || 0
-
-      setStats({
-        totalUsers: totalUsers || 0,
-        totalProperties: totalProperties || 0,
-        pendingVerifications: pendingVerifications || 0,
-        totalBookings: totalBookings || 0,
-        totalRevenue,
-      })
-    }
-
-    fetchStats()
+    refreshStats()
   }, [supabase])
 
   const handleSignOut = async () => {
@@ -152,7 +152,8 @@ export function AdminDashboard({ userId, profile }: AdminDashboardProps) {
             <TabsContent value="import">
               <PropertyFeedImport 
                 currentUserId={userId} 
-                currentUserRole={profile.role} 
+                currentUserRole={profile.role}
+                onImportComplete={refreshStats}
               />
             </TabsContent>
 

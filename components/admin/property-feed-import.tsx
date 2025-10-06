@@ -12,9 +12,10 @@ import { PropertyImport } from "@/lib/types"
 interface PropertyFeedImportProps {
   currentUserId: string
   currentUserRole: string
+  onImportComplete?: () => void
 }
 
-export function PropertyFeedImport({ currentUserId, currentUserRole }: PropertyFeedImportProps) {
+export function PropertyFeedImport({ currentUserId, currentUserRole, onImportComplete }: PropertyFeedImportProps) {
   const [imports, setImports] = useState<PropertyImport[]>([])
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
@@ -88,6 +89,12 @@ export function PropertyFeedImport({ currentUserId, currentUserRole }: PropertyF
       if (response.ok) {
         // Refresh imports list
         await fetchImports()
+        
+        // Trigger stats refresh in parent component
+        if (onImportComplete) {
+          onImportComplete()
+        }
+        
         setSelectedFile(null)
         if (fileInputRef.current) {
           fileInputRef.current.value = ''
