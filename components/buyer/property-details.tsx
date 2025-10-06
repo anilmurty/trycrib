@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { Bed, Bath, Square, MapPin, DollarSign } from "lucide-react"
+import { Bed, Bath, Square, MapPin, DollarSign, ChevronLeft, ChevronRight } from "lucide-react"
 import { loadStripe } from "@stripe/stripe-js"
 
 interface Property {
@@ -26,6 +26,7 @@ interface Property {
   listing_price: number | null
   amenities: string[] | null
   images: string[] | null
+  original_image_urls: string[] | null
   is_active: boolean
   verification_status: string
 }
@@ -42,6 +43,20 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
   const [error, setError] = useState<string | null>(null)
   const [checkIn, setCheckIn] = useState("")
   const [checkOut, setCheckOut] = useState("")
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+
+  // Get available images (prioritize images over original_image_urls)
+  const availableImages = property.images && property.images.length > 0 
+    ? property.images 
+    : property.original_image_urls || []
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % availableImages.length)
+  }
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + availableImages.length) % availableImages.length)
+  }
 
   const calculateTotal = () => {
     if (!checkIn || !checkOut) return 0
@@ -110,17 +125,55 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
 
   return (
     <div className="bg-slate-50 py-8">
-      <div className="container max-w-6xl">
+      <div className="container max-w-6xl mx-auto px-4">
         <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-6">
-            {/* Images */}
-            <div className="aspect-[16/9] rounded-lg overflow-hidden bg-slate-200">
-              {property.images && property.images.length > 0 ? (
-                <img
-                  src={property.images[0] || "/placeholder.svg"}
-                  alt={property.title}
-                  className="object-cover w-full h-full"
-                />
+            {/* Image Carousel */}
+            <div className="relative aspect-[16/9] rounded-lg overflow-hidden bg-slate-200">
+              {availableImages.length > 0 ? (
+                <>
+                  <img
+                    src={availableImages[currentImageIndex]}
+                    alt={property.title}
+                    className="object-cover w-full h-full"
+                  />
+                  
+                  {/* Navigation arrows */}
+                  {availableImages.length > 1 && (
+                    <>
+                      <button
+                        onClick={prevImage}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                        aria-label="Previous image"
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+                      <button
+                        onClick={nextImage}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                        aria-label="Next image"
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+                    </>
+                  )}
+                  
+                  {/* Image indicators */}
+                  {availableImages.length > 1 && (
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                      {availableImages.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentImageIndex(index)}
+                          className={`w-2 h-2 rounded-full transition-colors ${
+                            index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                          }`}
+                          aria-label={`Go to image ${index + 1}`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className="flex items-center justify-center h-full">
                   <span className="text-slate-400">No image available</span>
