@@ -74,6 +74,11 @@ export interface Property {
   lot_info?: Record<string, any> | null
   interior_features?: string[] | null
   original_image_urls?: string[] | null
+  // Pricing system fields
+  pricing_tier?: 'under_500k' | '500k_1m' | '1m_1_5m' | '1_5m_3m' | '3m_5m' | 'over_5m' | null
+  calculated_price_per_night?: number | null
+  pricing_override?: boolean
+  custom_price_per_night?: number | null
 }
 
 export interface PropertyImport {
