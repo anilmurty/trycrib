@@ -206,29 +206,20 @@ export async function POST(request: NextRequest) {
 async function processImages(imageUrls: any[]): Promise<string[] | null> {
   if (!imageUrls || imageUrls.length === 0) return null
   
-  // For now, just return the original URLs
+  // For now, return null to indicate no processed images
   // TODO: Implement Cloudinary upload when env vars are configured
-  const processedImages: string[] = []
-  
-  for (const imageUrl of imageUrls) {
-    if (typeof imageUrl === 'string') {
-      processedImages.push(imageUrl)
-    } else if (imageUrl && typeof imageUrl === 'object' && imageUrl.href) {
-      processedImages.push(imageUrl.href)
-    }
-  }
-  
-  return processedImages.length > 0 ? processedImages : null
+  // This will be different from original_image_urls once Cloudinary is set up
+  return null
 }
 
 // Helper function to map property data from feed to our schema
 async function mapPropertyData(propertyData: any) {
   // Extract city, state, zip from address string
+  // Format: "356 W W St, Washougal, WA, 98671"
   const addressParts = propertyData.address?.split(', ') || []
   const city = addressParts[1] || ''
-  const stateZip = addressParts[2]?.split(' ') || []
-  const state = stateZip[0] || ''
-  const zip_code = stateZip[1] || ''
+  const state = addressParts[2] || ''
+  const zip_code = addressParts[3] || ''
 
   return {
     title: propertyData.title || propertyData.name || propertyData.property_title || 
