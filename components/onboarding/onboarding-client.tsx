@@ -44,12 +44,8 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
       }
 
       console.log("API call successful, redirecting based on role")
-      // Redirect to verification for buyers, dashboard for sellers
-      if (role === "buyer") {
-        router.push("/verification")
-      } else {
-        router.push("/dashboard")
-      }
+      // Redirect both buyers and sellers to verification
+      router.push("/verification")
     } catch (err) {
       console.error("Error in handleRoleSelection:", err)
       setError("Something went wrong. Please try again.")
