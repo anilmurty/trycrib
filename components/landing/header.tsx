@@ -42,16 +42,16 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="text-xl font-semibold text-gray-900 cursor-pointer">
+        <Link href="/" className="text-3xl font-bold text-gray-900 cursor-pointer">
           TryCrib
         </Link>
 
         {!isSignedIn && (
           <nav className="hidden items-center gap-8 md:flex">
-            <Link href="/properties" className="text-sm text-gray-600 hover:text-gray-900 cursor-pointer">
+            <Link href="/properties" className="text-lg font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
               Browse Properties
             </Link>
-            <Link href="/how-it-works" className="text-sm text-gray-600 hover:text-gray-900 cursor-pointer">
+            <Link href="/how-it-works" className="text-lg font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
               How it Works
             </Link>
           </nav>
