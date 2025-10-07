@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -26,22 +26,84 @@ interface TierConfig {
 
 export function PricingTiersConfig() {
   const [tiers, setTiers] = useState<TierConfig[]>([])
+  const [originalTiers, setOriginalTiers] = useState<TierConfig[]>([])
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
+  const [isProcessing, setIsProcessing] = useState(false)
+  const processingRef = useRef(false)
+  const [propertyCounts, setPropertyCounts] = useState<Record<string, number>>({})
 
   useEffect(() => {
-    // Initialize tiers from the pricing library
-    const initialTiers = Object.values(PRICING_TIERS).map(tier => ({
-      tier: tier.tier,
-      name: tier.name,
-      description: tier.description,
-      pricePerNight: tier.pricePerNight,
-      color: tier.color,
-      minPrice: tier.minPrice,
-      maxPrice: tier.maxPrice
-    }))
-    setTiers(initialTiers)
+    // Load current pricing tiers from database
+    loadPricingTiers()
+    // Load property counts
+    loadPropertyCounts()
   }, [])
+
+  const loadPricingTiers = async () => {
+    try {
+      console.log('📊 Loading current pricing tiers from database...')
+      const response = await fetch('/api/admin/pricing-tiers')
+      if (!response.ok) {
+        throw new Error('Failed to load pricing tiers')
+      }
+      
+      const result = await response.json()
+      if (result.success && result.data) {
+        console.log('✅ Loaded pricing tiers from database:', result.data)
+        setTiers(result.data)
+        setOriginalTiers(result.data) // Store original for comparison
+      } else {
+        // Fallback to hardcoded values if database fetch fails
+        console.log('⚠️ Using fallback pricing tiers')
+        const fallbackTiers = Object.values(PRICING_TIERS).map(tier => ({
+          tier: tier.tier,
+          name: tier.name,
+          description: tier.description,
+          pricePerNight: tier.pricePerNight,
+          color: tier.color,
+          minPrice: tier.minPrice,
+          maxPrice: tier.maxPrice
+        }))
+        setTiers(fallbackTiers)
+      }
+    } catch (error) {
+      console.error('❌ Error loading pricing tiers:', error)
+      // Fallback to hardcoded values
+      const fallbackTiers = Object.values(PRICING_TIERS).map(tier => ({
+        tier: tier.tier,
+        name: tier.name,
+        description: tier.description,
+        pricePerNight: tier.pricePerNight,
+        color: tier.color,
+        minPrice: tier.minPrice,
+        maxPrice: tier.maxPrice
+      }))
+      setTiers(fallbackTiers)
+    }
+  }
+
+  const loadPropertyCounts = async () => {
+    try {
+      console.log('📊 Loading property counts by tier...')
+      const response = await fetch('/api/admin/pricing-tiers/property-counts')
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch property counts')
+      }
+
+      const result = await response.json()
+      console.log('✅ Property counts fetched successfully:', result.data)
+      
+      if (result.success && result.data) {
+        setPropertyCounts(result.data)
+      }
+    } catch (error) {
+      console.error('❌ Error loading property counts:', error)
+      // Set empty counts as fallback
+      setPropertyCounts({})
+    }
+  }
 
   const handleTierChange = (tierKey: PricingTier, field: keyof TierConfig, value: string | number) => {
     setTiers(prev => prev.map(tier => 
@@ -51,14 +113,68 @@ export function PricingTiersConfig() {
     ))
   }
 
-  const handleSaveAll = async () => {
+  // Function to detect which tiers have changed
+  const getChangedTiers = (): string[] => {
+    console.log('🔍 Checking for changed tiers...')
+    console.log('📊 Current tiers:', tiers.map(t => `${t.tier}: $${t.pricePerNight}`))
+    console.log('📊 Original tiers:', originalTiers.map(t => `${t.tier}: $${t.pricePerNight}`))
+    
+    if (originalTiers.length === 0) {
+      console.log('⚠️ No original tiers to compare against')
+      return []
+    }
+    
+    const changedTiers: string[] = []
+    
+    for (const currentTier of tiers) {
+      const originalTier = originalTiers.find(t => t.tier === currentTier.tier)
+      if (!originalTier) {
+        console.log(`⚠️ No original tier found for ${currentTier.tier}`)
+        continue
+      }
+      
+      // Check if pricePerNight has changed
+      if (currentTier.pricePerNight !== originalTier.pricePerNight) {
+        console.log(`✅ Tier ${currentTier.tier} changed: ${originalTier.pricePerNight} → ${currentTier.pricePerNight}`)
+        changedTiers.push(currentTier.tier)
+      } else {
+        console.log(`➖ Tier ${currentTier.tier} unchanged: ${currentTier.pricePerNight}`)
+      }
+    }
+    
+    console.log('🎯 Detected changed tiers:', changedTiers)
+    return changedTiers
+  }
+
+  const handleSaveAndRecalculate = async () => {
+    // Prevent multiple simultaneous operations using ref for immediate check
+    if (processingRef.current) {
+      console.log('⚠️ Operation already in progress, ignoring request')
+      return
+    }
+
+    console.log('🚀 Starting operation - setting states to true')
+    processingRef.current = true
     setSaving(true)
+    setIsProcessing(true)
     setMessage(null)
 
     try {
-      console.log('💾 Saving pricing tiers to database...', tiers)
+      console.log('🚀 Starting save tiers and recalculate pricing...')
       
-      const response = await fetch('/api/admin/pricing-tiers', {
+      // Get changed tiers BEFORE saving (so we can detect what changed)
+      const changedTiers = getChangedTiers()
+      console.log('🔍 Detected changed tiers before save:', changedTiers)
+      
+      // Also log to help debug
+      console.log('🔍 DEBUG: originalTiers length:', originalTiers.length)
+      console.log('🔍 DEBUG: current tiers length:', tiers.length)
+      console.log('🔍 DEBUG: originalTiers:', originalTiers.map(t => `${t.tier}: $${t.pricePerNight}`))
+      console.log('🔍 DEBUG: current tiers:', tiers.map(t => `${t.tier}: $${t.pricePerNight}`))
+      
+      // First save the tiers to database
+      console.log('💾 Saving pricing tiers to database...', tiers)
+      const saveResponse = await fetch('/api/admin/pricing-tiers', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -66,18 +182,41 @@ export function PricingTiersConfig() {
         body: JSON.stringify({ tiers }),
       })
 
-      if (!response.ok) {
+      if (!saveResponse.ok) {
         throw new Error('Failed to save pricing tiers')
       }
 
-      const result = await response.json()
-      console.log('✅ Pricing tiers saved successfully:', result)
-      setMessage({ type: 'success', text: 'Pricing tiers updated successfully!' })
+      const saveResult = await saveResponse.json()
+      console.log('✅ Pricing tiers saved successfully:', saveResult)
+
+      // Recalculate only the tiers that were changed
+      console.log('🔄 Starting bulk recalculate pricing...', changedTiers.length > 0 ? `for changed tiers: ${changedTiers.join(', ')}` : 'for all tiers')
+      
+      const recalcResponse = await fetch('/api/admin/bulk-recalculate-pricing', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ affectedTiers: changedTiers }),
+      })
+
+      if (!recalcResponse.ok) {
+        throw new Error('Failed to recalculate pricing')
+      }
+
+      const recalcResult = await recalcResponse.json()
+      console.log('✅ Bulk recalculate completed:', recalcResult)
+      setOriginalTiers(tiers) // Update original tiers after successful save
+      // Refresh property counts after recalculation
+      await loadPropertyCounts()
+      setMessage({ type: 'success', text: recalcResult.message || 'Tiers saved and pricing recalculated successfully!' })
     } catch (error) {
-      console.error("❌ Error saving pricing tiers:", error)
-      setMessage({ type: 'error', text: 'Failed to update pricing tiers' })
+      console.error("❌ Error in save and recalculate:", error)
+      setMessage({ type: 'error', text: 'Failed to save tiers and recalculate pricing' })
     } finally {
+      processingRef.current = false
       setSaving(false)
+      setIsProcessing(false)
     }
   }
 
@@ -95,44 +234,17 @@ export function PricingTiersConfig() {
     setMessage({ type: 'success', text: 'Reset to default pricing tiers' })
   }
 
-  const handleSaveAndRecalculate = async () => {
-    setSaving(true)
-    setMessage(null)
-
-    try {
-      console.log('🚀 Starting save tiers and recalculate pricing...')
-      
-      // First save the tiers (in a real implementation, you'd save to database)
-      console.log('💾 Saving pricing tiers...')
-      await new Promise(resolve => setTimeout(resolve, 500)) // Simulate save delay
-      console.log('✅ Pricing tiers saved successfully')
-
-      // Then recalculate pricing
-      console.log('🔄 Starting bulk recalculate pricing...')
-      const response = await fetch('/api/admin/bulk-recalculate-pricing', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to recalculate pricing')
-      }
-
-      const result = await response.json()
-      console.log('✅ Bulk recalculate completed:', result)
-      setMessage({ type: 'success', text: result.message || 'Tiers saved and pricing recalculated successfully!' })
-    } catch (error) {
-      console.error("❌ Error in save and recalculate:", error)
-      setMessage({ type: 'error', text: 'Failed to save tiers and recalculate pricing' })
-    } finally {
-      setSaving(false)
-    }
-  }
 
   const handleBulkRecalculate = async () => {
+    // Prevent multiple simultaneous operations using ref for immediate check
+    if (processingRef.current) {
+      console.log('⚠️ Operation already in progress, ignoring request')
+      return
+    }
+
+    processingRef.current = true
     setSaving(true)
+    setIsProcessing(true)
     setMessage(null)
 
     try {
@@ -150,19 +262,24 @@ export function PricingTiersConfig() {
 
       const result = await response.json()
       console.log('✅ Bulk recalculate completed:', result)
+      // Refresh property counts after recalculation
+      await loadPropertyCounts()
       setMessage({ type: 'success', text: result.message || 'Pricing recalculated successfully!' })
     } catch (error) {
       console.error("❌ Error recalculating pricing:", error)
       setMessage({ type: 'error', text: 'Failed to recalculate pricing' })
     } finally {
+      processingRef.current = false
       setSaving(false)
+      setIsProcessing(false)
     }
   }
 
   const handleRefreshData = () => {
-    // Reset to defaults to refresh the data
-    handleResetToDefaults()
-    setMessage({ type: 'success', text: 'Data refreshed successfully!' })
+    // Reload from database
+    loadPricingTiers()
+    loadPropertyCounts()
+    setMessage({ type: 'success', text: 'Data refreshed from database!' })
   }
 
   const getTierColor = (color: string) => {
@@ -187,23 +304,25 @@ export function PricingTiersConfig() {
         </div>
         <div className="flex gap-2">
           <Button 
-            onClick={handleSaveAll}
-            disabled={saving}
+            onClick={handleSaveAndRecalculate}
+            disabled={saving || isProcessing}
             className="flex items-center gap-2"
           >
-            <Save className="h-4 w-4" />
-            {saving ? 'Saving...' : 'Save Tiers'}
+            <RefreshCw className={`h-4 w-4 ${(saving || isProcessing) ? 'animate-spin' : ''}`} />
+            {(saving || isProcessing) ? 'Processing...' : 'Save & Recalculate'}
           </Button>
           <Button 
-            onClick={handleSaveAndRecalculate}
-            disabled={saving}
+            onClick={handleBulkRecalculate}
+            disabled={saving || isProcessing}
+            variant="outline"
             className="flex items-center gap-2"
           >
-            <RefreshCw className={`h-4 w-4 ${saving ? 'animate-spin' : ''}`} />
-            {saving ? 'Processing...' : 'Save & Recalculate'}
+            <RefreshCw className="h-4 w-4" />
+            Recalculate All
           </Button>
           <Button 
             onClick={handleRefreshData}
+            disabled={saving || isProcessing}
             variant="outline"
             className="flex items-center gap-2"
           >
@@ -212,6 +331,7 @@ export function PricingTiersConfig() {
           </Button>
           <Button 
             onClick={handleResetToDefaults}
+            disabled={saving || isProcessing}
             variant="outline"
             className="flex items-center gap-2"
           >
@@ -220,6 +340,14 @@ export function PricingTiersConfig() {
           </Button>
         </div>
       </div>
+
+      {/* Processing Indicator */}
+      {(saving || isProcessing) && (
+        <div className="p-4 rounded-lg flex items-center gap-2 bg-blue-50 text-blue-800 border border-blue-200">
+          <RefreshCw className="h-5 w-5 animate-spin" />
+          <span>Processing pricing updates... This may take a few minutes for large datasets.</span>
+        </div>
+      )}
 
       {/* Message */}
       {message && (
@@ -262,7 +390,7 @@ export function PricingTiersConfig() {
             </CardHeader>
             
             <CardContent>
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="grid gap-4 md:grid-cols-4">
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-700">Price Range</Label>
                   <div className="flex items-center gap-2">
@@ -305,6 +433,15 @@ export function PricingTiersConfig() {
                   <p className="text-sm text-gray-600">
                     {tier.pricePerNight ? `$${tier.pricePerNight.toLocaleString()}/night` : 'Contact listing agent'}
                   </p>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">Properties</Label>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="text-sm">
+                      {propertyCounts[tier.tier] || 0} properties
+                    </Badge>
+                  </div>
                 </div>
               </div>
             </CardContent>

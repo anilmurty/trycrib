@@ -133,15 +133,68 @@ export function AdminDashboard({ userId, profile }: AdminDashboardProps) {
             </Card>
           </div>
 
-          <Tabs defaultValue="properties" className="space-y-6">
-            <TabsList>
-              <TabsTrigger value="properties">Property Verification</TabsTrigger>
-              <TabsTrigger value="claims">Property Claims</TabsTrigger>
-              <TabsTrigger value="import">Feed Import</TabsTrigger>
-              <TabsTrigger value="pricing">Pricing Management</TabsTrigger>
-              <TabsTrigger value="users">User Management</TabsTrigger>
-              <TabsTrigger value="bookings">Bookings</TabsTrigger>
+      <Tabs defaultValue="properties" className="space-y-6">
+        <div className="space-y-4">
+          <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
+            <TabsList className="grid w-full grid-cols-6 h-14 bg-gray-50 p-1">
+              <TabsTrigger 
+                value="properties" 
+                className="text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
+              >
+                <div className="flex flex-col items-center gap-1">
+                  <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                  <span>Property Verification</span>
+                </div>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="claims" 
+                className="text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
+              >
+                <div className="flex flex-col items-center gap-1">
+                  <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                  <span>Property Claims</span>
+                </div>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="import" 
+                className="text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
+              >
+                <div className="flex flex-col items-center gap-1">
+                  <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                  <span>Feed Import</span>
+                </div>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="pricing" 
+                className="text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200 data-[state=active]:ring-2 data-[state=active]:ring-blue-100"
+              >
+                <div className="flex flex-col items-center gap-1">
+                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                  <span>Pricing Management</span>
+                  <span className="text-xs text-gray-500">(2 sub-sections)</span>
+                </div>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="users" 
+                className="text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
+              >
+                <div className="flex flex-col items-center gap-1">
+                  <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                  <span>User Management</span>
+                </div>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="bookings" 
+                className="text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
+              >
+                <div className="flex flex-col items-center gap-1">
+                  <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
+                  <span>Bookings</span>
+                </div>
+              </TabsTrigger>
             </TabsList>
+          </div>
+        </div>
 
             <TabsContent value="properties">
               <PropertyVerificationPaginated />
@@ -159,9 +212,30 @@ export function AdminDashboard({ userId, profile }: AdminDashboardProps) {
               />
             </TabsContent>
 
-            <TabsContent value="pricing">
-              <PricingManagement />
-            </TabsContent>
+        <TabsContent value="pricing" className="space-y-6">
+          <div className="bg-gradient-to-r from-blue-50 to-green-50 border border-gray-200 rounded-lg p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">$</span>
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Pricing Management</h2>
+                <p className="text-gray-600">Configure pricing tiers and manage property pricing across the platform</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 text-sm text-gray-500">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                <span>Pricing Tiers Configuration</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                <span>Individual Property Management</span>
+              </div>
+            </div>
+          </div>
+          <PricingManagement />
+        </TabsContent>
 
             <TabsContent value="users">
               <UserManagement currentUserId={userId} currentUserRole={profile.role} />

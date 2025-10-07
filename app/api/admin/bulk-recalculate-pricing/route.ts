@@ -37,6 +37,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Parse request body to get specific tiers to recalculate
+    let body = {}
+    try {
+      body = await request.json()
+    } catch (error) {
+      console.log('📝 No request body provided, will recalculate all tiers')
+    }
+
+    const { affectedTiers } = body as { affectedTiers?: string[] }
+    console.log('📨 Request body:', body)
+    console.log('🎯 Affected tiers from request:', affectedTiers)
+
     console.log('✅ User authenticated, initializing Supabase client...')
     const supabase = await createClient()
 
@@ -62,12 +74,47 @@ export async function POST(request: NextRequest) {
 
     console.log('📊 Using pricing tiers:', tiers.map(t => `${t.tier}: $${t.pricePerNight}/night`).join(', '))
 
+    // If specific tiers are provided, only recalculate those ranges
+    let priceRangeFilter = {}
+    if (affectedTiers && affectedTiers.length > 0) {
+      console.log(`🎯 Recalculating only affected tiers: ${affectedTiers.join(', ')}`)
+      
+      // Find the price ranges for the affected tiers
+      const affectedTierRanges = tiers.filter(tier => affectedTiers.includes(tier.tier))
+      console.log('🔍 Affected tier ranges:', affectedTierRanges.map(t => `${t.tier}: $${t.minPrice}-${t.maxPrice || '∞'}`))
+      
+      const minPrice = Math.min(...affectedTierRanges.map(t => t.minPrice))
+      const maxPrice = Math.max(...affectedTierRanges.map(t => t.maxPrice || Infinity))
+      
+      console.log(`📊 Price range filter: $${minPrice} - $${maxPrice === Infinity ? '∞' : maxPrice}`)
+      
+      priceRangeFilter = {
+        gte: minPrice,
+        lte: maxPrice === Infinity ? null : maxPrice
+      }
+    } else {
+      console.log('🔄 Recalculating all properties (no specific tiers provided)')
+    }
+
     console.log('📋 Fetching properties that need pricing recalculation...')
-    // Fetch all properties that are not using custom pricing
-    const { data: properties, error: fetchError } = await supabase
+    // Build query based on whether we're filtering by price range
+    let query = supabase
       .from('properties')
       .select('id, listing_price, pricing_override')
       .eq('pricing_override', false)
+      .not('listing_price', 'is', null)
+      .gt('listing_price', 0)
+
+    if (priceRangeFilter.gte !== undefined) {
+      console.log(`🔍 Adding filter: listing_price >= ${priceRangeFilter.gte}`)
+      query = query.gte('listing_price', priceRangeFilter.gte)
+    }
+    if (priceRangeFilter.lte !== null && priceRangeFilter.lte !== undefined) {
+      console.log(`🔍 Adding filter: listing_price <= ${priceRangeFilter.lte}`)
+      query = query.lte('listing_price', priceRangeFilter.lte)
+    }
+
+    const { data: properties, error: fetchError } = await query
 
     if (fetchError) {
       console.error('❌ Error fetching properties:', fetchError)

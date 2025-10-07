@@ -213,82 +213,41 @@ export function PricingManagement() {
 
   return (
     <div className="space-y-6">
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="tiers">Pricing Tiers</TabsTrigger>
-          <TabsTrigger value="properties">Property Management</TabsTrigger>
-        </TabsList>
+      {/* Breadcrumb indicator */}
+      <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+        <span className="font-medium text-gray-700">Admin Dashboard</span>
+        <span>›</span>
+        <span className="font-medium text-blue-600">Pricing Management</span>
+        <span>›</span>
+        <span className="text-gray-500">Sub-sections below</span>
+      </div>
 
-        <TabsContent value="overview" className="space-y-6">
-          {/* Stats Overview */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalProperties}</div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Auto-Priced</CardTitle>
-                <CheckCircle className="h-4 w-4 text-green-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-green-600">{stats.autoPriced}</div>
-                <p className="text-xs text-muted-foreground">
-                  {stats.totalProperties > 0 ? Math.round((stats.autoPriced / stats.totalProperties) * 100) : 0}% of total
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Custom-Priced</CardTitle>
-                <Settings className="h-4 w-4 text-blue-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-blue-600">{stats.customPriced}</div>
-                <p className="text-xs text-muted-foreground">
-                  {stats.totalProperties > 0 ? Math.round((stats.customPriced / stats.totalProperties) * 100) : 0}% of total
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Pricing Tiers</CardTitle>
-                <AlertCircle className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{Object.keys(stats.tierDistribution).length}</div>
-                <p className="text-xs text-muted-foreground">Active tiers</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Tier Distribution */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Pricing Tier Distribution</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
-                {Object.entries(stats.tierDistribution).map(([tier, count]) => (
-                  <div key={tier} className="flex items-center justify-between p-3 border rounded-lg">
-                    <span className="font-medium">{tier}</span>
-                    <Badge variant="secondary">{count} properties</Badge>
-                  </div>
-                ))}
+      <Tabs defaultValue="tiers" className="space-y-6">
+        <div className="bg-white border border-gray-200 rounded-lg p-1 shadow-sm">
+          <TabsList className="grid w-full grid-cols-2 h-12 bg-transparent">
+            <TabsTrigger 
+              value="tiers" 
+              className="text-sm font-semibold data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-500 data-[state=active]:shadow-sm"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                <span>Pricing Tiers</span>
+                <span className="text-xs text-gray-500">(Configure rates)</span>
               </div>
-            </CardContent>
-          </Card>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="properties" 
+              className="text-sm font-semibold data-[state=active]:bg-green-50 data-[state=active]:text-green-700 data-[state=active]:border-b-2 data-[state=active]:border-green-500 data-[state=active]:shadow-sm"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                <span>Property Management</span>
+                <span className="text-xs text-gray-500">(Individual edits)</span>
+              </div>
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-        </TabsContent>
 
         <TabsContent value="tiers">
           <PricingTiersConfig />
