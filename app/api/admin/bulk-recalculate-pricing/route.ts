@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Fetch all properties that are not using custom pricing
     const { data: properties, error: fetchError } = await supabase
