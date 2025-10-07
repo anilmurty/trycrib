@@ -207,12 +207,8 @@ export function PropertiesList() {
                   )}
                 </div>
                 <CardContent className="p-3">
-                  <h3 className="font-semibold text-base text-gray-900">{property.title}</h3>
-                  <p className="text-sm text-gray-600 mt-0.5">
-                    {property.city}, {property.state}
-                  </p>
                   {/* Property details in main title */}
-                  <div className="flex items-center gap-4 text-sm font-bold text-gray-700 mt-2">
+                  <div className="flex items-center gap-4 text-sm font-bold text-gray-700">
                     {property.bedrooms && (
                       <span>{property.bedrooms} beds</span>
                     )}
@@ -223,6 +219,9 @@ export function PropertiesList() {
                       <span>{property.square_feet.toLocaleString()} sqft</span>
                     )}
                   </div>
+                  <p className="text-sm font-bold text-gray-900 mt-1">
+                    {property.city}, {property.state}
+                  </p>
                   
                   {/* Pricing Information */}
                   <div className="mt-2 space-y-1">
@@ -245,7 +244,7 @@ export function PropertiesList() {
                         return (
                           <div className="flex items-center gap-2">
                             <DollarSign className="h-4 w-4 text-blue-600" />
-                            <span className="text-lg font-bold text-blue-600">
+                            <span className="text-sm text-blue-600">
                               Try for ${effectivePricePerNight.toLocaleString()}/night
                             </span>
                           </div>
