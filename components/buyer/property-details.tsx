@@ -277,10 +277,10 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
                   
                   if (effectivePricePerNight) {
                     return (
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-3xl font-bold text-slate-900">${effectivePricePerNight.toLocaleString()}</span>
-                        <span className="text-slate-600">/ night</span>
-                      </div>
+                 <div className="flex items-baseline gap-2">
+                   <span className="text-3xl font-bold text-slate-900">Try for ${effectivePricePerNight.toLocaleString()}</span>
+                   <span className="text-slate-600">/ night</span>
+                 </div>
                     )
                   } else if (property.pricing_tier === 'over_5m') {
                     return (
@@ -298,30 +298,6 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
                   }
                 })()}
                 
-                {/* Pricing Tier Badge */}
-                {property.pricing_tier && (
-                  <div className="mt-2">
-                    {(() => {
-                      const tierInfo = getPricingTierInfo(property.pricing_tier)
-                      if (!tierInfo) return null
-                      
-                      const colorClasses = {
-                        green: 'bg-green-100 text-green-800',
-                        blue: 'bg-blue-100 text-blue-800',
-                        purple: 'bg-purple-100 text-purple-800',
-                        orange: 'bg-orange-100 text-orange-800',
-                        red: 'bg-red-100 text-red-800',
-                        gray: 'bg-gray-100 text-gray-800'
-                      }
-                      
-                      return (
-                        <Badge className={`text-xs ${colorClasses[tierInfo.color] || 'bg-gray-100 text-gray-800'}`}>
-                          {tierInfo.name}
-                        </Badge>
-                      )
-                    })()}
-                  </div>
-                )}
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
