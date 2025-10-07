@@ -7,12 +7,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { 
-  Settings, 
   Save, 
   RefreshCw, 
   AlertCircle,
-  CheckCircle,
-  DollarSign
+  CheckCircle
 } from "lucide-react"
 import { PRICING_TIERS, PricingTier, getPricingTierInfo } from "@/lib/pricing"
 
@@ -28,14 +26,6 @@ interface TierConfig {
 
 export function PricingTiersConfig() {
   const [tiers, setTiers] = useState<TierConfig[]>([])
-  const [editingTier, setEditingTier] = useState<PricingTier | null>(null)
-  const [editForm, setEditForm] = useState({
-    name: '',
-    description: '',
-    pricePerNight: 0,
-    minPrice: 0,
-    maxPrice: 0
-  })
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
 
@@ -53,43 +43,24 @@ export function PricingTiersConfig() {
     setTiers(initialTiers)
   }, [])
 
-  const handleEditTier = (tier: TierConfig) => {
-    setEditingTier(tier.tier)
-    setEditForm({
-      name: tier.name,
-      description: tier.description,
-      pricePerNight: tier.pricePerNight || 0,
-      minPrice: tier.minPrice,
-      maxPrice: tier.maxPrice || 0
-    })
+  const handleTierChange = (tierKey: PricingTier, field: keyof TierConfig, value: string | number) => {
+    setTiers(prev => prev.map(tier => 
+      tier.tier === tierKey 
+        ? { ...tier, [field]: value }
+        : tier
+    ))
   }
 
-  const handleSaveTier = async () => {
-    if (!editingTier) return
-
+  const handleSaveAll = async () => {
     setSaving(true)
     setMessage(null)
 
     try {
       // In a real implementation, you'd save to a database
-      // For now, we'll just update the local state
-      setTiers(prev => prev.map(tier => 
-        tier.tier === editingTier 
-          ? {
-              ...tier,
-              name: editForm.name,
-              description: editForm.description,
-              pricePerNight: editForm.pricePerNight || null,
-              minPrice: editForm.minPrice,
-              maxPrice: editForm.maxPrice || null
-            }
-          : tier
-      ))
-
-      setMessage({ type: 'success', text: 'Pricing tier updated successfully!' })
-      setEditingTier(null)
+      // For now, we'll just show a success message
+      setMessage({ type: 'success', text: 'Pricing tiers updated successfully!' })
     } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to update pricing tier' })
+      setMessage({ type: 'error', text: 'Failed to update pricing tiers' })
     } finally {
       setSaving(false)
     }
@@ -131,6 +102,14 @@ export function PricingTiersConfig() {
         </div>
         <div className="flex gap-2">
           <Button 
+            onClick={handleSaveAll}
+            disabled={saving}
+            className="flex items-center gap-2"
+          >
+            <Save className="h-4 w-4" />
+            {saving ? 'Saving...' : 'Save All Changes'}
+          </Button>
+          <Button 
             onClick={handleResetToDefaults}
             variant="outline"
             className="flex items-center gap-2"
@@ -162,45 +141,68 @@ export function PricingTiersConfig() {
         {tiers.map((tier) => (
           <Card key={tier.tier}>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Badge className={getTierColor(tier.color)}>
-                    {tier.name}
-                  </Badge>
-                  <div>
-                    <h3 className="font-semibold">{tier.name}</h3>
-                    <p className="text-sm text-gray-600">{tier.description}</p>
-                  </div>
+              <div className="flex items-center gap-3">
+                <Badge className={getTierColor(tier.color)}>
+                  {tier.name}
+                </Badge>
+                <div className="flex-1">
+                  <Input
+                    value={tier.name}
+                    onChange={(e) => handleTierChange(tier.tier, 'name', e.target.value)}
+                    className="font-semibold text-lg border-none p-0 h-auto"
+                  />
+                  <Input
+                    value={tier.description}
+                    onChange={(e) => handleTierChange(tier.tier, 'description', e.target.value)}
+                    className="text-sm text-gray-600 border-none p-0 h-auto mt-1"
+                  />
                 </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleEditTier(tier)}
-                >
-                  <Settings className="h-4 w-4" />
-                </Button>
               </div>
             </CardHeader>
             
             <CardContent>
               <div className="grid gap-4 md:grid-cols-3">
-                <div>
+                <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-700">Price Range</Label>
-                  <p className="text-sm text-gray-600">
-                    ${tier.minPrice.toLocaleString()} - {tier.maxPrice ? `$${tier.maxPrice.toLocaleString()}` : '∞'}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-600">$</span>
+                    <Input
+                      type="number"
+                      value={tier.minPrice}
+                      onChange={(e) => handleTierChange(tier.tier, 'minPrice', parseInt(e.target.value) || 0)}
+                      className="w-24"
+                    />
+                    <span className="text-sm text-gray-600">-</span>
+                    <span className="text-sm text-gray-600">$</span>
+                    <Input
+                      type="number"
+                      value={tier.maxPrice || ''}
+                      onChange={(e) => handleTierChange(tier.tier, 'maxPrice', parseInt(e.target.value) || null)}
+                      placeholder="∞"
+                      className="w-24"
+                    />
+                  </div>
                 </div>
-                <div>
+                
+                <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-700">Nightly Rate</Label>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-600">$</span>
+                    <Input
+                      type="number"
+                      value={tier.pricePerNight || ''}
+                      onChange={(e) => handleTierChange(tier.tier, 'pricePerNight', parseInt(e.target.value) || null)}
+                      placeholder="0 for contact agent"
+                      className="w-32"
+                    />
+                    <span className="text-sm text-gray-600">/night</span>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">Preview</Label>
                   <p className="text-sm text-gray-600">
                     {tier.pricePerNight ? `$${tier.pricePerNight.toLocaleString()}/night` : 'Contact listing agent'}
-                  </p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-700">Properties</Label>
-                  <p className="text-sm text-gray-600">
-                    {/* This would be calculated from actual property data */}
-                    Loading...
                   </p>
                 </div>
               </div>
@@ -208,92 +210,6 @@ export function PricingTiersConfig() {
           </Card>
         ))}
       </div>
-
-      {/* Edit Modal */}
-      {editingTier && (
-        <Card className="border-2 border-blue-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Settings className="h-5 w-5" />
-              Edit Pricing Tier: {tiers.find(t => t.tier === editingTier)?.name}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="tierName">Tier Name</Label>
-                <Input
-                  id="tierName"
-                  value={editForm.name}
-                  onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="e.g., Under $500K"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="tierDescription">Description</Label>
-                <Input
-                  id="tierDescription"
-                  value={editForm.description}
-                  onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="e.g., Properties under $500,000"
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="space-y-2">
-                <Label htmlFor="minPrice">Minimum Price</Label>
-                <Input
-                  id="minPrice"
-                  type="number"
-                  value={editForm.minPrice}
-                  onChange={(e) => setEditForm(prev => ({ ...prev, minPrice: parseInt(e.target.value) || 0 }))}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="maxPrice">Maximum Price</Label>
-                <Input
-                  id="maxPrice"
-                  type="number"
-                  value={editForm.maxPrice}
-                  onChange={(e) => setEditForm(prev => ({ ...prev, maxPrice: parseInt(e.target.value) || 0 }))}
-                  placeholder="Leave empty for unlimited"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="pricePerNight">Price Per Night</Label>
-                <Input
-                  id="pricePerNight"
-                  type="number"
-                  value={editForm.pricePerNight}
-                  onChange={(e) => setEditForm(prev => ({ ...prev, pricePerNight: parseInt(e.target.value) || 0 }))}
-                  placeholder="0 for contact agent"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 pt-4">
-              <Button 
-                onClick={handleSaveTier}
-                disabled={saving}
-                className="flex items-center gap-2"
-              >
-                <Save className="h-4 w-4" />
-                {saving ? 'Saving...' : 'Save Changes'}
-              </Button>
-              <Button 
-                variant="outline"
-                onClick={() => setEditingTier(null)}
-              >
-                Cancel
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Info Card */}
       <Card className="bg-blue-50 border-blue-200">
