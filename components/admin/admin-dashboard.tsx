@@ -12,6 +12,7 @@ import { PropertyClaims } from "./property-claims"
 import { PropertyFeedImport } from "./property-feed-import"
 import { UserManagement } from "./user-management"
 import { BookingsOverview } from "./bookings-overview"
+import { PricingManagement } from "./pricing-management"
 import { useRouter } from "next/navigation"
 import { useClerk } from "@clerk/nextjs"
 
@@ -137,6 +138,7 @@ export function AdminDashboard({ userId, profile }: AdminDashboardProps) {
               <TabsTrigger value="properties">Property Verification</TabsTrigger>
               <TabsTrigger value="claims">Property Claims</TabsTrigger>
               <TabsTrigger value="import">Feed Import</TabsTrigger>
+              <TabsTrigger value="pricing">Pricing Management</TabsTrigger>
               <TabsTrigger value="users">User Management</TabsTrigger>
               <TabsTrigger value="bookings">Bookings</TabsTrigger>
             </TabsList>
@@ -155,6 +157,10 @@ export function AdminDashboard({ userId, profile }: AdminDashboardProps) {
                 currentUserRole={profile.role}
                 onImportComplete={refreshStats}
               />
+            </TabsContent>
+
+            <TabsContent value="pricing">
+              <PricingManagement />
             </TabsContent>
 
             <TabsContent value="users">
