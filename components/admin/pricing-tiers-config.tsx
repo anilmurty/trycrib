@@ -80,6 +80,38 @@ export function PricingTiersConfig() {
     setMessage({ type: 'success', text: 'Reset to default pricing tiers' })
   }
 
+  const handleBulkRecalculate = async () => {
+    setSaving(true)
+    setMessage(null)
+
+    try {
+      const response = await fetch('/api/admin/bulk-recalculate-pricing', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to recalculate pricing')
+      }
+
+      const result = await response.json()
+      setMessage({ type: 'success', text: result.message || 'Pricing recalculated successfully!' })
+    } catch (error) {
+      console.error("Error recalculating pricing:", error)
+      setMessage({ type: 'error', text: 'Failed to recalculate pricing' })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleRefreshData = () => {
+    // Reset to defaults to refresh the data
+    handleResetToDefaults()
+    setMessage({ type: 'success', text: 'Data refreshed successfully!' })
+  }
+
   const getTierColor = (color: string) => {
     const colorClasses = {
       green: 'bg-green-100 text-green-800',
@@ -119,6 +151,33 @@ export function PricingTiersConfig() {
           </Button>
         </div>
       </div>
+
+      {/* Bulk Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Bulk Actions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-4">
+            <Button 
+              onClick={handleBulkRecalculate}
+              disabled={saving}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${saving ? 'animate-spin' : ''}`} />
+              Recalculate All Pricing
+            </Button>
+            <Button 
+              onClick={handleRefreshData}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Refresh Data
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Message */}
       {message && (
