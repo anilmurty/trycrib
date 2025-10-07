@@ -285,7 +285,7 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
                   } else if (property.pricing_tier === 'over_5m') {
                     return (
                       <div className="flex items-center gap-2">
-                        <span className="text-lg font-semibold text-slate-600">Contact Seller for Pricing</span>
+                        <span className="text-lg font-semibold text-slate-600">Contact listing agent for pricing</span>
                       </div>
                     )
                   } else {
