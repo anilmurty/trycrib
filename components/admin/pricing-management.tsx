@@ -288,32 +288,6 @@ export function PricingManagement() {
             </CardContent>
           </Card>
 
-          {/* Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Bulk Actions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex gap-4">
-                <Button 
-                  onClick={handleBulkRecalculate}
-                  disabled={saving}
-                  className="flex items-center gap-2"
-                >
-                  <RefreshCw className={`h-4 w-4 ${saving ? 'animate-spin' : ''}`} />
-                  Recalculate All Pricing
-                </Button>
-                <Button 
-                  onClick={fetchProperties}
-                  variant="outline"
-                  className="flex items-center gap-2"
-                >
-                  <RefreshCw className="h-4 w-4" />
-                  Refresh Data
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
 
         <TabsContent value="tiers">
