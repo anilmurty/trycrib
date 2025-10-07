@@ -56,10 +56,25 @@ export function PricingTiersConfig() {
     setMessage(null)
 
     try {
-      // In a real implementation, you'd save to a database
-      // For now, we'll just show a success message
+      console.log('💾 Saving pricing tiers to database...', tiers)
+      
+      const response = await fetch('/api/admin/pricing-tiers', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ tiers }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to save pricing tiers')
+      }
+
+      const result = await response.json()
+      console.log('✅ Pricing tiers saved successfully:', result)
       setMessage({ type: 'success', text: 'Pricing tiers updated successfully!' })
     } catch (error) {
+      console.error("❌ Error saving pricing tiers:", error)
       setMessage({ type: 'error', text: 'Failed to update pricing tiers' })
     } finally {
       setSaving(false)
