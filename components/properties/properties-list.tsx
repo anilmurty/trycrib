@@ -57,7 +57,29 @@ export function PropertiesList() {
 
       let query = supabase
         .from("properties")
-        .select("*", { count: "exact" })
+        .select(`
+          id,
+          title,
+          description,
+          address,
+          city,
+          state,
+          zip_code,
+          bedrooms,
+          bathrooms,
+          square_feet,
+          price_per_night,
+          listing_price,
+          images,
+          original_image_urls,
+          is_active,
+          verification_status,
+          created_at,
+          pricing_tier,
+          calculated_price_per_night,
+          pricing_override,
+          custom_price_per_night
+        `, { count: "exact" })
         .eq("is_active", true)
         .in("verification_status", ["approved", "pending"])
 
