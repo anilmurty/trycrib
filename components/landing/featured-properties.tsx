@@ -133,7 +133,7 @@ export async function FeaturedProperties() {
                         <div className="flex items-center gap-2">
                           <DollarSign className="h-4 w-4 text-gray-500" />
                           <span className="text-sm text-gray-600 italic">
-                            Contact Seller for pricing
+                            Contact listing agent for pricing
                           </span>
                         </div>
                       )
