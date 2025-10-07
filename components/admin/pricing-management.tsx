@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { PricingTiersConfig } from "./pricing-tiers-config"
 import { 
   DollarSign, 
   Settings, 
@@ -212,228 +213,244 @@ export function PricingManagement() {
 
   return (
     <div className="space-y-6">
-      {/* Stats Overview */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalProperties}</div>
-          </CardContent>
-        </Card>
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="tiers">Pricing Tiers</TabsTrigger>
+          <TabsTrigger value="properties">Property Management</TabsTrigger>
+        </TabsList>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Auto-Priced</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.autoPriced}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.totalProperties > 0 ? Math.round((stats.autoPriced / stats.totalProperties) * 100) : 0}% of total
-            </p>
-          </CardContent>
-        </Card>
+        <TabsContent value="overview" className="space-y-6">
+          {/* Stats Overview */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalProperties}</div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Custom-Priced</CardTitle>
-            <Settings className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{stats.customPriced}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.totalProperties > 0 ? Math.round((stats.customPriced / stats.totalProperties) * 100) : 0}% of total
-            </p>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Auto-Priced</CardTitle>
+                <CheckCircle className="h-4 w-4 text-green-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-green-600">{stats.autoPriced}</div>
+                <p className="text-xs text-muted-foreground">
+                  {stats.totalProperties > 0 ? Math.round((stats.autoPriced / stats.totalProperties) * 100) : 0}% of total
+                </p>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pricing Tiers</CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{Object.keys(stats.tierDistribution).length}</div>
-            <p className="text-xs text-muted-foreground">Active tiers</p>
-          </CardContent>
-        </Card>
-      </div>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Custom-Priced</CardTitle>
+                <Settings className="h-4 w-4 text-blue-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-blue-600">{stats.customPriced}</div>
+                <p className="text-xs text-muted-foreground">
+                  {stats.totalProperties > 0 ? Math.round((stats.customPriced / stats.totalProperties) * 100) : 0}% of total
+                </p>
+              </CardContent>
+            </Card>
 
-      {/* Tier Distribution */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Pricing Tier Distribution</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
-            {Object.entries(stats.tierDistribution).map(([tier, count]) => (
-              <div key={tier} className="flex items-center justify-between p-3 border rounded-lg">
-                <span className="font-medium">{tier}</span>
-                <Badge variant="secondary">{count} properties</Badge>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Pricing Tiers</CardTitle>
+                <AlertCircle className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{Object.keys(stats.tierDistribution).length}</div>
+                <p className="text-xs text-muted-foreground">Active tiers</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Tier Distribution */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Pricing Tier Distribution</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
+                {Object.entries(stats.tierDistribution).map(([tier, count]) => (
+                  <div key={tier} className="flex items-center justify-between p-3 border rounded-lg">
+                    <span className="font-medium">{tier}</span>
+                    <Badge variant="secondary">{count} properties</Badge>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
 
-      {/* Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Bulk Actions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4">
-            <Button 
-              onClick={handleBulkRecalculate}
-              disabled={saving}
-              className="flex items-center gap-2"
-            >
-              <RefreshCw className={`h-4 w-4 ${saving ? 'animate-spin' : ''}`} />
-              Recalculate All Pricing
-            </Button>
-            <Button 
-              onClick={fetchProperties}
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <RefreshCw className="h-4 w-4" />
-              Refresh Data
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          {/* Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Bulk Actions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-4">
+                <Button 
+                  onClick={handleBulkRecalculate}
+                  disabled={saving}
+                  className="flex items-center gap-2"
+                >
+                  <RefreshCw className={`h-4 w-4 ${saving ? 'animate-spin' : ''}`} />
+                  Recalculate All Pricing
+                </Button>
+                <Button 
+                  onClick={fetchProperties}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  Refresh Data
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {/* Properties List */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Property Pricing Management</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {properties.map((property) => (
-              <div key={property.id} className="border rounded-lg p-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-lg">{property.title}</h3>
-                    <p className="text-sm text-gray-600">
-                      {property.address}, {property.city}, {property.state}
-                    </p>
-                    <div className="flex items-center gap-4 mt-2">
-                      <span className="text-sm">
-                        <strong>Listed:</strong> ${property.listing_price?.toLocaleString() || 'N/A'}
-                      </span>
-                      <span className="text-sm">
-                        <strong>Nightly:</strong> ${getEffectivePricePerNight(property).toLocaleString()}
-                      </span>
-                      {property.pricing_tier && (
-                        <Badge className={getTierColor(property.pricing_tier)}>
-                          {getPricingTierInfo(property.pricing_tier)?.name}
-                        </Badge>
-                      )}
-                      {property.pricing_override && (
-                        <Badge variant="outline" className="text-blue-600">
-                          Custom Price
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    {editingProperty === property.id ? (
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => handleSaveProperty(property.id)}
-                          disabled={saving}
-                        >
-                          <Save className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setEditingProperty(null)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleEditProperty(property)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                </div>
+        <TabsContent value="tiers">
+          <PricingTiersConfig />
+        </TabsContent>
 
-                {editingProperty === property.id && (
-                  <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label htmlFor="listingPrice">Listing Price</Label>
-                        <Input
-                          id="listingPrice"
-                          type="number"
-                          value={editForm.listingPrice}
-                          onChange={(e) => setEditForm(prev => ({
-                            ...prev,
-                            listingPrice: parseInt(e.target.value) || 0
-                          }))}
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <Switch
-                            id="pricingOverride"
-                            checked={editForm.pricingOverride}
-                            onCheckedChange={(checked) => setEditForm(prev => ({
-                              ...prev,
-                              pricingOverride: checked
-                            }))}
-                          />
-                          <Label htmlFor="pricingOverride">Custom Pricing</Label>
+        <TabsContent value="properties">
+          {/* Properties List */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Property Pricing Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {properties.map((property) => (
+                  <div key={property.id} className="border rounded-lg p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-lg">{property.title}</h3>
+                        <p className="text-sm text-gray-600">
+                          {property.address}, {property.city}, {property.state}
+                        </p>
+                        <div className="flex items-center gap-4 mt-2">
+                          <span className="text-sm">
+                            <strong>Listed:</strong> ${property.listing_price?.toLocaleString() || 'N/A'}
+                          </span>
+                          <span className="text-sm">
+                            <strong>Nightly:</strong> ${getEffectivePricePerNight(property).toLocaleString()}
+                          </span>
+                          {property.pricing_tier && (
+                            <Badge className={getTierColor(property.pricing_tier)}>
+                              {getPricingTierInfo(property.pricing_tier)?.name}
+                            </Badge>
+                          )}
+                          {property.pricing_override && (
+                            <Badge variant="outline" className="text-blue-600">
+                              Custom Price
+                            </Badge>
+                          )}
                         </div>
                       </div>
+                      
+                      <div className="flex items-center gap-2">
+                        {editingProperty === property.id ? (
+                          <div className="flex items-center gap-2">
+                            <Button
+                              size="sm"
+                              onClick={() => handleSaveProperty(property.id)}
+                              disabled={saving}
+                            >
+                              <Save className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setEditingProperty(null)}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleEditProperty(property)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                     </div>
 
-                    {editForm.pricingOverride && (
-                      <div className="space-y-2">
-                        <Label htmlFor="customPrice">Custom Price Per Night</Label>
-                        <Input
-                          id="customPrice"
-                          type="number"
-                          value={editForm.customPricePerNight}
-                          onChange={(e) => setEditForm(prev => ({
-                            ...prev,
-                            customPricePerNight: parseInt(e.target.value) || 0
-                          }))}
-                        />
-                      </div>
-                    )}
+                    {editingProperty === property.id && (
+                      <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <div className="space-y-2">
+                            <Label htmlFor="listingPrice">Listing Price</Label>
+                            <Input
+                              id="listingPrice"
+                              type="number"
+                              value={editForm.listingPrice}
+                              onChange={(e) => setEditForm(prev => ({
+                                ...prev,
+                                listingPrice: parseInt(e.target.value) || 0
+                              }))}
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <div className="flex items-center space-x-2">
+                              <Switch
+                                id="pricingOverride"
+                                checked={editForm.pricingOverride}
+                                onCheckedChange={(checked) => setEditForm(prev => ({
+                                  ...prev,
+                                  pricingOverride: checked
+                                }))}
+                              />
+                              <Label htmlFor="pricingOverride">Custom Pricing</Label>
+                            </div>
+                          </div>
+                        </div>
 
-                    {!editForm.pricingOverride && editForm.listingPrice > 0 && (
-                      <div className="p-3 bg-blue-50 rounded-lg">
-                        <p className="text-sm text-blue-800">
-                          <strong>Calculated Tier:</strong> {getPricingTierInfo(calculatePricingTier(editForm.listingPrice))?.name || 'N/A'}
-                        </p>
-                        <p className="text-sm text-blue-800">
-                          <strong>Calculated Price:</strong> ${calculatePricePerNight(calculatePricingTier(editForm.listingPrice))?.toLocaleString() || 'N/A'}/night
-                        </p>
+                        {editForm.pricingOverride && (
+                          <div className="space-y-2">
+                            <Label htmlFor="customPrice">Custom Price Per Night</Label>
+                            <Input
+                              id="customPrice"
+                              type="number"
+                              value={editForm.customPricePerNight}
+                              onChange={(e) => setEditForm(prev => ({
+                                ...prev,
+                                customPricePerNight: parseInt(e.target.value) || 0
+                              }))}
+                            />
+                          </div>
+                        )}
+
+                        {!editForm.pricingOverride && editForm.listingPrice > 0 && (
+                          <div className="p-3 bg-blue-50 rounded-lg">
+                            <p className="text-sm text-blue-800">
+                              <strong>Calculated Tier:</strong> {getPricingTierInfo(calculatePricingTier(editForm.listingPrice))?.name || 'N/A'}
+                            </p>
+                            <p className="text-sm text-blue-800">
+                              <strong>Calculated Price:</strong> ${calculatePricePerNight(calculatePricingTier(editForm.listingPrice))?.toLocaleString() || 'N/A'}/night
+                            </p>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
-                )}
+                ))}
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
