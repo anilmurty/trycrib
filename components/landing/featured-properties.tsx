@@ -2,6 +2,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
+import { DollarSign } from "lucide-react"
+import { formatPricingDisplay, getPricingTierInfo } from "@/lib/pricing"
 
 export async function FeaturedProperties() {
   const supabase = await createClient()
@@ -88,20 +90,65 @@ export async function FeaturedProperties() {
                 <p className="text-sm text-gray-600 mt-0.5">
                   {property.city}, {property.state}
                 </p>
-                <div className="flex items-center justify-between mt-2">
-                  <p className="text-lg font-bold text-gray-900">${property.listing_price?.toLocaleString() || 'Price TBD'}</p>
+                {/* Property details in main title */}
+                <div className="flex items-center gap-4 text-sm font-bold text-gray-700 mt-2">
+                  {property.bedrooms && (
+                    <span>{property.bedrooms} beds</span>
+                  )}
+                  {property.bathrooms && (
+                    <span>{property.bathrooms} baths</span>
+                  )}
+                  {property.square_feet && (
+                    <span>{property.square_feet.toLocaleString()} sqft</span>
+                  )}
+                </div>
+                
+                {/* Pricing Information */}
+                <div className="mt-3 space-y-1">
+                  {property.listing_price && (
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="h-4 w-4 text-gray-500" />
+                      <span className="text-sm text-gray-600">
+                        Listed at ${property.listing_price.toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* Nightly Rate */}
+                  {(() => {
+                    const effectivePricePerNight = property.pricing_override 
+                      ? property.custom_price_per_night 
+                      : property.calculated_price_per_night
+                    
+                    if (effectivePricePerNight) {
+                      return (
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-4 w-4 text-blue-600" />
+                          <span className="text-lg font-bold text-blue-600">
+                            Try for ${effectivePricePerNight.toLocaleString()}/night
+                          </span>
+                        </div>
+                      )
+                    } else if (property.pricing_tier === 'over_5m') {
+                      return (
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-4 w-4 text-gray-500" />
+                          <span className="text-sm text-gray-600 italic">
+                            Contact Seller for pricing
+                          </span>
+                        </div>
+                      )
+                    }
+                    return null
+                  })()}
+                </div>
+                
+                <div className="flex items-center justify-end mt-3">
                   <Link href={`/properties/${property.id}`}>
                     <Button className="rounded-lg bg-blue-600 hover:bg-blue-700 px-4 py-1.5 text-sm">
                       View Details
                     </Button>
                   </Link>
-                </div>
-                <div className="flex items-center gap-1.5 mt-2 text-xs text-gray-600">
-                  {property.bedrooms && <span>{property.bedrooms} beds</span>}
-                  {property.bedrooms && property.bathrooms && <span>•</span>}
-                  {property.bathrooms && <span>{property.bathrooms} baths</span>}
-                  {property.bathrooms && property.square_feet && <span>•</span>}
-                  {property.square_feet && <span>{property.square_feet.toLocaleString()} sqft</span>}
                 </div>
               </CardContent>
             </Card>

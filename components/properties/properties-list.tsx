@@ -211,6 +211,18 @@ export function PropertiesList() {
                   <p className="text-sm text-gray-600 mt-0.5">
                     {property.city}, {property.state}
                   </p>
+                  {/* Property details in main title */}
+                  <div className="flex items-center gap-4 text-sm font-bold text-gray-700 mt-2">
+                    {property.bedrooms && (
+                      <span>{property.bedrooms} beds</span>
+                    )}
+                    {property.bathrooms && (
+                      <span>{property.bathrooms} baths</span>
+                    )}
+                    {property.square_feet && (
+                      <span>{property.square_feet.toLocaleString()} sqft</span>
+                    )}
+                  </div>
                   
                   {/* Pricing Information */}
                   <div className="mt-2 space-y-1">
@@ -234,7 +246,7 @@ export function PropertiesList() {
                           <div className="flex items-center gap-2">
                             <DollarSign className="h-4 w-4 text-blue-600" />
                             <span className="text-lg font-bold text-blue-600">
-                              ${effectivePricePerNight.toLocaleString()}/night
+                              Try for ${effectivePricePerNight.toLocaleString()}/night
                             </span>
                           </div>
                         )
@@ -250,45 +262,9 @@ export function PropertiesList() {
                       }
                       return null
                     })()}
-                    
-                    {/* Pricing Tier Badge */}
-                    {property.pricing_tier && (
-                      <div className="flex items-center gap-2">
-                        {(() => {
-                          const tierInfo = getPricingTierInfo(property.pricing_tier)
-                          if (!tierInfo) return null
-                          
-                          const colorClasses = {
-                            green: 'bg-green-100 text-green-800',
-                            blue: 'bg-blue-100 text-blue-800',
-                            purple: 'bg-purple-100 text-purple-800',
-                            orange: 'bg-orange-100 text-orange-800',
-                            red: 'bg-red-100 text-red-800',
-                            gray: 'bg-gray-100 text-gray-800'
-                          }
-                          
-                          return (
-                            <Badge className={`text-xs ${colorClasses[tierInfo.color] || 'bg-gray-100 text-gray-800'}`}>
-                              {tierInfo.name}
-                            </Badge>
-                          )
-                        })()}
-                      </div>
-                    )}
                   </div>
                   
-                  <div className="flex items-center justify-between mt-3">
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
-                      {property.bedrooms && (
-                        <span>{property.bedrooms} beds</span>
-                      )}
-                      {property.bathrooms && (
-                        <span>{property.bathrooms} baths</span>
-                      )}
-                      {property.square_feet && (
-                        <span>{property.square_feet.toLocaleString()} sqft</span>
-                      )}
-                    </div>
+                  <div className="flex items-center justify-end mt-3">
                     <Link href={`/properties/${property.id}`}>
                       <Button className="rounded-lg bg-blue-600 hover:bg-blue-700 px-4 py-1.5 text-sm">
                         View Details
