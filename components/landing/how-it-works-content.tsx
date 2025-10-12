@@ -13,12 +13,7 @@ export function HowItWorksContent() {
       icon: Search,
       title: "Browse Properties",
       description:
-        "Explore homes currently on the market without creating an account. View photos, details, and availability.",
-    },
-    {
-      icon: Calendar,
-      title: "Create Account & Verify",
-      description: "Sign up when ready to book. Upload your pre-approval letter to verify your buying capacity.",
+        "Explore homes currently on the market without creating an account.",
     },
     {
       icon: Home,
@@ -82,7 +77,7 @@ export function HowItWorksContent() {
           </TabsList>
 
           <TabsContent value="buyer" className="mt-0">
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-3">
               {buyerSteps.map((step, index) => (
                 <Card key={index} className="p-6 hover:shadow-lg transition-shadow duration-300">
                   <div className="flex items-start gap-4">
@@ -121,6 +116,13 @@ export function HowItWorksContent() {
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Disclaimer */}
+        <div className="mt-8 text-center">
+          <p className="text-sm text-gray-500">
+            *Listings are based on public MLS data. Requests are routed through real estate agents.
+          </p>
+        </div>
 
         {/* CTA Section */}
         <div className="mt-16 text-center">
