@@ -29,15 +29,9 @@ export function HowItWorksContent() {
 
   const sellerSteps = [
     {
-      icon: Upload,
-      title: "Create Account & Verify",
-      description:
-        "Sign up and verify ownership with your property tax statement and Zillow home dashboard screenshot.",
-    },
-    {
       icon: Home,
-      title: "List Your Property",
-      description: "Add photos, details, pricing, and set your availability calendar. Link to your sale listing.",
+      title: "Claim Your Property",
+      description: "We help facilitate this through your listing agent.",
     },
     {
       icon: DollarSign,
@@ -97,7 +91,7 @@ export function HowItWorksContent() {
           </TabsContent>
 
           <TabsContent value="seller" className="mt-0">
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-3">
               {sellerSteps.map((step, index) => (
                 <Card key={index} className="p-6 hover:shadow-lg transition-shadow duration-300">
                   <div className="flex items-start gap-4">
