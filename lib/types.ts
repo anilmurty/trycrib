@@ -1,4 +1,4 @@
-export type UserRole = "buyer" | "seller" | "admin" | "superadmin"
+export type UserRole = "buyer" | "seller" | "admin" | "superadmin" | "seller_agent" | "buyer_agent"
 export type VerificationStatus = "pending" | "approved" | "rejected"
 export type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed"
 
@@ -28,6 +28,56 @@ export interface SellerProfile {
   agent_email: string | null
   agent_phone: string | null
   agent_commission_percent: number
+  created_at: string
+  updated_at: string
+}
+
+export interface SellerAgentProfile {
+  id: string
+  license_number: string | null
+  brokerage_name: string | null
+  brokerage_license: string | null
+  years_experience: number | null
+  specializations: string[] | null
+  commission_rate: number
+  phone: string | null
+  website: string | null
+  bio: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface BuyerAgentProfile {
+  id: string
+  license_number: string | null
+  brokerage_name: string | null
+  brokerage_license: string | null
+  years_experience: number | null
+  specializations: string[] | null
+  phone: string | null
+  website: string | null
+  bio: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface AgentProperty {
+  id: string
+  agent_id: string
+  property_id: string
+  agent_type: "seller_agent" | "buyer_agent"
+  is_primary: boolean
+  assigned_at: string
+  created_at: string
+  updated_at: string
+}
+
+export interface AgentClient {
+  id: string
+  agent_id: string
+  client_id: string
+  relationship_type: string
+  assigned_at: string
   created_at: string
   updated_at: string
 }

@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Home, Store } from "lucide-react"
+import { Home, Store, UserCheck, Users } from "lucide-react"
 
 interface OnboardingClientProps {
   firstName: string
@@ -15,7 +15,7 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
-  const handleRoleSelection = async (role: "buyer" | "seller") => {
+  const handleRoleSelection = async (role: "buyer" | "seller" | "seller_agent" | "buyer_agent") => {
     console.log("=== ONBOARDING CLIENT: Role selection started ===")
     console.log("Selected role:", role)
     
@@ -58,29 +58,29 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
       <div className="w-full max-w-4xl">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-slate-900 mb-3">Welcome, {firstName}!</h1>
-          <p className="text-xl text-slate-600">Are you looking to buy a home or to sell a home?</p>
+          <p className="text-xl text-slate-600">How would you like to use TryCrib?</p>
         </div>
 
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-center">{error}</div>
         )}
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card
-            className="p-8 hover:shadow-xl transition-all cursor-pointer border-2 hover:border-blue-500 group"
+            className="p-6 hover:shadow-xl transition-all cursor-pointer border-2 hover:border-blue-500 group"
             onClick={() => !loading && handleRoleSelection("buyer")}
           >
-            <div className="text-center space-y-6">
-              <div className="w-20 h-20 mx-auto bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-500 transition-colors">
-                <Home className="w-10 h-10 text-blue-600 group-hover:text-white transition-colors" />
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-500 transition-colors">
+                <Home className="w-8 h-8 text-blue-600 group-hover:text-white transition-colors" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 mb-2">Buyer</h2>
-                <p className="text-slate-600">I'm looking to find and experience homes before making an offer</p>
+                <h2 className="text-xl font-bold text-slate-900 mb-2">Buyer</h2>
+                <p className="text-sm text-slate-600">Find and experience homes before making an offer</p>
               </div>
               <Button
                 className="w-full bg-blue-600 hover:bg-blue-700"
-                size="lg"
+                size="sm"
                 disabled={loading}
                 onClick={(e) => {
                   e.stopPropagation()
@@ -93,20 +93,20 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
           </Card>
 
           <Card
-            className="p-8 hover:shadow-xl transition-all cursor-pointer border-2 hover:border-green-500 group"
+            className="p-6 hover:shadow-xl transition-all cursor-pointer border-2 hover:border-green-500 group"
             onClick={() => !loading && handleRoleSelection("seller")}
           >
-            <div className="text-center space-y-6">
-              <div className="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-500 transition-colors">
-                <Store className="w-10 h-10 text-green-600 group-hover:text-white transition-colors" />
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-500 transition-colors">
+                <Store className="w-8 h-8 text-green-600 group-hover:text-white transition-colors" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 mb-2">Seller</h2>
-                <p className="text-slate-600">I want to list my property and let buyers experience it virtually</p>
+                <h2 className="text-xl font-bold text-slate-900 mb-2">Seller</h2>
+                <p className="text-sm text-slate-600">List your property for buyers to experience</p>
               </div>
               <Button
                 className="w-full bg-green-600 hover:bg-green-700"
-                size="lg"
+                size="sm"
                 disabled={loading}
                 onClick={(e) => {
                   e.stopPropagation()
@@ -114,6 +114,58 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
                 }}
               >
                 {loading ? "Setting up..." : "Continue as Seller"}
+              </Button>
+            </div>
+          </Card>
+
+          <Card
+            className="p-6 hover:shadow-xl transition-all cursor-pointer border-2 hover:border-purple-500 group"
+            onClick={() => !loading && handleRoleSelection("seller_agent")}
+          >
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 mx-auto bg-purple-100 rounded-full flex items-center justify-center group-hover:bg-purple-500 transition-colors">
+                <UserCheck className="w-8 h-8 text-purple-600 group-hover:text-white transition-colors" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 mb-2">Seller's Agent</h2>
+                <p className="text-sm text-slate-600">Help sellers list and manage their properties</p>
+              </div>
+              <Button
+                className="w-full bg-purple-600 hover:bg-purple-700"
+                size="sm"
+                disabled={loading}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleRoleSelection("seller_agent")
+                }}
+              >
+                {loading ? "Setting up..." : "Continue as Seller's Agent"}
+              </Button>
+            </div>
+          </Card>
+
+          <Card
+            className="p-6 hover:shadow-xl transition-all cursor-pointer border-2 hover:border-orange-500 group"
+            onClick={() => !loading && handleRoleSelection("buyer_agent")}
+          >
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 mx-auto bg-orange-100 rounded-full flex items-center justify-center group-hover:bg-orange-500 transition-colors">
+                <Users className="w-8 h-8 text-orange-600 group-hover:text-white transition-colors" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 mb-2">Buyer's Agent</h2>
+                <p className="text-sm text-slate-600">Help buyers find and experience homes</p>
+              </div>
+              <Button
+                className="w-full bg-orange-600 hover:bg-orange-700"
+                size="sm"
+                disabled={loading}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleRoleSelection("buyer_agent")
+                }}
+              >
+                {loading ? "Setting up..." : "Continue as Buyer's Agent"}
               </Button>
             </div>
           </Card>

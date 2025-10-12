@@ -65,7 +65,7 @@ export async function POST(request: Request) {
       }
     }
 
-    // Create the appropriate profile (buyer_profiles or seller_profiles)
+    // Create the appropriate profile (buyer_profiles, seller_profiles, or agent_profiles)
     console.log("Creating role-specific profile for role:", role)
     if (role === "buyer") {
       console.log("Creating buyer profile...")
@@ -93,6 +93,32 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Failed to create seller profile" }, { status: 500 })
       }
       console.log("Seller profile created successfully")
+    } else if (role === "seller_agent") {
+      console.log("Creating seller agent profile...")
+      const { error: sellerAgentError } = await supabase.from("seller_agent_profiles").upsert({
+        id: userId,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+
+      if (sellerAgentError) {
+        console.error("Error creating seller agent profile:", sellerAgentError)
+        return NextResponse.json({ error: "Failed to create seller agent profile" }, { status: 500 })
+      }
+      console.log("Seller agent profile created successfully")
+    } else if (role === "buyer_agent") {
+      console.log("Creating buyer agent profile...")
+      const { error: buyerAgentError } = await supabase.from("buyer_agent_profiles").upsert({
+        id: userId,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+
+      if (buyerAgentError) {
+        console.error("Error creating buyer agent profile:", buyerAgentError)
+        return NextResponse.json({ error: "Failed to create buyer agent profile" }, { status: 500 })
+      }
+      console.log("Buyer agent profile created successfully")
     }
 
     return NextResponse.json({ success: true })
