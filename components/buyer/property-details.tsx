@@ -49,7 +49,6 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
     setCurrentImageIndex((prev) => (prev - 1 + availableImages.length) % availableImages.length)
   }
 
-
   return (
     <div className="bg-slate-50 py-8">
       <div className="container max-w-6xl mx-auto px-4">
@@ -130,8 +129,8 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
                       // TODO: Implement test drive request functionality
                       alert("Test drive request functionality coming soon!")
                     }}
-                    disabled={!property.is_active || property.verification_status !== "approved"}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    disabled={!property.is_active}
+                    className="bg-blue-600 hover:bg-blue-700 text-white disabled:bg-gray-400 disabled:cursor-not-allowed"
                   >
                     {userId ? "Request Test Drive" : "Sign in to Request"}
                   </Button>
