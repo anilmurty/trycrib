@@ -6,11 +6,7 @@ import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
 import { Bed, Bath, Square, MapPin, DollarSign, ChevronLeft, ChevronRight } from "lucide-react"
-import { loadStripe } from "@stripe/stripe-js"
-import { formatPricingDisplay, getPricingTierInfo } from "@/lib/pricing"
 
 interface Property {
   id: string
@@ -23,18 +19,12 @@ interface Property {
   bedrooms: number | null
   bathrooms: number | null
   square_feet: number | null
-  price_per_night: number
   listing_price: number | null
   amenities: string[] | null
   images: string[] | null
   original_image_urls: string[] | null
   is_active: boolean
   verification_status: string
-  // Pricing system fields
-  pricing_tier?: 'under_500k' | '500k_1m' | '1m_1_5m' | '1_5m_3m' | '3m_5m' | 'over_5m' | null
-  calculated_price_per_night?: number | null
-  pricing_override?: boolean
-  custom_price_per_night?: number | null
 }
 
 interface PropertyDetailsProps {
@@ -44,11 +34,6 @@ interface PropertyDetailsProps {
 
 export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
   const router = useRouter()
-  const supabase = createClient()
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [checkIn, setCheckIn] = useState("")
-  const [checkOut, setCheckOut] = useState("")
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   // Get available images (prioritize images over original_image_urls)
@@ -64,76 +49,6 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
     setCurrentImageIndex((prev) => (prev - 1 + availableImages.length) % availableImages.length)
   }
 
-  const calculateTotal = () => {
-    if (!checkIn || !checkOut) return 0
-    const start = new Date(checkIn)
-    const end = new Date(checkOut)
-    const nights = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
-    
-    // Use effective price per night (calculated or custom)
-    const effectivePricePerNight = property.pricing_override 
-      ? property.custom_price_per_night 
-      : property.calculated_price_per_night || property.price_per_night
-    
-    return nights > 0 && effectivePricePerNight ? nights * effectivePricePerNight : 0
-  }
-
-  const handleBooking = async () => {
-    if (!userId) {
-      router.push("/sign-in")
-      return
-    }
-
-    if (!checkIn || !checkOut) {
-      setError("Please select check-in and check-out dates")
-      return
-    }
-
-    const start = new Date(checkIn)
-    const end = new Date(checkOut)
-    const nights = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
-
-    if (nights <= 0) {
-      setError("Check-out must be after check-in")
-      return
-    }
-
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      // Create checkout session
-      const response = await fetch("/api/create-checkout-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          propertyId: property.id,
-          checkIn,
-          checkOut,
-          totalPrice: calculateTotal(),
-        }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to create checkout session")
-      }
-
-      // Redirect to Stripe Checkout
-      const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
-      if (stripe && data.sessionId) {
-        await stripe.redirectToCheckout({ sessionId: data.sessionId })
-      }
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred")
-      setIsLoading(false)
-    }
-  }
-
-  const totalPrice = calculateTotal()
 
   return (
     <div className="bg-slate-50 py-8">
@@ -265,96 +180,52 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
             </Card>
           </div>
 
-          {/* Booking Card */}
+          {/* Request Test Drive Card */}
           <div className="lg:col-span-1">
             <Card className="sticky top-4">
               <CardHeader>
-                <CardTitle>Book Your Stay</CardTitle>
-                {(() => {
-                  const effectivePricePerNight = property.pricing_override 
-                    ? property.custom_price_per_night 
-                    : property.calculated_price_per_night || property.price_per_night
-                  
-                  if (effectivePricePerNight) {
-                    return (
-                 <div className="flex items-baseline gap-2">
-                   <span className="text-3xl font-bold text-slate-900">Try for ${effectivePricePerNight.toLocaleString()}</span>
-                   <span className="text-slate-600">/ night</span>
-                 </div>
-                    )
-                  } else if (property.pricing_tier === 'over_5m') {
-                    return (
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg font-semibold text-slate-600">Contact listing agent for pricing</span>
-                      </div>
-                    )
-                  } else {
-                    return (
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-3xl font-bold text-slate-900">${property.price_per_night.toLocaleString()}</span>
-                        <span className="text-slate-600">/ night</span>
-                      </div>
-                    )
-                  }
-                })()}
-                
+                <CardTitle>Request a Test Drive</CardTitle>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-semibold text-slate-600">Contact listing agent for pricing</span>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="check-in">Check-in</Label>
-                  <Input
-                    id="check-in"
-                    type="date"
-                    min={new Date().toISOString().split("T")[0]}
-                    value={checkIn}
-                    onChange={(e) => setCheckIn(e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="check-out">Check-out</Label>
-                  <Input
-                    id="check-out"
-                    type="date"
-                    min={checkIn || new Date().toISOString().split("T")[0]}
-                    value={checkOut}
-                    onChange={(e) => setCheckOut(e.target.value)}
-                  />
-                </div>
-
-                {totalPrice > 0 && (
-                  <div className="pt-4 border-t">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-slate-600">
-                        ${(() => {
-                          const effectivePricePerNight = property.pricing_override 
-                            ? property.custom_price_per_night 
-                            : property.calculated_price_per_night || property.price_per_night
-                          return effectivePricePerNight?.toLocaleString() || '0'
-                        })()} x{" "}
-                        {Math.ceil(
-                          (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24),
-                        )}{" "}
-                        nights
-                      </span>
-                      <span className="font-semibold text-slate-900">${totalPrice.toLocaleString()}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-lg font-bold">
-                      <span>Total</span>
-                      <span>${totalPrice.toLocaleString()}</span>
-                    </div>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-sm font-medium text-green-800">Available for Test Drive</span>
                   </div>
-                )}
+                  <p className="text-sm text-green-700">
+                    This property is available for a test drive stay. Contact the listing agent to discuss pricing and availability.
+                  </p>
+                </div>
 
-                {error && <p className="text-sm text-red-500">{error}</p>}
+                <div className="space-y-3">
+                  <div className="text-sm text-slate-600">
+                    <p className="font-medium mb-1">What happens next?</p>
+                    <ul className="space-y-1 text-xs">
+                      <li>• Submit your test drive request</li>
+                      <li>• Listing agent will contact you</li>
+                      <li>• Discuss pricing and availability</li>
+                      <li>• Schedule your test drive stay</li>
+                    </ul>
+                  </div>
+                </div>
 
                 <Button
                   className="w-full"
                   size="lg"
-                  onClick={handleBooking}
-                  disabled={isLoading || !property.is_active || property.verification_status !== "approved"}
+                  onClick={() => {
+                    if (!userId) {
+                      router.push("/auth")
+                      return
+                    }
+                    // TODO: Implement test drive request functionality
+                    alert("Test drive request functionality coming soon!")
+                  }}
+                  disabled={!property.is_active || property.verification_status !== "approved"}
                 >
-                  {isLoading ? "Booking..." : userId ? "Reserve" : "Sign in to Book"}
+                  {userId ? "Request Test Drive" : "Sign in to Request"}
                 </Button>
 
                 {property.verification_status !== "approved" && (
