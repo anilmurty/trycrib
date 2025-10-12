@@ -2,11 +2,15 @@
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.buyer_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.seller_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.seller_agent_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.buyer_agent_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.properties ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.property_availability ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.agent_properties ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.agent_clients ENABLE ROW LEVEL SECURITY;
 
 -- Profiles policies
 CREATE POLICY "Users can view all profiles"
@@ -133,3 +137,55 @@ CREATE POLICY "Users can send messages"
 CREATE POLICY "Recipients can mark messages as read"
   ON public.messages FOR UPDATE
   USING (auth.uid() = recipient_id);
+
+-- Seller agent profiles policies
+CREATE POLICY "Users can view their own seller agent profile"
+  ON public.seller_agent_profiles FOR SELECT
+  USING (auth.uid() = id);
+
+CREATE POLICY "Users can update their own seller agent profile"
+  ON public.seller_agent_profiles FOR UPDATE
+  USING (auth.uid() = id);
+
+CREATE POLICY "Users can insert their own seller agent profile"
+  ON public.seller_agent_profiles FOR INSERT
+  WITH CHECK (auth.uid() = id);
+
+-- Buyer agent profiles policies
+CREATE POLICY "Users can view their own buyer agent profile"
+  ON public.buyer_agent_profiles FOR SELECT
+  USING (auth.uid() = id);
+
+CREATE POLICY "Users can update their own buyer agent profile"
+  ON public.buyer_agent_profiles FOR UPDATE
+  USING (auth.uid() = id);
+
+CREATE POLICY "Users can insert their own buyer agent profile"
+  ON public.buyer_agent_profiles FOR INSERT
+  WITH CHECK (auth.uid() = id);
+
+-- Agent properties policies
+CREATE POLICY "Agents can view their own property assignments"
+  ON public.agent_properties FOR SELECT
+  USING (auth.uid() = agent_id);
+
+CREATE POLICY "Agents can insert their own property assignments"
+  ON public.agent_properties FOR INSERT
+  WITH CHECK (auth.uid() = agent_id);
+
+CREATE POLICY "Agents can update their own property assignments"
+  ON public.agent_properties FOR UPDATE
+  USING (auth.uid() = agent_id);
+
+-- Agent clients policies
+CREATE POLICY "Agents can view their own client relationships"
+  ON public.agent_clients FOR SELECT
+  USING (auth.uid() = agent_id);
+
+CREATE POLICY "Clients can view their agent relationships"
+  ON public.agent_clients FOR SELECT
+  USING (auth.uid() = client_id);
+
+CREATE POLICY "Agents can insert their own client relationships"
+  ON public.agent_clients FOR INSERT
+  WITH CHECK (auth.uid() = agent_id);
