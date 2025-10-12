@@ -53,8 +53,7 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
   return (
     <div className="bg-slate-50 py-8">
       <div className="container max-w-6xl mx-auto px-4">
-        <div className="grid gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6">
             {/* Image Carousel */}
             <div className="relative aspect-[16/9] rounded-lg overflow-hidden bg-slate-200">
               {availableImages.length > 0 ? (
@@ -121,9 +120,21 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
                       </span>
                     </div>
                   </div>
-                  <Badge variant={property.is_active ? "default" : "secondary"}>
-                    {property.is_active ? "Available" : "Unavailable"}
-                  </Badge>
+                  <Button
+                    size="lg"
+                    onClick={() => {
+                      if (!userId) {
+                        router.push("/auth")
+                        return
+                      }
+                      // TODO: Implement test drive request functionality
+                      alert("Test drive request functionality coming soon!")
+                    }}
+                    disabled={!property.is_active || property.verification_status !== "approved"}
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    {userId ? "Request Test Drive" : "Sign in to Request"}
+                  </Button>
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -176,36 +187,16 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
                     </div>
                   </div>
                 )}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Request Test Drive Card */}
-          <div className="lg:col-span-1">
-            <Card className="sticky top-4">
-              <CardContent className="p-6">
-                <Button
-                  className="w-full"
-                  size="lg"
-                  onClick={() => {
-                    if (!userId) {
-                      router.push("/auth")
-                      return
-                    }
-                    // TODO: Implement test drive request functionality
-                    alert("Test drive request functionality coming soon!")
-                  }}
-                  disabled={!property.is_active || property.verification_status !== "approved"}
-                >
-                  {userId ? "Request Test Drive" : "Sign in to Request"}
-                </Button>
 
                 {property.verification_status !== "approved" && (
-                  <p className="text-xs text-center text-slate-500 mt-2">This property is pending verification</p>
+                  <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <p className="text-sm text-yellow-800 text-center">
+                      This property is pending verification
+                    </p>
+                  </div>
                 )}
               </CardContent>
             </Card>
-          </div>
         </div>
       </div>
     </div>
