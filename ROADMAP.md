@@ -1,5 +1,7 @@
 # TryCrib Development Roadmap
 
+*Last Updated: October 12, 2025*
+
 This roadmap tracks the development progress of TryCrib, a "try before you buy" real estate platform. Features are organized by user role and development phase.
 
 ## 🎯 Core Platform Features
@@ -37,6 +39,12 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [x] Role-based permission controls
   - [ ] Role change history tracking
   - [ ] Role change audit log interface
+- [ ] **Agent Role System** (NEW - From Business Plan)
+  - [ ] Seller's Agent role implementation
+  - [ ] Buyer's Agent role implementation
+  - [ ] Agent-specific profile fields (license, brokerage, phone)
+  - [ ] Agent-client relationship system
+  - [ ] Agent onboarding flows
 
 ### Database & Backend
 - [x] **Database Schema**
@@ -51,17 +59,25 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [x] Feed-specific fields (MLS ID, source tracking)
   - [x] Property claiming system
   - [x] Historical data retention
-- [ ] **API Endpoints**
-  - [ ] Property CRUD operations
+- [x] **API Endpoints**
+  - [x] Property CRUD operations
+  - [x] User management
+  - [x] Property feed import
+  - [x] Property claiming
+  - [x] Pricing system management
+  - [x] Verification system
   - [ ] Booking management
   - [ ] Payment processing
-  - [ ] User management
-  - [ ] Property feed import
-  - [ ] Property claiming
 - [x] **Data Security**
   - [x] Supabase RLS policies
   - [x] Input validation
   - [x] SQL injection prevention
+- [ ] **Privacy & Legal Compliance** (CRITICAL)
+  - [ ] Email privacy protection (buyer/seller isolation)
+  - [ ] Agent-only pricing system
+  - [ ] Seller approval required for all pricing
+  - [ ] No direct buyer-seller communication
+  - [ ] Professional agent coordination only
 
 ## 🏠 Property Management
 
@@ -129,25 +145,24 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [x] Consistent styling across pages
   - [x] Fast loading with lazy loading
 
-### Pricing System
-- [ ] **Tiered Pricing Structure** (Next Priority)
-  - [ ] Property value-based pricing tiers
-  - [ ] Under $500K: $500/night
-  - [ ] $500K-$1M: $750/night
-  - [ ] $1M-$1.5M: $1250/night
-  - [ ] $1.5M-$3M: $1500/night
-  - [ ] $3M-$5M: $2000/night
-  - [ ] Over $5M: "Contact Seller" pricing
-- [ ] **Pricing Integration**
-  - [ ] Dynamic price calculation based on property value
-  - [ ] Price display on property listings
-  - [ ] Price integration with booking flow
-  - [ ] Admin pricing management interface
-  - [ ] Price validation and error handling
+### Pricing System (🚧 PARTIALLY COMPLETED - LEGAL ISSUES)
+- [x] **Pricing Infrastructure**
+  - [x] Pricing tier configuration system
+  - [x] Admin pricing management interface
+  - [x] Property-specific pricing overrides
+  - [x] Bulk pricing recalculation system
+- [ ] **Legal Compliance Requirements** (CRITICAL)
+  - [ ] Remove automatic price display on public listings
+  - [ ] Implement agent-only pricing system
+  - [ ] Require seller approval for all pricing
+  - [ ] Hide pricing until agent sets and seller approves
+  - [ ] "Contact listing agent for pricing" as default display
 
 ### Search & Discovery
-- [ ] **Basic Search**
-  - [ ] Property listing page
+- [x] **Basic Search**
+  - [x] Property listing page
+  - [x] Search and filtering functionality
+  - [x] Pagination with search
   - [ ] Location-based filtering
   - [ ] Property type filtering
 - [ ] **Advanced Search**
@@ -201,10 +216,11 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 ## 👥 User Dashboards
 
 ### Buyer Dashboard
-- [ ] **Core Features**
-  - [ ] Property browsing
+- [x] **Core Features**
+  - [x] Property browsing
+  - [x] Profile management
+  - [x] Verification system integration
   - [ ] Booking management
-  - [ ] Profile management
   - [ ] Booking history
 - [ ] **Enhanced Features**
   - [ ] Wishlist/favorites
@@ -213,11 +229,13 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [ ] Review management
   - [ ] Message center
   - [ ] Notification preferences
-  - [ ] Pre-approval letter upload
+  - [x] Pre-approval letter upload (via verification system)
 
 ### Seller Dashboard
-- [ ] **Core Features**
-  - [ ] Property listing management
+- [x] **Core Features**
+  - [x] Property listing management
+  - [x] Property claiming system
+  - [x] Verification system integration
   - [ ] Booking overview
   - [ ] Earnings tracking
   - [ ] Property analytics
@@ -229,6 +247,32 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [ ] Pricing optimization tools
   - [ ] Market insights
   - [ ] Automated messaging
+
+### Seller's Agent Dashboard (NEW - From Business Plan)
+- [ ] **Core Features**
+  - [ ] Main overview with key metrics
+  - [ ] My Listings management
+  - [ ] Booking requests queue
+  - [ ] Confirmed stays calendar
+  - [ ] Payouts tracking
+- [ ] **Enhanced Features**
+  - [ ] Collaborative proposals system
+  - [ ] Direct property management
+  - [ ] Marketing copy editing
+  - [ ] Cleaning service management
+  - [ ] Professional profile management
+
+### Buyer's Agent Dashboard (NEW - From Business Plan)
+- [ ] **Core Features**
+  - [ ] Upcoming tasks checklist
+  - [ ] My clients' activity feed
+  - [ ] New client requests queue
+  - [ ] Resource hub
+- [ ] **Enhanced Features**
+  - [ ] Client connection management
+  - [ ] Task automation
+  - [ ] Professional communication tools
+  - [ ] Client progress tracking
 
 ### Admin Dashboard
 - [x] **Core Features**
@@ -259,6 +303,43 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [ ] A/B testing tools
   - [ ] Bulk operations
   - [ ] System health monitoring
+
+## 🤝 Collaborative Workflows
+
+### Seller & Seller's Agent Collaboration
+- [ ] **Proposal System**
+  - [ ] Agent proposes, seller approves model
+  - [ ] Availability proposals
+  - [ ] Pricing proposals
+  - [ ] House rules proposals
+  - [ ] Stay requirements proposals
+- [ ] **Communication System**
+  - [ ] Notification system for proposals
+  - [ ] Approval/decline workflow
+  - [ ] Seller dashboard for managing proposals
+
+### Buyer & Buyer's Agent Collaboration
+- [ ] **Client Connection System**
+  - [ ] "Share with Agent" functionality
+  - [ ] Instant notifications for booking requests
+  - [ ] Private journal sharing (post-MVP)
+  - [ ] Agent dashboard for client activity
+
+### Buyer & Seller's Agent Collaboration
+- [ ] **Booking Request System**
+  - [ ] "Request a Test Drive" as only direct contact
+  - [ ] Structured booking approval/decline
+  - [ ] Limited messaging portal (post-booking)
+  - [ ] Status update system
+  - [ ] **CRITICAL: No direct email sharing between buyer and seller**
+
+### Seller's Agent & Buyer's Agent Collaboration
+- [ ] **Professional Introduction System**
+  - [ ] Formal introduction after booking confirmation
+  - [ ] Coordination prompts for check-in
+  - [ ] Verified contact information sharing (agents only)
+  - [ ] Professional communication facilitation
+  - [ ] **CRITICAL: No buyer/seller email sharing - agents coordinate only**
 
 ## 💬 Communication & Reviews
 
@@ -315,6 +396,14 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [x] How it works section
   - [x] Featured properties
   - [x] Call-to-action sections
+- [ ] **Public Site Enhancements**
+  - [ ] Update tagline to "test drive home"
+  - [ ] Clear value propositions for buyers and sellers
+  - [ ] Enhanced "How It Works" section with buyer workflow
+  - [ ] Separate pages: How It Works, Browse Listings, Listing Detail, FAQs, ToS, Privacy Policy
+  - [ ] Property listing states (Seeded vs Activated)
+  - [ ] "Request a Test Drive" CTA for seeded properties
+  - [ ] "Activate this home" CTA for seller onboarding
 - [ ] **Marketing Features**
   - [ ] SEO optimization
   - [ ] Blog/content management
@@ -408,38 +497,50 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 
 ## 📊 Development Phases
 
-### Phase 1: MVP (Current) 🚧
+### Phase 1: MVP (🚧 PARTIALLY COMPLETED)
 - [x] Landing page frontend
 - [x] Core authentication
 - [x] Basic property management
-- [x] Simple booking system
-- [x] Payment integration
+- [x] User verification system
 - [x] Basic dashboards
+- [ ] Legal compliance fixes (pricing, privacy)
 
-### Phase 2: Property Data Management 🚧 IN TESTING
+### Phase 2: Property Data Management (✅ COMPLETED)
 - [x] Enhanced role system (superadmin)
 - [x] Database schema updates
-- [ ] Property feed import system (testing)
+- [x] Property feed import system
 - [x] Property claiming system
-- [ ] Admin data management interface (testing)
+- [x] Admin data management interface
 - [x] Cloudinary image integration
-- [x] Role change history tracking
+- [x] Pagination and performance optimization
 
-### Phase 3: Enhanced UX (3-5 months)
+### Phase 3: Agent System & Collaborative Workflows (CURRENT PRIORITY)
+- [ ] Agent role system implementation
+- [ ] Agent-specific dashboards
+- [ ] Collaborative proposal system
+- [ ] Client-agent connection system
+- [ ] Professional communication tools
+
+### Phase 4: Booking & Payment System (NEXT PRIORITY)
+- [ ] Booking creation and management
+- [ ] Payment processing integration
+- [ ] Calendar and availability system
+- [ ] Booking approval workflows
+
+### Phase 5: Enhanced UX (3-5 months)
 - [ ] Advanced search and filtering
 - [ ] Real-time messaging
 - [ ] Review system
-- [ ] Calendar management
 - [ ] Mobile optimization
 
-### Phase 4: Advanced Features (5-8 months)
+### Phase 6: Advanced Features (5-8 months)
 - [ ] AI recommendations
 - [ ] Advanced analytics
 - [ ] Mobile app
 - [ ] Third-party integrations
 - [ ] Performance optimization
 
-### Phase 5: Scale & Growth (8+ months)
+### Phase 7: Scale & Growth (8+ months)
 - [ ] Enterprise features
 - [ ] Advanced AI/ML
 - [ ] International expansion
@@ -450,22 +551,25 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 
 ## 📈 Progress Summary
 
-**Overall Completion: ~60%**
+**Overall Completion: ~45%**
 
-- ✅ **Completed**: 45+ features (Landing page, authentication, property management, enhanced role system, property claiming system, property data management system, pagination & performance system, user verification system)
-- 🚧 **In Testing**: 2+ features (Cloudinary integration, advanced search)
-- ⏳ **Planned**: 50+ features
+- ✅ **Completed**: 35+ features (Landing page, authentication, property management, enhanced role system, property claiming system, property data management system, pagination & performance system, user verification system, pricing infrastructure)
+- 🚧 **In Progress**: Legal compliance fixes, agent system implementation
+- ⏳ **Planned**: 60+ features
+
+**Critical Issues Identified**:
+- 🚨 **Pricing System Legal Issues** - Currently displays prices without agent/seller approval (LEGAL RISK)
+- 🚨 **Privacy Protection Missing** - No buyer/seller email isolation system
+- 🚨 **Agent System Not Implemented** - Core business model requires agent roles
+- 🚨 **Booking System Missing** - Core platform functionality not implemented
 
 **Recent Major Accomplishments**:
-- ✅ **User Verification System** - Complete identity verification for buyers and sellers with document upload, status tracking, and dashboard integration
-- ✅ **Enhanced Authentication** - Fixed CAPTCHA, email verification, and mobile navigation issues
-- ✅ **Property Data Management System** - Successfully tested with 85 properties
+- ✅ **User Verification System** - Complete identity verification for buyers and sellers
+- ✅ **Property Data Management System** - Successfully handles 1000+ properties with import, claiming, and management
 - ✅ **Pagination & Performance** - High-performance browsing with search/filtering
-- ✅ **Large Dataset Support** - Handles 200+ properties efficiently
-- ✅ **Rich Property Data** - 40+ images per property, detailed descriptions
+- ✅ **Admin Dashboard** - Comprehensive property and user management interface
+- ✅ **Pricing Infrastructure** - Backend pricing system (needs legal compliance fixes)
 
-**Next Priority**: Tiered pricing system implementation, then Cloudinary integration and booking system.
+**Current Priority**: Fix legal compliance issues (pricing display, email privacy) and implement agent role system.
 
----
-
-*Last Updated: October 2025*
+**Next Priority**: Booking and payment system implementation.
