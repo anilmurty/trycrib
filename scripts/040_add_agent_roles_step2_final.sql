@@ -1,13 +1,10 @@
--- Add agent roles to user_role enum
--- This script adds seller_agent and buyer_agent roles to the existing user_role enum
-
--- Add agent roles to the user_role enum
-ALTER TYPE user_role ADD VALUE 'seller_agent';
-ALTER TYPE user_role ADD VALUE 'buyer_agent';
+-- Step 2: Create agent tables and relationships (Final version with explicit type casting)
+-- This version uses TEXT for foreign key references and explicit type casting in RLS policies
+-- Run this AFTER step 1 (scripts/034_add_agent_roles_step1.sql)
 
 -- Create seller_agent_profiles table (additional seller agent-specific info)
 CREATE TABLE IF NOT EXISTS public.seller_agent_profiles (
-  id UUID PRIMARY KEY REFERENCES public.profiles(id) ON DELETE CASCADE,
+  id TEXT PRIMARY KEY REFERENCES public.profiles(id) ON DELETE CASCADE,
   license_number TEXT,
   brokerage_name TEXT,
   brokerage_license TEXT,
@@ -23,7 +20,7 @@ CREATE TABLE IF NOT EXISTS public.seller_agent_profiles (
 
 -- Create buyer_agent_profiles table (additional buyer agent-specific info)
 CREATE TABLE IF NOT EXISTS public.buyer_agent_profiles (
-  id UUID PRIMARY KEY REFERENCES public.profiles(id) ON DELETE CASCADE,
+  id TEXT PRIMARY KEY REFERENCES public.profiles(id) ON DELETE CASCADE,
   license_number TEXT,
   brokerage_name TEXT,
   brokerage_license TEXT,
@@ -39,7 +36,7 @@ CREATE TABLE IF NOT EXISTS public.buyer_agent_profiles (
 -- Create agent_properties table (links agents to properties they manage)
 CREATE TABLE IF NOT EXISTS public.agent_properties (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  agent_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  agent_id TEXT NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   property_id UUID NOT NULL REFERENCES public.properties(id) ON DELETE CASCADE,
   agent_type user_role NOT NULL CHECK (agent_type IN ('seller_agent', 'buyer_agent')),
   is_primary BOOLEAN DEFAULT false,
@@ -52,8 +49,8 @@ CREATE TABLE IF NOT EXISTS public.agent_properties (
 -- Create agent_clients table (links buyer agents to their clients)
 CREATE TABLE IF NOT EXISTS public.agent_clients (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  agent_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
-  client_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  agent_id TEXT NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  client_id TEXT NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   relationship_type TEXT DEFAULT 'buyer_agent_client',
   assigned_at TIMESTAMPTZ DEFAULT NOW(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -73,45 +70,45 @@ ALTER TABLE public.buyer_agent_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.agent_properties ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.agent_clients ENABLE ROW LEVEL SECURITY;
 
--- RLS policies for seller_agent_profiles
+-- RLS policies for seller_agent_profiles (with explicit type casting)
 CREATE POLICY "Users can view their own seller agent profile" ON public.seller_agent_profiles
-  FOR SELECT USING (auth.uid() = id);
+  FOR SELECT USING (auth.uid()::TEXT = id);
 
 CREATE POLICY "Users can update their own seller agent profile" ON public.seller_agent_profiles
-  FOR UPDATE USING (auth.uid() = id);
+  FOR UPDATE USING (auth.uid()::TEXT = id);
 
 CREATE POLICY "Users can insert their own seller agent profile" ON public.seller_agent_profiles
-  FOR INSERT WITH CHECK (auth.uid() = id);
+  FOR INSERT WITH CHECK (auth.uid()::TEXT = id);
 
--- RLS policies for buyer_agent_profiles
+-- RLS policies for buyer_agent_profiles (with explicit type casting)
 CREATE POLICY "Users can view their own buyer agent profile" ON public.buyer_agent_profiles
-  FOR SELECT USING (auth.uid() = id);
+  FOR SELECT USING (auth.uid()::TEXT = id);
 
 CREATE POLICY "Users can update their own buyer agent profile" ON public.buyer_agent_profiles
-  FOR UPDATE USING (auth.uid() = id);
+  FOR UPDATE USING (auth.uid()::TEXT = id);
 
 CREATE POLICY "Users can insert their own buyer agent profile" ON public.buyer_agent_profiles
-  FOR INSERT WITH CHECK (auth.uid() = id);
+  FOR INSERT WITH CHECK (auth.uid()::TEXT = id);
 
--- RLS policies for agent_properties
+-- RLS policies for agent_properties (with explicit type casting)
 CREATE POLICY "Agents can view their own property assignments" ON public.agent_properties
-  FOR SELECT USING (auth.uid() = agent_id);
+  FOR SELECT USING (auth.uid()::TEXT = agent_id);
 
 CREATE POLICY "Agents can insert their own property assignments" ON public.agent_properties
-  FOR INSERT WITH CHECK (auth.uid() = agent_id);
+  FOR INSERT WITH CHECK (auth.uid()::TEXT = agent_id);
 
 CREATE POLICY "Agents can update their own property assignments" ON public.agent_properties
-  FOR UPDATE USING (auth.uid() = agent_id);
+  FOR UPDATE USING (auth.uid()::TEXT = agent_id);
 
--- RLS policies for agent_clients
+-- RLS policies for agent_clients (with explicit type casting)
 CREATE POLICY "Agents can view their own client relationships" ON public.agent_clients
-  FOR SELECT USING (auth.uid() = agent_id);
+  FOR SELECT USING (auth.uid()::TEXT = agent_id);
 
 CREATE POLICY "Clients can view their agent relationships" ON public.agent_clients
-  FOR SELECT USING (auth.uid() = client_id);
+  FOR SELECT USING (auth.uid()::TEXT = client_id);
 
 CREATE POLICY "Agents can insert their own client relationships" ON public.agent_clients
-  FOR INSERT WITH CHECK (auth.uid() = agent_id);
+  FOR INSERT WITH CHECK (auth.uid()::TEXT = agent_id);
 
 -- Add comments for documentation
 COMMENT ON TABLE public.seller_agent_profiles IS 'Additional profile information for seller agents';
