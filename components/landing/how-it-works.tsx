@@ -23,9 +23,9 @@ export function HowItWorks() {
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-600">
               <span className="text-lg font-bold text-white">2</span>
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">Book a Stay</h3>
+            <h3 className="text-lg font-bold text-white mb-2">Request & Stay</h3>
             <p className="text-sm text-gray-400 leading-relaxed">
-              Reserve a short-term stay to experience living in the home before making an offer.
+              Request a short-term stay to experience living in the home before making an offer.
             </p>
           </div>
 

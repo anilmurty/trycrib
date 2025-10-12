@@ -22,8 +22,8 @@ export function HowItWorksContent() {
     },
     {
       icon: Home,
-      title: "Book Your Stay",
-      description: "Reserve a short-term stay to experience the home, neighborhood, and commute firsthand.",
+      title: "Request & Stay",
+      description: "Request a short-term stay to experience living in the home before making an offer.",
     },
     {
       icon: CheckCircle,
