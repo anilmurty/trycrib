@@ -245,8 +245,8 @@ export function PropertiesList() {
                     {property.city}, {property.state}
                   </p>
                   
-                  {/* Pricing Information */}
-                  <div className="mt-2 space-y-1">
+                  {/* Property Status and CTA */}
+                  <div className="mt-2 space-y-2">
                     {property.listing_price && (
                       <div className="flex items-center gap-2">
                         <DollarSign className="h-4 w-4 text-gray-500" />
@@ -256,39 +256,21 @@ export function PropertiesList() {
                       </div>
                     )}
                     
-                    {/* Nightly Rate */}
-                    {(() => {
-                      const effectivePricePerNight = property.pricing_override 
-                        ? property.custom_price_per_night 
-                        : property.calculated_price_per_night
-                      
-                      if (effectivePricePerNight) {
-                        return (
-                          <div className="flex items-center gap-2">
-                            <DollarSign className="h-4 w-4 text-blue-600" />
-                            <span className="text-sm text-blue-600">
-                              Try for ${effectivePricePerNight.toLocaleString()}/night
-                            </span>
-                          </div>
-                        )
-                      } else if (property.pricing_tier === 'over_5m') {
-                        return (
-                          <div className="flex items-center gap-2">
-                            <DollarSign className="h-4 w-4 text-gray-500" />
-                            <span className="text-sm text-gray-600 italic">
-                              Contact listing agent for pricing
-                            </span>
-                          </div>
-                        )
-                      }
-                      return null
-                    })()}
+                    {/* Property Status and CTA */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-500 italic">
+                        Contact listing agent for pricing
+                      </span>
+                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                        Available for Test Drive
+                      </span>
+                    </div>
                   </div>
                   
                   <div className="flex items-center justify-end mt-3">
                     <Link href={`/properties/${property.id}`}>
                       <Button className="rounded-lg bg-blue-600 hover:bg-blue-700 px-4 py-1.5 text-sm">
-                        View Details
+                        Request Test Drive
                       </Button>
                     </Link>
                   </div>
