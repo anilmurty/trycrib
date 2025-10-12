@@ -183,35 +183,7 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
           {/* Request Test Drive Card */}
           <div className="lg:col-span-1">
             <Card className="sticky top-4">
-              <CardHeader>
-                <CardTitle>Request a Test Drive</CardTitle>
-                <div className="flex items-center gap-2">
-                  <span className="text-lg font-semibold text-slate-600">Contact listing agent for pricing</span>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-sm font-medium text-green-800">Available for Test Drive</span>
-                  </div>
-                  <p className="text-sm text-green-700">
-                    This property is available for a test drive stay. Contact the listing agent to discuss pricing and availability.
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="text-sm text-slate-600">
-                    <p className="font-medium mb-1">What happens next?</p>
-                    <ul className="space-y-1 text-xs">
-                      <li>• Submit your test drive request</li>
-                      <li>• Listing agent will contact you</li>
-                      <li>• Discuss pricing and availability</li>
-                      <li>• Schedule your test drive stay</li>
-                    </ul>
-                  </div>
-                </div>
-
+              <CardContent className="p-6">
                 <Button
                   className="w-full"
                   size="lg"
@@ -229,7 +201,7 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
                 </Button>
 
                 {property.verification_status !== "approved" && (
-                  <p className="text-xs text-center text-slate-500">This property is pending verification</p>
+                  <p className="text-xs text-center text-slate-500 mt-2">This property is pending verification</p>
                 )}
               </CardContent>
             </Card>

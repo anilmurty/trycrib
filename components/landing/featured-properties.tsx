@@ -102,8 +102,8 @@ export async function FeaturedProperties() {
                   {property.city}, {property.state}
                 </p>
                 
-                {/* Property Status and CTA */}
-                <div className="mt-3 space-y-2">
+                {/* Property Info and CTA */}
+                <div className="mt-3 flex items-center justify-between">
                   {property.listing_price && (
                     <div className="flex items-center gap-2">
                       <DollarSign className="h-4 w-4 text-gray-500" />
@@ -113,18 +113,6 @@ export async function FeaturedProperties() {
                     </div>
                   )}
                   
-                  {/* Property Status and CTA */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500 italic">
-                      Contact listing agent for pricing
-                    </span>
-                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                      Available for Test Drive
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-end mt-3">
                   <Link href={`/properties/${property.id}`}>
                     <Button className="rounded-lg bg-blue-600 hover:bg-blue-700 px-4 py-1.5 text-sm">
                       Request Test Drive
