@@ -84,7 +84,7 @@ export async function FeaturedProperties() {
                   </div>
                 )}
               </div>
-              <CardContent className="p-3">
+              <CardContent className="p-3 pb-2">
                 {/* Property details in main title */}
                 <div className="flex items-center gap-4 text-sm font-bold text-gray-700">
                   {property.bedrooms && (
@@ -102,7 +102,7 @@ export async function FeaturedProperties() {
                 </p>
                 
                 {/* Property Info and CTA */}
-                <div className="mt-3 flex items-center justify-between">
+                <div className="mt-1 flex items-center justify-between">
                   {property.listing_price && (
                     <div className="flex items-center gap-2">
                       <DollarSign className="h-4 w-4 text-gray-500" />
