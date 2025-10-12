@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { DollarSign } from "lucide-react"
-import { formatPricingDisplay, getPricingTierInfo } from "@/lib/pricing"
 
 export async function FeaturedProperties() {
   const supabase = await createClient()

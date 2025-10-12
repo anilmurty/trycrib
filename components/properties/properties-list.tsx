@@ -8,7 +8,6 @@ import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
 import { ChevronLeft, ChevronRight, Search, Filter, DollarSign } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { formatPricingDisplay, getPricingTierInfo } from "@/lib/pricing"
 
 interface Property {
   id: string
