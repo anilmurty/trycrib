@@ -8,7 +8,6 @@ export async function POST(request: Request) {
 
     const supabase = createClient()
 
-    // For now, let's just log the request since we don't have the table yet
     console.log("Property listing request received:", {
       seller_id,
       agent_email,
@@ -21,17 +20,41 @@ export async function POST(request: Request) {
       message
     })
 
-    // TODO: Insert into property_listing_requests table once it's created
-    // For now, we'll simulate success
+    // Insert into property_listing_requests table
+    const { data, error } = await supabase
+      .from("property_listing_requests")
+      .insert([{
+        seller_id,
+        agent_email,
+        property_id,
+        request_type,
+        property_address,
+        property_city,
+        property_state,
+        property_zip,
+        message,
+        status: "pending"
+      }])
+      .select()
+
+    if (error) {
+      console.error("Database error:", error)
+      return NextResponse.json({ 
+        error: `Database error: ${error.message}` 
+      }, { status: 500 })
+    }
+
+    console.log("Request saved successfully:", data)
     return NextResponse.json({ 
       success: true, 
-      message: "Request received successfully" 
+      message: "Request received successfully",
+      data: data[0]
     })
 
   } catch (error) {
     console.error("Error handling property listing request:", error)
     return NextResponse.json({ 
-      error: "Failed to process request" 
+      error: `Failed to process request: ${error instanceof Error ? error.message : 'Unknown error'}` 
     }, { status: 500 })
   }
 }
@@ -40,16 +63,27 @@ export async function GET() {
   try {
     const supabase = createClient()
     
-    // TODO: Fetch requests from property_listing_requests table once it's created
-    // For now, return empty array
+    // Fetch requests from property_listing_requests table
+    const { data, error } = await supabase
+      .from("property_listing_requests")
+      .select("*")
+      .order("created_at", { ascending: false })
+
+    if (error) {
+      console.error("Database error:", error)
+      return NextResponse.json({ 
+        error: `Database error: ${error.message}` 
+      }, { status: 500 })
+    }
+
     return NextResponse.json({ 
-      requests: [] 
+      requests: data || [] 
     })
 
   } catch (error) {
     console.error("Error fetching property listing requests:", error)
     return NextResponse.json({ 
-      error: "Failed to fetch requests" 
+      error: `Failed to fetch requests: ${error instanceof Error ? error.message : 'Unknown error'}` 
     }, { status: 500 })
   }
 }
