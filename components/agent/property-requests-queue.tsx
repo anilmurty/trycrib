@@ -1,15 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { toast } from "sonner"
 import { MapPin, Home, DollarSign, Clock, CheckCircle, XCircle, MessageSquare, User, Mail } from "lucide-react"
 import { format } from "date-fns"
-import { toast } from "sonner"
 
 interface PropertyListingRequest {
   id: string
@@ -38,26 +37,35 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
   const [selectedRequest, setSelectedRequest] = useState<PropertyListingRequest | null>(null)
   const [agentNotes, setAgentNotes] = useState("")
   const [actionLoading, setActionLoading] = useState(false)
-  const supabase = createClient()
 
   useEffect(() => {
     fetchRequests()
   }, [agentEmail])
 
+  // Refresh requests every 30 seconds to catch withdrawals and removals
+  useEffect(() => {
+    const interval = setInterval(fetchRequests, 30000)
+    return () => clearInterval(interval)
+  }, [agentEmail])
+
   const fetchRequests = async () => {
     try {
-      const { data, error } = await supabase
-        .from("property_listing_requests")
-        .select("*")
-        .eq("agent_email", agentEmail)
-        .order("created_at", { ascending: false })
-
-      if (error) {
-        console.error("Error fetching requests:", error)
-        return
+      console.log("Fetching requests for agent email:", agentEmail)
+      
+      // Use API route to fetch requests (bypasses RLS)
+      const response = await fetch('/api/property-listing-requests')
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch requests')
       }
-
-      setRequests(data || [])
+      
+      const result = await response.json()
+      console.log("All requests from API:", result.requests)
+      
+      // Filter requests for this specific agent
+      const agentRequests = result.requests?.filter((req: PropertyListingRequest) => req.agent_email === agentEmail) || []
+      console.log("Filtered requests for agent:", agentRequests)
+      setRequests(agentRequests)
     } catch (error) {
       console.error("Error fetching requests:", error)
     } finally {
@@ -68,19 +76,21 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
   const handleApprove = async (request: PropertyListingRequest) => {
     setActionLoading(true)
     try {
-      const { error } = await supabase
-        .from("property_listing_requests")
-        .update({
+      const response = await fetch('/api/property-listing-requests', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          requestId: request.id,
           status: 'approved',
-          agent_notes: agentNotes || null,
-          updated_at: new Date().toISOString()
+          agentNotes: agentNotes || null
         })
-        .eq("id", request.id)
+      })
 
-      if (error) {
-        console.error("Error approving request:", error)
-        toast.error("Failed to approve request")
-        return
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to approve request')
       }
 
       toast.success("Request approved successfully")
@@ -98,19 +108,21 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
   const handleReject = async (request: PropertyListingRequest) => {
     setActionLoading(true)
     try {
-      const { error } = await supabase
-        .from("property_listing_requests")
-        .update({
+      const response = await fetch('/api/property-listing-requests', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          requestId: request.id,
           status: 'rejected',
-          agent_notes: agentNotes || null,
-          updated_at: new Date().toISOString()
+          agentNotes: agentNotes || null
         })
-        .eq("id", request.id)
+      })
 
-      if (error) {
-        console.error("Error rejecting request:", error)
-        toast.error("Failed to reject request")
-        return
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to reject request')
       }
 
       toast.success("Request rejected")
@@ -270,8 +282,8 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
 
       {/* Action Modal */}
       {selectedRequest && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <Card className="w-full max-w-md">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <Card className="w-full max-w-md bg-white">
             <CardHeader>
               <CardTitle className="text-lg">Review Property Request</CardTitle>
             </CardHeader>

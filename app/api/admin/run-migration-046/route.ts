@@ -1,11 +1,15 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient } from "@supabase/supabase-js"
 import { NextResponse } from "next/server"
 
 export async function POST() {
   try {
     console.log("🚀 Running migration 046: Create property listing requests...")
     
-    const supabase = createClient()
+    // Use service role client to bypass RLS for migration operations
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
     
     // Read the SQL file
     const fs = require('fs')
