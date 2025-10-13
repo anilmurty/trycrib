@@ -10,6 +10,7 @@ import { Home, Calendar, DollarSign } from "lucide-react"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 import { PropertyList } from "./property-list"
+import { PropertySearch } from "@/components/property-search"
 import { BookingsList } from "./bookings-list"
 import { PropertyClaiming } from "./property-claiming"
 import { useClerk } from "@clerk/clerk-react"
@@ -151,12 +152,20 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
             </Card>
           </div>
 
-          <Tabs defaultValue="properties" className="space-y-6">
+          <Tabs defaultValue="search" className="space-y-6">
             <TabsList>
+              <TabsTrigger value="search">Find Properties</TabsTrigger>
               <TabsTrigger value="properties">My Properties</TabsTrigger>
               <TabsTrigger value="claim">Claim Property</TabsTrigger>
               <TabsTrigger value="bookings">Bookings</TabsTrigger>
             </TabsList>
+
+            <TabsContent value="search">
+              <PropertySearch 
+                userRole="seller" 
+                userId={userId}
+              />
+            </TabsContent>
 
             <TabsContent value="properties">
               <PropertyList userId={userId} />
