@@ -35,8 +35,8 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [x] Agent-specific profile fields (license, brokerage, phone)
   - [x] Agent-client relationship system
   - [x] Agent onboarding flows
-  - [ ] Agent dashboard structure
-  - [ ] Agent-only pricing management
+  - [x] Agent dashboard structure
+  - [x] Agent-only pricing management
   - [ ] Agent contact system for stay requests
 
 ### Database & Backend
@@ -513,9 +513,9 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 - [x] Cloudinary image integration
 - [x] Pagination and performance optimization
 
-### Phase 3: Agent System & Collaborative Workflows (CURRENT PRIORITY)
-- [ ] Agent role system implementation
-- [ ] Agent-specific dashboards
+### Phase 3: Agent System & Collaborative Workflows (COMPLETED)
+- [x] Agent role system implementation
+- [x] Agent-specific dashboards
 - [ ] Collaborative proposal system
 - [ ] Client-agent connection system
 - [ ] Professional communication tools
@@ -569,6 +569,6 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 - ✅ **Admin Dashboard** - Comprehensive property and user management interface
 - ✅ **Pricing Infrastructure** - Backend pricing system (needs legal compliance fixes)
 
-**Current Priority**: Fix legal compliance issues (pricing display, email privacy) and implement agent role system.
+**Current Priority**: Booking and payment system implementation.
 
-**Next Priority**: Booking and payment system implementation.
+**Next Priority**: Collaborative workflows and communication systems.

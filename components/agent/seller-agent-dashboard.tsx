@@ -11,6 +11,7 @@ import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 import { PropertyPricingModal } from "./property-pricing-modal"
 import { PropertySearch } from "@/components/property-search"
+import { PropertyRequestsQueue } from "./property-requests-queue"
 
 interface SellerAgentDashboardProps {
   userId: string
@@ -226,6 +227,7 @@ export function SellerAgentDashboard({ userId, profile, agentProfile }: SellerAg
           <Tabs defaultValue="search" className="space-y-6">
             <TabsList>
               <TabsTrigger value="search">Find Properties</TabsTrigger>
+              <TabsTrigger value="property-requests">Property Requests</TabsTrigger>
               <TabsTrigger value="properties">Properties</TabsTrigger>
               <TabsTrigger value="pricing">Pricing Management</TabsTrigger>
               <TabsTrigger value="clients">Clients</TabsTrigger>
@@ -238,6 +240,10 @@ export function SellerAgentDashboard({ userId, profile, agentProfile }: SellerAg
                 userRole="seller_agent" 
                 userId={userId}
               />
+            </TabsContent>
+
+            <TabsContent value="property-requests">
+              <PropertyRequestsQueue agentEmail={profile.email || ""} />
             </TabsContent>
 
             <TabsContent value="properties">
