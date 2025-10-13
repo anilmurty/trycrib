@@ -25,6 +25,13 @@ export async function POST(request: Request) {
     const supabase = await createClient()
     console.log("Supabase client created")
 
+    // Get user details from Clerk (needed for both creating and updating profiles)
+    const user = await currentUser()
+    const userEmail = user?.emailAddresses?.[0]?.emailAddress || "unknown@example.com"
+    const userFullName = user?.firstName && user?.lastName 
+      ? `${user.firstName} ${user.lastName}` 
+      : user?.firstName || user?.lastName || null
+
     // First, check if the profile exists
     console.log("Checking for existing profile...")
     const { data: existingProfile, error: profileCheckError } = await supabase.from("profiles").select("id").eq("id", userId).single()
@@ -34,13 +41,6 @@ export async function POST(request: Request) {
       // Profile doesn't exist, create it first
       console.log("Profile not found, creating profile for user", userId)
       
-      // Get user details from Clerk
-      const user = await currentUser()
-      const userEmail = user?.emailAddresses?.[0]?.emailAddress || "unknown@example.com"
-      const userFullName = user?.firstName && user?.lastName 
-        ? `${user.firstName} ${user.lastName}` 
-        : user?.firstName || user?.lastName || null
-
       console.log("Creating profile with data:", { userId, userEmail, userFullName, role })
       const { error: createError } = await supabase.from("profiles").insert({
         id: userId,
