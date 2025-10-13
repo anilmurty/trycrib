@@ -102,7 +102,6 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
 
       <main className="flex-1 py-12 bg-slate-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* Verification Banner */}
           
           <div className="mb-8 flex items-center justify-between">
             <div>
