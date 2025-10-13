@@ -17,16 +17,6 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
 - [x] **User Profiles**
   - [x] Basic profile information
   - [x] Role-specific profile extensions
-  - [x] Profile verification system
-- [x] **User Verification System** (✅ COMPLETED)
-  - [x] Document upload system with drag-and-drop interface
-  - [x] Role-specific verification requirements (buyers: pre-approval letters, sellers: property tax statements)
-  - [x] File deduplication and secure storage
-  - [x] Verification status tracking (pending, approved, rejected)
-  - [x] Dashboard integration with verification banners
-  - [x] Onboarding flow integration
-  - [x] Mobile-responsive verification pages
-  - [x] Skip verification option with persistent reminders
 - [x] **Authorization & Security**
   - [x] Route protection middleware
   - [x] Role-based access control
@@ -39,7 +29,7 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [x] Role-based permission controls
   - [ ] Role change history tracking
   - [ ] Role change audit log interface
-- [ ] **Agent Role System** (NEW - From Business Plan)
+- [ ] **Agent Role System** 
   - [ ] Seller's Agent role implementation
   - [ ] Buyer's Agent role implementation
   - [ ] Agent-specific profile fields (license, brokerage, phone)

@@ -208,7 +208,7 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
                 Please provide your {selectedRole === "buyer" ? "buyer's" : "seller's"} agent information
               </p>
               <p className="text-sm text-slate-500 mt-2">
-                We'll use this to connect you with your agent for stay requests and property management
+                We'll use this to connect you with your agent for stay requests
               </p>
             </div>
 
