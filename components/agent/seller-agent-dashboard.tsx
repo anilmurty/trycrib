@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Users, Home, Calendar, DollarSign, MessageSquare } from "lucide-react"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
+import { PropertyPricingModal } from "./property-pricing-modal"
 
 interface SellerAgentDashboardProps {
   userId: string
@@ -75,9 +76,12 @@ export function SellerAgentDashboard({ userId, profile, agentProfile }: SellerAg
   const [stayRequests, setStayRequests] = useState<StayRequest[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
+  const refreshData = () => {
+    fetchData()
+  }
+
+  const fetchData = async () => {
+    try {
         // Fetch clients (sellers assigned to this agent)
         const { data: clientsData } = await supabase
           .from("seller_profiles")
@@ -157,6 +161,7 @@ export function SellerAgentDashboard({ userId, profile, agentProfile }: SellerAg
       }
     }
 
+  useEffect(() => {
     fetchData()
   }, [userId, profile.email, supabase])
 
@@ -232,6 +237,7 @@ export function SellerAgentDashboard({ userId, profile, agentProfile }: SellerAg
           <Tabs defaultValue="properties" className="space-y-6">
             <TabsList>
               <TabsTrigger value="properties">Properties</TabsTrigger>
+              <TabsTrigger value="pricing">Pricing Management</TabsTrigger>
               <TabsTrigger value="clients">Clients</TabsTrigger>
               <TabsTrigger value="requests">Stay Requests</TabsTrigger>
               <TabsTrigger value="messages">Messages</TabsTrigger>
@@ -278,6 +284,74 @@ export function SellerAgentDashboard({ userId, profile, agentProfile }: SellerAg
                             </Button>
                             <Button variant="outline" size="sm">
                               Edit
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="pricing">
+              <Card className="border-0 shadow-md">
+                <CardHeader>
+                  <CardTitle>Property Pricing Management</CardTitle>
+                  <p className="text-sm text-slate-600 mt-2">
+                    Set pricing for your clients' properties. All pricing requires seller approval.
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  {loading ? (
+                    <div className="text-center py-8 text-slate-600">Loading properties...</div>
+                  ) : properties.length === 0 ? (
+                    <div className="text-center py-8 text-slate-600">
+                      <DollarSign className="h-12 w-12 mx-auto mb-4 text-slate-400" />
+                      <p>No properties to manage pricing for</p>
+                      <p className="text-sm text-slate-500 mt-2">
+                        Properties from your clients will appear here for pricing management
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {properties.map((property) => (
+                        <div key={property.id} className="flex items-center justify-between p-4 border rounded-lg">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <h3 className="font-semibold text-slate-900">{property.title}</h3>
+                              <Badge variant={property.is_active ? "default" : "secondary"}>
+                                {property.is_active ? "Active" : "Inactive"}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-slate-600">
+                              {property.city}, {property.state}
+                            </p>
+                            <p className="text-sm text-slate-600">
+                              Listed for: ${property.listing_price.toLocaleString()}
+                            </p>
+                            <div className="mt-2 flex items-center gap-4">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-medium">TryCrib Price:</span>
+                                <span className="text-sm text-slate-600">
+                                  {property.price_per_night ? `$${property.price_per_night}/night` : "Not set"}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-medium">Status:</span>
+                                <Badge variant="outline">
+                                  {property.price_per_night ? "Pricing Set" : "Needs Pricing"}
+                                </Badge>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <PropertyPricingModal 
+                              property={property} 
+                              onPricingUpdated={refreshData}
+                            />
+                            <Button variant="outline" size="sm">
+                              View Details
                             </Button>
                           </div>
                         </div>
