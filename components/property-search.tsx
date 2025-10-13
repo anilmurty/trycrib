@@ -80,7 +80,8 @@ export function PropertySearch({ userRole, userId, onPropertySelected }: Propert
         const { data: streetMatches, error: streetError } = await supabase
           .from("properties")
           .select("*")
-          .and(`address.ilike.%${streetNumber}%, address.ilike.%${streetName}%`)
+          .ilike("address", `%${streetNumber}%`)
+          .ilike("address", `%${streetName}%`)
           .eq("is_active", true)
           .limit(10)
 
@@ -100,7 +101,8 @@ export function PropertySearch({ userRole, userId, onPropertySelected }: Propert
         const { data: cityMatches, error: cityError } = await supabase
           .from("properties")
           .select("*")
-          .and(`city.ilike.%${city}%, state.ilike.%${state}%`)
+          .ilike("city", `%${city}%`)
+          .ilike("state", `%${state}%`)
           .eq("is_active", true)
           .limit(20)
 
