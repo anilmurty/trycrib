@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     const { role } = await request.json()
     console.log("Role from request:", role)
 
-    if (!role || (role !== "buyer" && role !== "seller")) {
+    if (!role || !["buyer", "seller", "seller_agent", "buyer_agent"].includes(role)) {
       console.log("Invalid role:", role)
       return NextResponse.json({ error: "Invalid role" }, { status: 400 })
     }
