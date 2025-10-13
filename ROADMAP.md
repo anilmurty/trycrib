@@ -156,8 +156,14 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [x] Property listing page
   - [x] Search and filtering functionality
   - [x] Pagination with search
+  - [x] Street address search (agent dashboard)
+  - [ ] Full address search (currently only street search works)
   - [ ] Location-based filtering
   - [ ] Property type filtering
+- [ ] **Search Performance & Infrastructure**
+  - [ ] Database indexing for search queries
+  - [ ] Query optimization for large datasets
+  - [ ] Search result caching
 - [ ] **Advanced Search**
   - [ ] Price range filtering
   - [ ] Bedroom/bathroom filters
