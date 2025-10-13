@@ -29,12 +29,15 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [x] Role-based permission controls
   - [ ] Role change history tracking
   - [ ] Role change audit log interface
-- [ ] **Agent Role System** 
-  - [ ] Seller's Agent role implementation
-  - [ ] Buyer's Agent role implementation
-  - [ ] Agent-specific profile fields (license, brokerage, phone)
-  - [ ] Agent-client relationship system
-  - [ ] Agent onboarding flows
+- [x] **Agent Role System** 
+  - [x] Seller's Agent role implementation
+  - [x] Buyer's Agent role implementation
+  - [x] Agent-specific profile fields (license, brokerage, phone)
+  - [x] Agent-client relationship system
+  - [x] Agent onboarding flows
+  - [ ] Agent dashboard structure
+  - [ ] Agent-only pricing management
+  - [ ] Agent contact system for stay requests
 
 ### Database & Backend
 - [x] **Database Schema**
@@ -238,7 +241,7 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [ ] Market insights
   - [ ] Automated messaging
 
-### Seller's Agent Dashboard (NEW - From Business Plan)
+### Seller's Agent Dashboard
 - [ ] **Core Features**
   - [ ] Main overview with key metrics
   - [ ] My Listings management
@@ -252,7 +255,7 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [ ] Cleaning service management
   - [ ] Professional profile management
 
-### Buyer's Agent Dashboard (NEW - From Business Plan)
+### Buyer's Agent Dashboard
 - [ ] **Core Features**
   - [ ] Upcoming tasks checklist
   - [ ] My clients' activity feed
