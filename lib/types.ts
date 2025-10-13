@@ -94,7 +94,12 @@ export interface Property {
   city: string
   state: string
   zip_code: string
-  price_per_night: number
+  price_per_night: number | null
+  pricing_tier: string | null
+  pricing_notes: string | null
+  pricing_set_by: string | null
+  pricing_set_at: string | null
+  pricing_approved_by_seller: boolean | null
   bedrooms: number | null
   bathrooms: number | null
   square_feet: number | null
