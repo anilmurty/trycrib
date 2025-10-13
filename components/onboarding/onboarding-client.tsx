@@ -42,9 +42,15 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
         throw new Error(`Failed to set role: ${response.status} - ${errorText}`)
       }
 
-      console.log("API call successful, redirecting based on role")
-      // Redirect both buyers and sellers to verification
-      router.push("/verification")
+      console.log("API call successful, redirecting to dashboard")
+      // Redirect to appropriate dashboard based on role
+      if (role === "buyer" || role === "buyer_agent") {
+        router.push("/dashboard/buyer")
+      } else if (role === "seller" || role === "seller_agent") {
+        router.push("/dashboard/seller")
+      } else {
+        router.push("/dashboard")
+      }
     } catch (err) {
       console.error("Error in handleRoleSelection:", err)
       setError("Something went wrong. Please try again.")

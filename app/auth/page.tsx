@@ -28,13 +28,8 @@ export default function AuthPage() {
     }
   }, [searchParams])
 
-  // Reset verification state when switching tabs
+  // Reset error state when switching tabs
   useEffect(() => {
-    setIsVerificationPending(false)
-    setVerificationEmail("")
-    setVerificationCode("")
-    setIsVerifyingCode(false)
-    setVerificationError("")
     setSignUpError("")
     setSignInError("")
   }, [activeTab])
@@ -47,12 +42,6 @@ export default function AuthPage() {
   const [signUpError, setSignUpError] = useState("")
   const [signUpLoading, setSignUpLoading] = useState(false)
   
-  // Email verification state
-  const [isVerificationPending, setIsVerificationPending] = useState(false)
-  const [verificationEmail, setVerificationEmail] = useState("")
-  const [verificationCode, setVerificationCode] = useState("")
-  const [isVerifyingCode, setIsVerifyingCode] = useState(false)
-  const [verificationError, setVerificationError] = useState("")
 
   // Sign In state
   const [signInEmail, setSignInEmail] = useState("")
@@ -80,11 +69,10 @@ export default function AuthPage() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!signUpLoaded || isVerificationPending) return
+    if (!signUpLoaded) return
 
     setSignUpLoading(true)
     setSignUpError("")
-    setVerificationError("")
 
     try {
       const result = await signUp.create({
@@ -99,14 +87,13 @@ export default function AuthPage() {
 
       if (result.status === "complete") {
         await setSignUpActive({ session: result.createdSessionId })
-        router.push("/dashboard")
+        router.push("/onboarding")
       } else if (result.status === "missing_requirements") {
-        // Email verification required
+        // Email verification required - redirect to onboarding after verification
         if (result.unverifiedFields?.includes("email_address")) {
-          setIsVerificationPending(true)
-          setVerificationEmail(signUpEmail)
-          // Prepare email verification
           await signUp.prepareEmailAddressVerification({ strategy: "email_code" })
+          // For now, just redirect to onboarding - user will verify email there
+          router.push("/onboarding")
         }
       }
     } catch (err: any) {
@@ -160,39 +147,6 @@ export default function AuthPage() {
     }
   }
 
-  const handleVerifyCode = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!signUpLoaded || !verificationCode) return
-
-    setIsVerifyingCode(true)
-    setVerificationError("")
-
-    try {
-      const result = await signUp.attemptEmailAddressVerification({
-        code: verificationCode,
-      })
-
-      if (result.status === "complete") {
-        await setSignUpActive({ session: result.createdSessionId })
-        router.push("/dashboard")
-      }
-    } catch (err: any) {
-      setVerificationError(err.errors?.[0]?.message || "Invalid verification code")
-    } finally {
-      setIsVerifyingCode(false)
-    }
-  }
-
-  const handleResendVerification = async () => {
-    if (!signUpLoaded) return
-
-    try {
-      await signUp.prepareEmailAddressVerification({ strategy: "email_code" })
-      setVerificationError("")
-    } catch (err: any) {
-      setVerificationError("Failed to resend verification code. Please try again.")
-    }
-  }
 
   const handleGoogleSignIn = async () => {
     try {
@@ -271,65 +225,6 @@ export default function AuthPage() {
         </div>
 
         {activeTab === "signup" ? (
-          isVerificationPending ? (
-            <div className="space-y-4">
-              <div className="text-center">
-                <h2 className="text-xl font-semibold text-slate-900 mb-2">Verify your email</h2>
-                <p className="text-slate-600">
-                  We sent a verification code to <strong>{verificationEmail}</strong>
-                </p>
-              </div>
-
-              {verificationError && (
-                <Alert variant="destructive">
-                  <AlertDescription>{verificationError}</AlertDescription>
-                </Alert>
-              )}
-
-              <form onSubmit={handleVerifyCode} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="verificationCode">Verification Code</Label>
-                  <Input
-                    id="verificationCode"
-                    type="text"
-                    placeholder="Enter 6-digit code"
-                    value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value)}
-                    maxLength={6}
-                    required
-                  />
-                </div>
-
-                <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={isVerifyingCode}>
-                  {isVerifyingCode ? "Verifying..." : "Verify Email"}
-                </Button>
-
-                <div className="text-center">
-                  <button
-                    type="button"
-                    onClick={handleResendVerification}
-                    className="text-sm text-blue-600 hover:text-blue-700 underline"
-                  >
-                    Didn't receive it? Resend verification code
-                  </button>
-                </div>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full bg-transparent"
-                  onClick={() => {
-                    setIsVerificationPending(false)
-                    setVerificationEmail("")
-                    setVerificationCode("")
-                    setVerificationError("")
-                  }}
-                >
-                  Back to sign up
-                </Button>
-              </form>
-            </div>
-          ) : (
             <form onSubmit={handleSignUp} className="space-y-4">
               {signUpError && (
                 <Alert variant="destructive">
