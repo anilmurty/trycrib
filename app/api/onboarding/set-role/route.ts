@@ -14,8 +14,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { role } = await request.json()
+    const { role, agentInfo } = await request.json()
     console.log("Role from request:", role)
+    console.log("Agent info from request:", agentInfo)
 
     if (!role || !["buyer", "seller", "seller_agent", "buyer_agent"].includes(role)) {
       console.log("Invalid role:", role)
@@ -47,7 +48,6 @@ export async function POST(request: Request) {
         email: userEmail,
         full_name: userFullName,
         role: role,
-        verification_status: "pending",
       })
 
       if (createError) {
@@ -72,6 +72,9 @@ export async function POST(request: Request) {
       const { error: buyerError } = await supabase.from("buyer_profiles").upsert({
         id: userId,
         email: userEmail,
+        agent_name: agentInfo?.name || null,
+        agent_email: agentInfo?.email || null,
+        agent_phone: agentInfo?.phone || null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -86,6 +89,9 @@ export async function POST(request: Request) {
       const { error: sellerError } = await supabase.from("seller_profiles").upsert({
         id: userId,
         email: userEmail,
+        agent_name: agentInfo?.name || null,
+        agent_email: agentInfo?.email || null,
+        agent_phone: agentInfo?.phone || null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })

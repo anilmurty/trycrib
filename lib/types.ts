@@ -13,6 +13,10 @@ export interface Profile {
 
 export interface BuyerProfile {
   id: string
+  email: string
+  agent_name: string | null
+  agent_email: string | null
+  agent_phone: string | null
   pre_approval_letter_url: string | null
   max_budget: number | null
   preferred_locations: string[] | null
@@ -22,6 +26,7 @@ export interface BuyerProfile {
 
 export interface SellerProfile {
   id: string
+  email: string
   agent_name: string | null
   agent_email: string | null
   agent_phone: string | null
