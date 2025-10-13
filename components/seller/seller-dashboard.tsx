@@ -6,8 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { Home, Calendar, DollarSign, Plus } from "lucide-react"
-import Link from "next/link"
+import { Home, Calendar, DollarSign } from "lucide-react"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 import { PropertyList } from "./property-list"
@@ -103,17 +102,11 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
       <main className="flex-1 py-12 bg-slate-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
-          <div className="mb-8 flex items-center justify-between">
+          <div className="mb-8">
             <div>
               <h1 className="text-3xl font-bold text-slate-900">Seller Dashboard</h1>
-              <p className="text-slate-600 mt-2">Manage your properties and bookings</p>
+              <p className="text-slate-600 mt-2">View your claimed properties and request your agent to add them to TryCrib listings</p>
             </div>
-            <Link href="/dashboard/seller/properties/new">
-              <Button className="rounded-lg bg-blue-600 hover:bg-blue-700">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Property
-              </Button>
-            </Link>
           </div>
 
           <div className="grid gap-6 md:grid-cols-4 mb-8">
