@@ -144,12 +144,12 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [x] Admin pricing management interface
   - [x] Property-specific pricing overrides
   - [x] Bulk pricing recalculation system
-- [ ] **Legal Compliance Requirements** (CRITICAL)
-  - [ ] Remove automatic price display on public listings
-  - [ ] Implement agent-only pricing system
-  - [ ] Require seller approval for all pricing
-  - [ ] Hide pricing until agent sets and seller approves
-  - [ ] "Contact listing agent for pricing" as default display
+- [x] **Legal Compliance Requirements** (COMPLETED)
+  - [x] Hide price per night on public listings (only shows listing price from MLS)
+  - [x] Hide price per night on property details (only shows listing price from MLS)
+  - [x] Implement agent-only pricing system for price per night
+  - [x] Require seller approval for price per night
+  - [x] "Contact listing agent for pricing" as default for price per night
 
 ### Search & Discovery
 - [x] **Basic Search**
