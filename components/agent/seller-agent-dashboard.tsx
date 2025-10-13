@@ -10,6 +10,7 @@ import { Users, Home, Calendar, DollarSign, MessageSquare } from "lucide-react"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 import { PropertyPricingModal } from "./property-pricing-modal"
+import { PropertySearch } from "@/components/property-search"
 
 interface SellerAgentDashboardProps {
   userId: string
@@ -234,14 +235,22 @@ export function SellerAgentDashboard({ userId, profile, agentProfile }: SellerAg
             </Card>
           </div>
 
-          <Tabs defaultValue="properties" className="space-y-6">
+          <Tabs defaultValue="search" className="space-y-6">
             <TabsList>
+              <TabsTrigger value="search">Find Properties</TabsTrigger>
               <TabsTrigger value="properties">Properties</TabsTrigger>
               <TabsTrigger value="pricing">Pricing Management</TabsTrigger>
               <TabsTrigger value="clients">Clients</TabsTrigger>
               <TabsTrigger value="requests">Stay Requests</TabsTrigger>
               <TabsTrigger value="messages">Messages</TabsTrigger>
             </TabsList>
+
+            <TabsContent value="search">
+              <PropertySearch 
+                userRole="seller_agent" 
+                userId={userId}
+              />
+            </TabsContent>
 
             <TabsContent value="properties">
               <Card className="border-0 shadow-md">
