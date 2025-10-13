@@ -12,7 +12,6 @@ import { Footer } from "@/components/landing/footer"
 import { PropertyList } from "./property-list"
 import { PropertySearch } from "@/components/property-search"
 import { BookingsList } from "./bookings-list"
-import { PropertyClaiming } from "./property-claiming"
 import { PropertyRequests } from "./property-requests"
 import { useClerk } from "@clerk/clerk-react"
 import { useRouter } from "next/navigation"
@@ -154,13 +153,46 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
           </div>
 
           <Tabs defaultValue="search" className="space-y-6">
-            <TabsList>
-              <TabsTrigger value="search">Find Properties</TabsTrigger>
-              <TabsTrigger value="requests">My Requests</TabsTrigger>
-              <TabsTrigger value="properties">My Properties</TabsTrigger>
-              <TabsTrigger value="claim">Claim Property</TabsTrigger>
-              <TabsTrigger value="bookings">Bookings</TabsTrigger>
-            </TabsList>
+            <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
+              <TabsList className="h-14 bg-transparent p-0">
+                <TabsTrigger 
+                  value="search" 
+                  className="h-12 px-6 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
+                >
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                    <span>Find Properties</span>
+                  </div>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="requests" 
+                  className="h-12 px-6 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
+                >
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                    <span>My Requests</span>
+                  </div>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="properties" 
+                  className="h-12 px-6 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
+                >
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                    <span>My Properties</span>
+                  </div>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="bookings" 
+                  className="h-12 px-6 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
+                >
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                    <span>Bookings</span>
+                  </div>
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
             <TabsContent value="search">
               <PropertySearch 
@@ -175,10 +207,6 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
 
             <TabsContent value="properties">
               <PropertyList userId={userId} />
-            </TabsContent>
-
-            <TabsContent value="claim">
-              <PropertyClaiming userId={userId} />
             </TabsContent>
 
             <TabsContent value="bookings">

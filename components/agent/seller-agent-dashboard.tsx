@@ -75,6 +75,7 @@ export function SellerAgentDashboard({ userId, profile, agentProfile }: SellerAg
   const [clients, setClients] = useState<Client[]>([])
   const [properties, setProperties] = useState<Property[]>([])
   const [stayRequests, setStayRequests] = useState<StayRequest[]>([])
+  const [propertyRequests, setPropertyRequests] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   const refreshData = () => {
@@ -155,6 +156,15 @@ export function SellerAgentDashboard({ userId, profile, agentProfile }: SellerAg
             setStayRequests(requestsData || [])
           }
         }
+
+        // Fetch property listing requests for this agent
+        const { data: propertyRequestsData } = await supabase
+          .from("property_listing_requests")
+          .select("*")
+          .eq("agent_email", profile.email)
+          .order("created_at", { ascending: false })
+
+        setPropertyRequests(propertyRequestsData || [])
       } catch (error) {
         console.error("Error fetching agent data:", error)
       } finally {
@@ -167,7 +177,7 @@ export function SellerAgentDashboard({ userId, profile, agentProfile }: SellerAg
   }, [userId, profile.email, supabase])
 
   const activeProperties = properties.filter(p => p.is_active)
-  const pendingRequests = stayRequests.filter(r => r.status === "pending")
+  const pendingRequests = propertyRequests.filter(r => r.status === "pending")
   const confirmedRequests = stayRequests.filter(r => r.status === "confirmed")
 
   return (
@@ -224,16 +234,74 @@ export function SellerAgentDashboard({ userId, profile, agentProfile }: SellerAg
 
           </div>
 
-          <Tabs defaultValue="search" className="space-y-6">
-            <TabsList>
-              <TabsTrigger value="search">Find Properties</TabsTrigger>
-              <TabsTrigger value="property-requests">Property Requests</TabsTrigger>
-              <TabsTrigger value="properties">Properties</TabsTrigger>
-              <TabsTrigger value="pricing">Pricing Management</TabsTrigger>
-              <TabsTrigger value="clients">Clients</TabsTrigger>
-              <TabsTrigger value="requests">Stay Requests</TabsTrigger>
-              <TabsTrigger value="messages">Messages</TabsTrigger>
-            </TabsList>
+          <Tabs defaultValue="properties" className="space-y-6">
+            <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
+              <TabsList className="h-14 bg-transparent p-0 flex justify-center">
+                <TabsTrigger 
+                  value="properties" 
+                  className="h-12 px-6 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
+                >
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                    <span>Properties</span>
+                  </div>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="property-requests" 
+                  className="h-12 px-6 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
+                >
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                    <span>Property Requests</span>
+                  </div>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="search" 
+                  className="h-12 px-6 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
+                >
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                    <span>Find Properties</span>
+                  </div>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="pricing" 
+                  className="h-12 px-6 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
+                >
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                    <span>Pricing Management</span>
+                  </div>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="clients" 
+                  className="h-12 px-6 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
+                >
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                    <span>Clients</span>
+                  </div>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="requests" 
+                  className="h-12 px-6 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
+                >
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
+                    <span>Stay Requests</span>
+                  </div>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="messages" 
+                  className="h-12 px-6 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
+                >
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-pink-500"></div>
+                    <span>Messages</span>
+                  </div>
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
             <TabsContent value="search">
               <PropertySearch 

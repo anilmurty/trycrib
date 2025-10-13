@@ -1,11 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { MapPin, Home, DollarSign, Clock, CheckCircle, XCircle, MessageSquare } from "lucide-react"
+import { MapPin, Home, DollarSign, Clock, CheckCircle, XCircle, MessageSquare, X, Trash2 } from "lucide-react"
 import { format } from "date-fns"
 
 interface PropertyListingRequest {
@@ -32,7 +31,8 @@ interface PropertyRequestsProps {
 export function PropertyRequests({ userId }: PropertyRequestsProps) {
   const [requests, setRequests] = useState<PropertyListingRequest[]>([])
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
+  const [withdrawing, setWithdrawing] = useState<string | null>(null)
+  const [removing, setRemoving] = useState<string | null>(null)
 
   useEffect(() => {
     fetchRequests()
@@ -40,22 +40,78 @@ export function PropertyRequests({ userId }: PropertyRequestsProps) {
 
   const fetchRequests = async () => {
     try {
-      const { data, error } = await supabase
-        .from("property_listing_requests")
-        .select("*")
-        .eq("seller_id", userId)
-        .order("created_at", { ascending: false })
-
-      if (error) {
-        console.error("Error fetching requests:", error)
-        return
+      console.log("Fetching requests for userId:", userId)
+      
+      // Use API route to fetch requests (bypasses RLS)
+      const response = await fetch('/api/property-listing-requests')
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch requests')
       }
-
-      setRequests(data || [])
+      
+      const result = await response.json()
+      console.log("All requests from API:", result.requests)
+      
+      // Filter requests for this specific seller
+      const sellerRequests = result.requests?.filter((req: PropertyListingRequest) => req.seller_id === userId) || []
+      console.log("Filtered requests for seller:", sellerRequests)
+      setRequests(sellerRequests)
     } catch (error) {
       console.error("Error fetching requests:", error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleWithdraw = async (requestId: string) => {
+    if (!confirm("Are you sure you want to withdraw this request? This action cannot be undone.")) {
+      return
+    }
+
+    setWithdrawing(requestId)
+    try {
+      const response = await fetch(`/api/property-listing-requests?id=${requestId}&action=withdraw`, {
+        method: 'DELETE'
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to withdraw request')
+      }
+
+      // Remove the request from local state
+      setRequests(prev => prev.filter(req => req.id !== requestId))
+    } catch (error) {
+      console.error("Error withdrawing request:", error)
+      alert("Failed to withdraw request. Please try again.")
+    } finally {
+      setWithdrawing(null)
+    }
+  }
+
+  const handleRemove = async (requestId: string) => {
+    if (!confirm("Are you sure you want to remove this approved request? This action cannot be undone.")) {
+      return
+    }
+
+    setRemoving(requestId)
+    try {
+      const response = await fetch(`/api/property-listing-requests?id=${requestId}&action=remove`, {
+        method: 'DELETE'
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to remove request')
+      }
+
+      // Remove the request from local state
+      setRequests(prev => prev.filter(req => req.id !== requestId))
+    } catch (error) {
+      console.error("Error removing request:", error)
+      alert("Failed to remove request. Please try again.")
+    } finally {
+      setRemoving(null)
     }
   }
 
@@ -182,6 +238,34 @@ export function PropertyRequests({ userId }: PropertyRequestsProps) {
               <div className="text-xs text-slate-500">
                 Requested to: {request.agent_email}
               </div>
+
+              {(request.status === 'pending' || request.status === 'approved') && (
+                <div className="pt-3 border-t border-slate-200">
+                  {request.status === 'pending' ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleWithdraw(request.id)}
+                      disabled={withdrawing === request.id}
+                      className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+                    >
+                      <X className="h-4 w-4 mr-2" />
+                      {withdrawing === request.id ? "Withdrawing..." : "Withdraw Request"}
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleRemove(request.id)}
+                      disabled={removing === request.id}
+                      className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      {removing === request.id ? "Removing..." : "Remove Request"}
+                    </Button>
+                  )}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

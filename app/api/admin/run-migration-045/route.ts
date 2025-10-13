@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { createClient } from "@supabase/supabase-js"
 
 export async function POST() {
   try {
     console.log("🚀 Running migration 045: Add agent info to profiles...")
     
-    const supabase = await createClient()
+    // Use service role client to bypass RLS for migration operations
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
     
     // Add agent columns to buyer_profiles
     const { error: buyerError } = await supabase.rpc('exec', {
