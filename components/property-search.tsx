@@ -71,10 +71,23 @@ export function PropertySearch({ userRole, userId, onPropertySelected }: Propert
         return
       }
 
+      // Debug: Show sample property addresses
+      console.log("Sample property addresses:", allProperties.slice(0, 3).map(p => ({
+        id: p.id,
+        address: p.address,
+        city: p.city,
+        state: p.state,
+        zip: p.zip_code
+      })))
+
       // Strategy 1: Exact address match (most specific)
       let results = allProperties.filter(property => {
         const address = property.address?.toLowerCase() || ""
-        return address.includes(cleanQuery)
+        const matches = address.includes(cleanQuery)
+        if (matches) {
+          console.log("Found exact match:", { address, cleanQuery })
+        }
+        return matches
       })
 
       console.log("Exact address matches:", results.length)
@@ -82,13 +95,21 @@ export function PropertySearch({ userRole, userId, onPropertySelected }: Propert
       // Strategy 2: If no exact matches, try street number + street name
       if (results.length === 0) {
         const streetParts = cleanQuery.split(/\s+/)
+        console.log("Street parts:", streetParts)
         if (streetParts.length >= 2) {
           const streetNumber = streetParts[0]
           const streetName = streetParts.slice(1).join(" ")
+          console.log("Looking for street number:", streetNumber, "and street name:", streetName)
           
           results = allProperties.filter(property => {
             const address = property.address?.toLowerCase() || ""
-            return address.includes(streetNumber) && address.includes(streetName)
+            const hasNumber = address.includes(streetNumber)
+            const hasName = address.includes(streetName)
+            const matches = hasNumber && hasName
+            if (matches) {
+              console.log("Found street match:", { address, streetNumber, streetName })
+            }
+            return matches
           })
           
           console.log("Street matches found:", results.length)
