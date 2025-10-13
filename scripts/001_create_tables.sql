@@ -108,7 +108,6 @@ CREATE TABLE IF NOT EXISTS public.bookings (
   seller_agent_fee INTEGER NOT NULL,
   buyer_agent_fee INTEGER NOT NULL,
   seller_payout INTEGER NOT NULL,
-  stripe_payment_intent_id TEXT,
   status booking_status DEFAULT 'pending',
   buyer_agent_name TEXT,
   buyer_agent_email TEXT,

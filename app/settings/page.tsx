@@ -2,8 +2,6 @@ import { redirect } from "next/navigation"
 import { auth } from "@clerk/nextjs/server"
 import { createClient } from "@/lib/supabase/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { CreditCard } from "lucide-react"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 
@@ -16,6 +14,16 @@ export default async function SettingsPage() {
 
   const supabase = await createClient()
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", userId).single()
+  
+  // Fetch role-specific profile data
+  let roleProfile = null
+  if (profile?.role === "buyer") {
+    const { data } = await supabase.from("buyer_profiles").select("*").eq("id", userId).single()
+    roleProfile = data
+  } else if (profile?.role === "seller") {
+    const { data } = await supabase.from("seller_profiles").select("*").eq("id", userId).single()
+    roleProfile = data
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -25,7 +33,7 @@ export default async function SettingsPage() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-slate-900">Settings</h1>
-            <p className="text-slate-600 mt-2">Manage your account and subscription</p>
+            <p className="text-slate-600 mt-2">Manage your account information</p>
           </div>
 
           <div className="space-y-6">
@@ -50,27 +58,31 @@ export default async function SettingsPage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-md hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <CreditCard className="h-5 w-5" />
-                  Subscription & Billing
-                </CardTitle>
-                <CardDescription>Manage your subscription and payment methods</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-slate-600 mb-4">
-                  Access the Stripe Customer Portal to manage your subscription, update payment methods, and view
-                  billing history.
-                </p>
-                <form action="/api/create-portal-session" method="POST">
-                  <Button type="submit" className="w-full sm:w-auto">
-                    <CreditCard className="h-4 w-4 mr-2" />
-                    Manage Subscription
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
+            {/* Agent Information for Buyers and Sellers */}
+            {(profile?.role === "buyer" || profile?.role === "seller") && roleProfile && (
+              <Card className="border-0 shadow-md hover:shadow-xl transition-shadow">
+                <CardHeader>
+                  <CardTitle>Agent Information</CardTitle>
+                  <CardDescription>
+                    Your {profile.role === "buyer" ? "buyer's" : "seller's"} agent contact details
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-slate-700">Agent Name</label>
+                    <p className="text-slate-900 mt-1">{roleProfile.agent_name || "Not provided"}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-slate-700">Agent Email</label>
+                    <p className="text-slate-900 mt-1">{roleProfile.agent_email || "Not provided"}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-slate-700">Agent Phone</label>
+                    <p className="text-slate-900 mt-1">{roleProfile.agent_phone || "Not provided"}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </main>
