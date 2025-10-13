@@ -3,7 +3,6 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Create enum types
 CREATE TYPE user_role AS ENUM ('buyer', 'seller', 'admin', 'seller_agent', 'buyer_agent');
-CREATE TYPE verification_status AS ENUM ('pending', 'approved', 'rejected');
 CREATE TYPE booking_status AS ENUM ('pending', 'confirmed', 'cancelled', 'completed');
 
 -- Profiles table (extends auth.users)
@@ -14,7 +13,6 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   full_name TEXT,
   phone TEXT,
   role user_role NOT NULL,
-  verification_status verification_status DEFAULT 'pending',
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -92,7 +90,6 @@ CREATE TABLE IF NOT EXISTS public.properties (
   images TEXT[],
   amenities TEXT[],
   is_active BOOLEAN DEFAULT true,
-  verification_status verification_status DEFAULT 'pending',
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -178,7 +175,6 @@ CREATE TABLE IF NOT EXISTS public.agent_clients (
 
 -- Create indexes for better query performance
 CREATE INDEX IF NOT EXISTS idx_properties_seller_id ON public.properties(seller_id);
-CREATE INDEX IF NOT EXISTS idx_properties_verification_status ON public.properties(verification_status);
 CREATE INDEX IF NOT EXISTS idx_bookings_property_id ON public.bookings(property_id);
 CREATE INDEX IF NOT EXISTS idx_bookings_buyer_id ON public.bookings(buyer_id);
 CREATE INDEX IF NOT EXISTS idx_bookings_status ON public.bookings(status);

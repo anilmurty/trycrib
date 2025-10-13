@@ -1,5 +1,4 @@
 export type UserRole = "buyer" | "seller" | "admin" | "superadmin" | "seller_agent" | "buyer_agent"
-export type VerificationStatus = "pending" | "approved" | "rejected"
 export type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed"
 
 export interface Profile {
@@ -8,7 +7,6 @@ export interface Profile {
   full_name: string | null
   phone: string | null
   role: UserRole
-  verification_status: VerificationStatus
   created_at: string
   updated_at: string
 }
@@ -102,7 +100,6 @@ export interface Property {
   images: string[] | null
   amenities: string[] | null
   is_active: boolean
-  verification_status: VerificationStatus
   created_at: string
   updated_at: string
   // Enhanced property fields
@@ -152,7 +149,6 @@ export interface PropertyClaim {
   claimant_id: string
   claim_status: string
   claim_reason: string | null
-  verification_notes: string | null
   reviewed_by: string | null
   reviewed_at: string | null
   created_at: string
