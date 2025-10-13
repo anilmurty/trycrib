@@ -48,65 +48,86 @@ export function PropertySearch({ userRole, userId, onPropertySelected }: Propert
 
     setLoading(true)
     try {
-      // Clean the query for better matching
       const cleanQuery = query.trim().toLowerCase()
       console.log("Searching for:", cleanQuery)
       
-      // First, let's see what properties we have
-      const { data: allProperties, error: allError } = await supabase
+      // Strategy 1: Try exact address match first (most specific)
+      const { data: exactMatches, error: exactError } = await supabase
         .from("properties")
-        .select("id, title, address, city, state, zip_code, is_active")
+        .select("*")
+        .ilike("address", `%${cleanQuery}%`)
         .eq("is_active", true)
-        .limit(50)
+        .limit(10)
 
-      if (allError) {
-        console.error("Error fetching properties:", allError)
+      if (exactError) {
+        console.error("Error in exact search:", exactError)
+      }
+
+      console.log("Exact address matches:", exactMatches?.length || 0)
+
+      // If we have exact matches, use them
+      if (exactMatches && exactMatches.length > 0) {
+        setSearchResults(exactMatches)
+        return
+      }
+
+      // Strategy 2: Try street number + street name (e.g., "8103 NE 172nd")
+      const streetParts = cleanQuery.split(/\s+/)
+      if (streetParts.length >= 2) {
+        const streetNumber = streetParts[0]
+        const streetName = streetParts.slice(1).join(" ")
+        
+        const { data: streetMatches, error: streetError } = await supabase
+          .from("properties")
+          .select("*")
+          .and(`address.ilike.%${streetNumber}%, address.ilike.%${streetName}%`)
+          .eq("is_active", true)
+          .limit(10)
+
+        if (!streetError && streetMatches && streetMatches.length > 0) {
+          console.log("Street matches found:", streetMatches.length)
+          setSearchResults(streetMatches)
+          return
+        }
+      }
+
+      // Strategy 3: Try city + state combination
+      const cityStateMatch = cleanQuery.match(/(.+),\s*(.+)/)
+      if (cityStateMatch) {
+        const city = cityStateMatch[1].trim()
+        const state = cityStateMatch[2].trim()
+        
+        const { data: cityMatches, error: cityError } = await supabase
+          .from("properties")
+          .select("*")
+          .and(`city.ilike.%${city}%, state.ilike.%${state}%`)
+          .eq("is_active", true)
+          .limit(20)
+
+        if (!cityError && cityMatches && cityMatches.length > 0) {
+          console.log("City/State matches found:", cityMatches.length)
+          setSearchResults(cityMatches)
+          return
+        }
+      }
+
+      // Strategy 4: Fallback to broader search only if no specific matches
+      const { data: broadMatches, error: broadError } = await supabase
+        .from("properties")
+        .select("*")
+        .or(`address.ilike.%${cleanQuery}%, city.ilike.%${cleanQuery}%, state.ilike.%${cleanQuery}%`)
+        .eq("is_active", true)
+        .limit(15)
+
+      if (broadError) {
+        console.error("Error in broad search:", broadError)
         setSearchResults([])
         return
       }
 
-      console.log("Total active properties:", allProperties?.length || 0)
-      console.log("Sample properties:", allProperties?.slice(0, 3))
+      console.log("Broad matches found:", broadMatches?.length || 0)
+      setSearchResults(broadMatches || [])
 
-      // Try exact matches first
-      let results = allProperties?.filter(property => {
-        const address = property.address?.toLowerCase() || ""
-        const city = property.city?.toLowerCase() || ""
-        const state = property.state?.toLowerCase() || ""
-        const zip = property.zip_code?.toLowerCase() || ""
-        const title = property.title?.toLowerCase() || ""
-        
-        return address.includes(cleanQuery) || 
-               city.includes(cleanQuery) || 
-               state.includes(cleanQuery) || 
-               zip.includes(cleanQuery) ||
-               title.includes(cleanQuery)
-      }) || []
-
-      console.log("Exact matches found:", results.length)
-
-      // If no exact matches, try partial matching
-      if (results.length === 0) {
-        const queryParts = cleanQuery.split(/\s+/).filter(part => part.length > 2)
-        console.log("Trying partial matches with parts:", queryParts)
-        
-        results = allProperties?.filter(property => {
-          const address = property.address?.toLowerCase() || ""
-          const city = property.city?.toLowerCase() || ""
-          const state = property.state?.toLowerCase() || ""
-          const zip = property.zip_code?.toLowerCase() || ""
-          const title = property.title?.toLowerCase() || ""
-          
-          const searchText = `${address} ${city} ${state} ${zip} ${title}`
-          
-          return queryParts.some(part => searchText.includes(part))
-        }) || []
-        
-        console.log("Partial matches found:", results.length)
-      }
-
-      console.log("Final results:", results.length)
-      setSearchResults(results)
     } catch (error) {
       console.error("Error searching properties:", error)
       setSearchResults([])
