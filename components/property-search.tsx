@@ -48,112 +48,20 @@ export function PropertySearch({ userRole, userId, onPropertySelected }: Propert
 
     setLoading(true)
     try {
-      const cleanQuery = query.trim().toLowerCase()
-      console.log("Searching for:", cleanQuery)
-      
-      // Get all active properties and filter client-side for better control
-      const { data: allProperties, error: allError } = await supabase
+      // Use a simpler approach - search in address field only
+      const { data, error } = await supabase
         .from("properties")
         .select("*")
+        .ilike("address", `%${query}%`)
         .eq("is_active", true)
-        .limit(100)
+        .limit(10)
 
-      if (allError) {
-        console.error("Error fetching properties:", allError)
-        setSearchResults([])
+      if (error) {
+        console.error("Error searching properties:", error)
         return
       }
 
-      console.log("Total active properties:", allProperties?.length || 0)
-
-      if (!allProperties || allProperties.length === 0) {
-        setSearchResults([])
-        return
-      }
-
-      // Debug: Show sample property addresses
-      console.log("Sample property addresses:", allProperties.slice(0, 3).map(p => ({
-        id: p.id,
-        address: p.address,
-        city: p.city,
-        state: p.state,
-        zip: p.zip_code
-      })))
-
-      // Strategy 1: Exact address match (most specific)
-      let results = allProperties.filter(property => {
-        const address = property.address?.toLowerCase() || ""
-        const matches = address.includes(cleanQuery)
-        if (matches) {
-          console.log("Found exact match:", { address, cleanQuery })
-        }
-        return matches
-      })
-
-      console.log("Exact address matches:", results.length)
-
-      // Strategy 2: If no exact matches, try street number + street name
-      if (results.length === 0) {
-        const streetParts = cleanQuery.split(/\s+/)
-        console.log("Street parts:", streetParts)
-        if (streetParts.length >= 2) {
-          const streetNumber = streetParts[0]
-          const streetName = streetParts.slice(1).join(" ")
-          console.log("Looking for street number:", streetNumber, "and street name:", streetName)
-          
-          results = allProperties.filter(property => {
-            const address = property.address?.toLowerCase() || ""
-            const hasNumber = address.includes(streetNumber)
-            const hasName = address.includes(streetName)
-            const matches = hasNumber && hasName
-            if (matches) {
-              console.log("Found street match:", { address, streetNumber, streetName })
-            }
-            return matches
-          })
-          
-          console.log("Street matches found:", results.length)
-        }
-      }
-
-      // Strategy 3: If still no matches, try city + state
-      if (results.length === 0) {
-        const cityStateMatch = cleanQuery.match(/(.+),\s*(.+)/)
-        if (cityStateMatch) {
-          const city = cityStateMatch[1].trim()
-          const state = cityStateMatch[2].trim()
-          
-          results = allProperties.filter(property => {
-            const propertyCity = property.city?.toLowerCase() || ""
-            const propertyState = property.state?.toLowerCase() || ""
-            return propertyCity.includes(city) && propertyState.includes(state)
-          })
-          
-          console.log("City/State matches found:", results.length)
-        }
-      }
-
-      // Strategy 4: If still no matches, try broader search
-      if (results.length === 0) {
-        results = allProperties.filter(property => {
-          const address = property.address?.toLowerCase() || ""
-          const city = property.city?.toLowerCase() || ""
-          const state = property.state?.toLowerCase() || ""
-          const zip = property.zip_code?.toLowerCase() || ""
-          
-          return address.includes(cleanQuery) || 
-                 city.includes(cleanQuery) || 
-                 state.includes(cleanQuery) || 
-                 zip.includes(cleanQuery)
-        })
-        
-        console.log("Broad matches found:", results.length)
-      }
-
-      // Limit results to prevent overwhelming UI
-      results = results.slice(0, 20)
-      console.log("Final results:", results.length)
-      setSearchResults(results)
+      setSearchResults(data || [])
 
     } catch (error) {
       console.error("Error searching properties:", error)
