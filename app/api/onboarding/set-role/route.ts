@@ -71,6 +71,7 @@ export async function POST(request: Request) {
       console.log("Creating buyer profile...")
       const { error: buyerError } = await supabase.from("buyer_profiles").upsert({
         id: userId,
+        email: userEmail,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -84,6 +85,7 @@ export async function POST(request: Request) {
       console.log("Creating seller profile...")
       const { error: sellerError } = await supabase.from("seller_profiles").upsert({
         id: userId,
+        email: userEmail,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -97,6 +99,7 @@ export async function POST(request: Request) {
       console.log("Creating seller agent profile...")
       const { error: sellerAgentError } = await supabase.from("seller_agent_profiles").upsert({
         id: userId,
+        email: userEmail,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -110,6 +113,7 @@ export async function POST(request: Request) {
       console.log("Creating buyer agent profile...")
       const { error: buyerAgentError } = await supabase.from("buyer_agent_profiles").upsert({
         id: userId,
+        email: userEmail,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
