@@ -48,19 +48,48 @@ export function PropertySearch({ userRole, userId, onPropertySelected }: Propert
 
     setLoading(true)
     try {
+      // Clean the query for better matching
+      const cleanQuery = query.trim().toLowerCase()
+      
+      // Try multiple search strategies
       const { data, error } = await supabase
         .from("properties")
         .select("*")
-        .or(`title.ilike.%${query}%, address.ilike.%${query}%, city.ilike.%${query}%, state.ilike.%${query}%, zip_code.ilike.%${query}%`)
+        .or(`title.ilike.%${cleanQuery}%, address.ilike.%${cleanQuery}%, city.ilike.%${cleanQuery}%, state.ilike.%${cleanQuery}%, zip_code.ilike.%${cleanQuery}%`)
         .eq("is_active", true)
-        .limit(10)
+        .limit(20)
 
       if (error) {
         console.error("Error searching properties:", error)
         return
       }
 
-      setSearchResults(data || [])
+      // If no results, try partial matching
+      let results = data || []
+      
+      if (results.length === 0) {
+        // Split the query and try partial matches
+        const queryParts = cleanQuery.split(/\s+/).filter(part => part.length > 2)
+        
+        if (queryParts.length > 0) {
+          const partialQueries = queryParts.map(part => 
+            `address.ilike.%${part}%, city.ilike.%${part}%, state.ilike.%${part}%, zip_code.ilike.%${part}%`
+          ).join(',')
+          
+          const { data: partialData, error: partialError } = await supabase
+            .from("properties")
+            .select("*")
+            .or(partialQueries)
+            .eq("is_active", true)
+            .limit(20)
+          
+          if (!partialError) {
+            results = partialData || []
+          }
+        }
+      }
+
+      setSearchResults(results)
     } catch (error) {
       console.error("Error searching properties:", error)
     } finally {

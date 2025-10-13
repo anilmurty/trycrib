@@ -87,23 +87,31 @@ export function PropertyListingRequestModal({
         property_state: property ? property.state : newPropertyState,
         property_zip: property ? property.zip_code : newPropertyZip,
         message: message || newPropertyNotes,
-        status: "pending",
-        created_at: new Date().toISOString()
+        status: "pending"
       }
 
-      const { error } = await supabase
-        .from("property_listing_requests")
-        .insert([requestData])
+      console.log("Sending request with data:", requestData)
 
-      if (error) {
-        throw error
+      const response = await fetch('/api/property-listing-requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to send request')
       }
 
+      const result = await response.json()
+      console.log("Request sent successfully:", result)
       toast.success("Request sent to your agent successfully!")
       onSuccess()
     } catch (error) {
       console.error("Error sending request:", error)
-      toast.error("Failed to send request. Please try again.")
+      toast.error(`Failed to send request: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setLoading(false)
     }
