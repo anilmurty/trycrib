@@ -13,6 +13,7 @@ import { PropertyList } from "./property-list"
 import { PropertySearch } from "@/components/property-search"
 import { BookingsList } from "./bookings-list"
 import { PropertyClaiming } from "./property-claiming"
+import { PropertyRequests } from "./property-requests"
 import { useClerk } from "@clerk/clerk-react"
 import { useRouter } from "next/navigation"
 
@@ -155,6 +156,7 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
           <Tabs defaultValue="search" className="space-y-6">
             <TabsList>
               <TabsTrigger value="search">Find Properties</TabsTrigger>
+              <TabsTrigger value="requests">My Requests</TabsTrigger>
               <TabsTrigger value="properties">My Properties</TabsTrigger>
               <TabsTrigger value="claim">Claim Property</TabsTrigger>
               <TabsTrigger value="bookings">Bookings</TabsTrigger>
@@ -165,6 +167,10 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
                 userRole="seller" 
                 userId={userId}
               />
+            </TabsContent>
+
+            <TabsContent value="requests">
+              <PropertyRequests userId={userId} />
             </TabsContent>
 
             <TabsContent value="properties">
