@@ -6,10 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Users, Home, Calendar, DollarSign, MessageSquare, Settings } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useClerk } from "@clerk/nextjs"
+import { Users, Home, Calendar, DollarSign, MessageSquare } from "lucide-react"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 
@@ -61,8 +58,6 @@ interface StayRequest {
 }
 
 export function BuyerAgentDashboard({ userId, profile, agentProfile }: BuyerAgentDashboardProps) {
-  const router = useRouter()
-  const { signOut } = useClerk()
   const supabase = createClient()
   const [clients, setClients] = useState<Client[]>([])
   const [stayRequests, setStayRequests] = useState<StayRequest[]>([])
@@ -141,11 +136,6 @@ export function BuyerAgentDashboard({ userId, profile, agentProfile }: BuyerAgen
     fetchData()
   }, [userId, profile.email, supabase])
 
-  const handleSignOut = async () => {
-    await signOut()
-    router.push("/")
-  }
-
   const pendingRequests = stayRequests.filter(r => r.status === "pending")
   const confirmedRequests = stayRequests.filter(r => r.status === "confirmed")
 
@@ -156,7 +146,7 @@ export function BuyerAgentDashboard({ userId, profile, agentProfile }: BuyerAgen
       <main className="flex-1 py-12 bg-slate-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
-          <div className="mb-8 flex items-center justify-between">
+          <div className="mb-8">
             <div>
               <h1 className="text-3xl font-bold text-slate-900">Buyer's Agent Dashboard</h1>
               <p className="text-slate-600 mt-2">
@@ -167,17 +157,6 @@ export function BuyerAgentDashboard({ userId, profile, agentProfile }: BuyerAgen
                   </span>
                 )}
               </p>
-            </div>
-            <div className="flex gap-2">
-              <Link href="/settings">
-                <Button variant="outline" size="sm">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Settings
-                </Button>
-              </Link>
-              <Button onClick={handleSignOut} variant="outline" size="sm">
-                Sign Out
-              </Button>
             </div>
           </div>
 
