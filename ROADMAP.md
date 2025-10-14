@@ -39,6 +39,22 @@ This roadmap tracks the development progress of TryCrib, a "try before you buy" 
   - [x] Agent-only pricing management
   - [ ] Agent contact system for stay requests
 
+### Property Request System
+- [x] **Seller-Agent Workflow**
+  - [x] Property listing request creation by sellers
+  - [x] Agent request queue and management interface
+  - [x] Multi-stage approval workflow (listing_requested → listing_pending → approval_pending → listed)
+  - [x] Property setup interface for agents
+  - [x] Seller approval/rejection system
+  - [x] Change request functionality with conversation history
+- [x] **Technical Implementation**
+  - [x] Property listing requests database schema
+  - [x] Status tracking and workflow management
+  - [x] Conversation history preservation
+  - [x] Property creation on final approval
+  - [x] RLS policies for data security
+  - [x] API endpoints for CRUD operations
+
 ### Database & Backend
 - [x] **Database Schema**
   - [x] User profiles and roles

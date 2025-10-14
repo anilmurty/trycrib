@@ -108,11 +108,11 @@ export async function PUT(request: Request) {
       }, { status: 400 })
     }
 
-    if (!['pending', 'approved', 'rejected', 'completed'].includes(status)) {
-      return NextResponse.json({ 
-        error: "Invalid status. Must be one of: pending, approved, rejected, completed" 
-      }, { status: 400 })
-    }
+            if (!['listing_requested', 'listing_pending', 'rejected', 'listed', 'approval_pending'].includes(status)) {
+              return NextResponse.json({ 
+                error: "Invalid status. Must be one of: listing_requested, listing_pending, rejected, listed, approval_pending" 
+              }, { status: 400 })
+            }
 
     // Use service role client to bypass RLS for PUT operations
     const supabase = createServiceClient(
@@ -138,6 +138,47 @@ export async function PUT(request: Request) {
       }, { status: 500 })
     }
 
+    // If status is 'listed', create the actual property record
+    if (status === 'listed') {
+      const requestData = data[0]
+      
+      // Create property record from the request and setup data
+      const propertyData = {
+        title: requestData.property_setup_data?.title || requestData.property_address,
+        description: requestData.property_setup_data?.description || '',
+        address: requestData.property_address,
+        city: requestData.property_city,
+        state: requestData.property_state,
+        zip_code: requestData.property_zip,
+        listing_price: requestData.property_setup_data?.listing_price || 0,
+        price_per_night: requestData.property_setup_data?.price_per_night || 0,
+        bedrooms: requestData.property_setup_data?.bedrooms || 0,
+        bathrooms: requestData.property_setup_data?.bathrooms || 0,
+        square_feet: requestData.property_setup_data?.square_feet || 0,
+        property_type: requestData.property_setup_data?.property_type || 'house',
+        year_built: requestData.property_setup_data?.year_built || null,
+        lot_size: requestData.property_setup_data?.lot_size || null,
+        seller_id: requestData.seller_id,
+        is_active: true,
+        agent_created: true,
+        created_by_agent: true
+      }
+
+      const { data: newProperty, error: propertyError } = await supabase
+        .from("properties")
+        .insert(propertyData)
+        .select()
+
+      if (propertyError) {
+        console.error("Error creating property:", propertyError)
+        return NextResponse.json({ 
+          error: `Failed to create property: ${propertyError.message}` 
+        }, { status: 500 })
+      }
+
+      console.log("Property created successfully:", newProperty[0].id)
+    }
+
     console.log("Request updated successfully:", requestId, "to status:", status)
     return NextResponse.json({ 
       success: true, 
@@ -149,6 +190,58 @@ export async function PUT(request: Request) {
     console.error("Error updating request:", error)
     return NextResponse.json({ 
       error: `Failed to update request: ${error instanceof Error ? error.message : 'Unknown error'}` 
+    }, { status: 500 })
+  }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json()
+    const { requestId, propertySetupData, agentNotes } = body
+
+    if (!requestId || !propertySetupData) {
+      return NextResponse.json({ 
+        error: "Request ID and property setup data are required" 
+      }, { status: 400 })
+    }
+
+    // Use service role client to bypass RLS for PATCH operations
+    const supabase = createServiceClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
+    // Update the request with property setup data
+    const { data, error } = await supabase
+      .from("property_listing_requests")
+      .update({
+        status: 'approval_pending',
+        property_setup_data: propertySetupData,
+        agent_notes: agentNotes || null,
+        setup_completed_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", requestId)
+      .select()
+
+    if (error) {
+      console.error("Database error:", error)
+      return NextResponse.json({ 
+        error: `Database error: ${error.message}` 
+      }, { status: 500 })
+    }
+
+    console.log("Property setup completed for request:", requestId)
+    return NextResponse.json({ 
+      success: true, 
+      message: "Property setup completed successfully",
+      data: data[0]
+    })
+
+  } catch (error) {
+    console.error("Error completing property setup:", error)
+    return NextResponse.json({ 
+      error: `Failed to complete property setup: ${error instanceof Error ? error.message : 'Unknown error'}` 
     }, { status: 500 })
   }
 }
