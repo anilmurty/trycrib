@@ -158,13 +158,49 @@ export function SellerAgentDashboard({ userId, profile, agentProfile }: SellerAg
         }
 
         // Fetch property listing requests for this agent
-        const { data: propertyRequestsData } = await supabase
+        console.log("Agent profile email:", profile.email)
+        
+        // First try direct query
+        const { data: propertyRequestsData, error: requestsError } = await supabase
           .from("property_listing_requests")
           .select("*")
           .eq("agent_email", profile.email)
           .order("created_at", { ascending: false })
 
-        setPropertyRequests(propertyRequestsData || [])
+        console.log("Direct query result:", propertyRequestsData)
+        console.log("Direct query error:", requestsError)
+
+        // If direct query fails, try using API route (bypasses RLS) - only on client side
+        if (requestsError || !propertyRequestsData || propertyRequestsData.length === 0) {
+          console.log("Trying API route fallback...")
+          // Only run fetch on client side to avoid SSR issues
+          if (typeof window !== 'undefined') {
+            try {
+              const response = await fetch('/api/property-listing-requests', {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              })
+              if (response.ok) {
+                const result = await response.json()
+                const agentRequests = result.requests?.filter((req: any) => req.agent_email === profile.email) || []
+                console.log("API route result for agent:", agentRequests)
+                setPropertyRequests(agentRequests)
+              } else {
+                console.log("API route failed:", response.status)
+                setPropertyRequests([])
+              }
+            } catch (apiError) {
+              console.error("API route error:", apiError)
+              setPropertyRequests([])
+            }
+          } else {
+            setPropertyRequests([])
+          }
+        } else {
+          setPropertyRequests(propertyRequestsData || [])
+        }
       } catch (error) {
         console.error("Error fetching agent data:", error)
       } finally {
@@ -177,8 +213,11 @@ export function SellerAgentDashboard({ userId, profile, agentProfile }: SellerAg
   }, [userId, profile.email, supabase])
 
   const activeProperties = properties.filter(p => p.is_active)
-  const pendingRequests = propertyRequests.filter(r => r.status === "pending")
+  const pendingRequests = propertyRequests.filter(r => r.status === "pending" || r.status === "listing_requested" || r.status === "listing_pending")
   const confirmedRequests = stayRequests.filter(r => r.status === "confirmed")
+  
+  console.log("All property requests:", propertyRequests)
+  console.log("Pending requests count:", pendingRequests.length)
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -225,7 +264,7 @@ export function SellerAgentDashboard({ userId, profile, agentProfile }: SellerAg
             <Card className="border-0 shadow-md">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Pending Requests</CardTitle>
-                <Badge variant="secondary">{pendingRequests.length}</Badge>
+                <Calendar className="h-4 w-4 text-slate-600" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{pendingRequests.length}</div>
@@ -236,7 +275,7 @@ export function SellerAgentDashboard({ userId, profile, agentProfile }: SellerAg
 
           <Tabs defaultValue="properties" className="space-y-6">
             <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
-              <TabsList className="h-14 bg-transparent p-0 flex justify-center">
+              <TabsList className="h-14 bg-transparent p-0 w-full grid grid-cols-7">
                 <TabsTrigger 
                   value="properties" 
                   className="h-12 px-6 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"

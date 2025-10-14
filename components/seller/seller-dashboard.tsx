@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { Home, Calendar, DollarSign } from "lucide-react"
+import { Home, Calendar, DollarSign, Clock } from "lucide-react"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 import { PropertyList } from "./property-list"
@@ -33,30 +33,59 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
     activeProperties: 0,
     totalBookings: 0,
     totalEarnings: 0,
+    pendingRequests: 0,
   })
 
   useEffect(() => {
     async function fetchStats() {
       try {
         // Get properties count
-        const { count: totalProperties } = await supabase
+        const { count: totalProperties, error: propertiesError } = await supabase
           .from("properties")
           .select("*", { count: "exact", head: true })
           .eq("seller_id", userId)
 
-        const { count: activeProperties } = await supabase
+        const { count: activeProperties, error: activeError } = await supabase
           .from("properties")
           .select("*", { count: "exact", head: true })
           .eq("seller_id", userId)
           .eq("is_active", true)
+
+        console.log("Properties query results:", { 
+          totalProperties, 
+          activeProperties, 
+          propertiesError, 
+          activeError,
+          userId 
+        })
+
+        // Let's also check what properties actually exist for this seller
+        const { data: allProperties, error: allPropertiesError } = await supabase
+          .from("properties")
+          .select("id, seller_id, title, is_active")
+          .eq("seller_id", userId)
+        
+        console.log("All properties for seller:", { allProperties, allPropertiesError, userId })
+
+        // Get pending requests count
+        const { count: pendingRequests, error: requestsError } = await supabase
+          .from("property_listing_requests")
+          .select("*", { count: "exact", head: true })
+          .eq("seller_id", userId)
+          .in("status", ["listing_requested", "approval_pending", "pending", "listing_pending"])
+
+        console.log("Pending requests query result:", { pendingRequests, requestsError })
 
         // Get bookings
         const { data: properties } = await supabase.from("properties").select("id").eq("seller_id", userId)
 
         const propertyIds = properties?.map((p) => p.id) || []
 
+        let totalBookings = 0
+        let totalEarnings = 0
+
         if (propertyIds.length > 0) {
-          const { count: totalBookings } = await supabase
+          const { count: bookingsCount } = await supabase
             .from("bookings")
             .select("*", { count: "exact", head: true })
             .in("property_id", propertyIds)
@@ -67,22 +96,17 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
             .in("property_id", propertyIds)
             .eq("status", "confirmed")
 
-          const totalEarnings = bookings?.reduce((sum, booking) => sum + (booking.total_price || 0), 0) || 0
-
-          setStats({
-            totalProperties: totalProperties || 0,
-            activeProperties: activeProperties || 0,
-            totalBookings: totalBookings || 0,
-            totalEarnings,
-          })
-        } else {
-          setStats({
-            totalProperties: totalProperties || 0,
-            activeProperties: activeProperties || 0,
-            totalBookings: 0,
-            totalEarnings: 0,
-          })
+          totalBookings = bookingsCount || 0
+          totalEarnings = bookings?.reduce((sum, booking) => sum + (booking.total_price || 0), 0) || 0
         }
+
+        setStats({
+          totalProperties: totalProperties || 0,
+          activeProperties: activeProperties || 0,
+          totalBookings,
+          totalEarnings,
+          pendingRequests: pendingRequests || 0,
+        })
       } catch (error) {
         console.error("Error fetching stats:", error)
       }
@@ -110,7 +134,7 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
             </div>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-4 mb-8">
+          <div className="grid gap-6 md:grid-cols-5 mb-8">
             <Card className="border-0 shadow-md">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
@@ -150,11 +174,21 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
                 <div className="text-2xl font-bold">${stats.totalEarnings.toLocaleString()}</div>
               </CardContent>
             </Card>
+
+            <Card className="border-0 shadow-md">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Pending Requests</CardTitle>
+                <Clock className="h-4 w-4 text-slate-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.pendingRequests}</div>
+              </CardContent>
+            </Card>
           </div>
 
           <Tabs defaultValue="search" className="space-y-6">
             <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
-              <TabsList className="h-14 bg-transparent p-0">
+              <TabsList className="h-14 bg-transparent p-0 w-full grid grid-cols-4">
                 <TabsTrigger 
                   value="search" 
                   className="h-12 px-6 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"

@@ -51,7 +51,13 @@ The platform has two states for a property: "Seeded" (public data, inquiry only)
 
 This is the core management workflow, built on an "Agent Proposes, Seller Approves" model.
 
-**Workflow:** The agent initiates proposals for all key decisions (Availability Calendar, Nightly Price & Fees, House Rules, Stay Requirements). The seller receives a simple notification to "Approve" or "Decline" each proposal from their dashboard.
+**Workflow:**
+- **Property Listing Request:** Seller requests to list a property through their dashboard
+- **Agent Review:** Agent receives request, reviews property details, and can add notes
+- **Agent Setup:** Agent configures listing details (pricing, description, amenities) and submits for approval
+- **Seller Approval:** Seller reviews complete listing details and approves or requests changes
+- **Property Goes Live:** Upon approval, property is automatically created and listed on the platform
+- **Ongoing Management:** Agent manages availability calendar, pricing, and house rules with seller approval
 
 ### B) Buyer & Buyer's Agent Collaboration
 

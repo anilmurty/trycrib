@@ -87,7 +87,7 @@ export function PropertyListingRequestModal({
         property_state: property ? property.state : newPropertyState,
         property_zip: property ? property.zip_code : newPropertyZip,
         message: message || newPropertyNotes,
-        status: "pending"
+        status: "listing_requested"
       }
 
       console.log("Sending request with data:", requestData)
