@@ -104,7 +104,7 @@ export default function TermsPage() {
 
             <h2 className="text-2xl font-semibold text-gray-900 mt-12 mb-6">10. Disclaimers</h2>
             <p className="text-base text-gray-800 leading-7 mb-4 font-semibold">
-              THE SERVICES ARE PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED. TO THE FULLEST EXTENT PERMITTED BY LAW, TR YCRIB DISCLAIMS ALL WARRANTIES, INCLUDING IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+              THE SERVICES ARE PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED. TO THE FULLEST EXTENT PERMITTED BY LAW, TRYCRIB DISCLAIMS ALL WARRANTIES, INCLUDING IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
             </p>
             <p className="text-base text-gray-800 leading-7 mb-6">
               TryCrib does not guarantee that the Services will be uninterrupted, secure, or error-free.
@@ -112,7 +112,7 @@ export default function TermsPage() {
 
             <h2 className="text-2xl font-semibold text-gray-900 mt-12 mb-6">11. Limitation of Liability</h2>
             <p className="text-base text-gray-800 leading-7 mb-4 font-semibold">
-              TO THE MAXIMUM EXTENT PERMITTED BY LAW, TRYC RIB AND ITS AFFILIATES SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS, REVENUE, DATA, OR USE ARISING OUT OF OR RELATED TO THESE TERMS OR THE SERVICES.
+              TO THE MAXIMUM EXTENT PERMITTED BY LAW, TRYCRIB AND ITS AFFILIATES SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS, REVENUE, DATA, OR USE ARISING OUT OF OR RELATED TO THESE TERMS OR THE SERVICES.
             </p>
             <p className="text-base text-gray-800 leading-7 mb-6">
               In jurisdictions that do not allow the exclusion of certain warranties or liabilities, TryCrib's liability is limited to the greatest extent permitted by law.
