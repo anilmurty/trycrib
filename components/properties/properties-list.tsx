@@ -190,13 +190,6 @@ export function PropertiesList() {
             >
               Price {sortBy === "listing_price" && (sortOrder === "desc" ? "↓" : "↑")}
             </Button>
-            <Button
-              variant={sortBy === "price_per_night" ? "default" : "outline"}
-              size="sm"
-              onClick={() => handleSort("price_per_night")}
-            >
-              Nightly {sortBy === "price_per_night" && (sortOrder === "desc" ? "↓" : "↑")}
-            </Button>
           </div>
         </div>
       </div>
