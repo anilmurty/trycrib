@@ -144,7 +144,7 @@ export default function TermsPage() {
             </p>
             <ul className="list-none text-base text-gray-800 mb-12 space-y-2 leading-7">
               <li>
-                <strong>Email:</strong> <Link href="mailto:support@trycrib.com" className="text-blue-600 hover:text-blue-700 underline">support@trycrib.com</Link>
+                <strong>Email:</strong> <Link href="mailto:anil.metabldr@gmail.com" className="text-blue-600 hover:text-blue-700 underline">anil.metabldr@gmail.com</Link>
               </li>
               <li>
                 <strong>Website:</strong> <Link href="https://www.trycrib.com" className="text-blue-600 hover:text-blue-700 underline">https://www.trycrib.com</Link>

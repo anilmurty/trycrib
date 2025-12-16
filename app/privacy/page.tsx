@@ -134,7 +134,7 @@ export default function PrivacyPage() {
             </p>
             <ul className="list-none text-base text-gray-800 mb-12 space-y-2 leading-7">
               <li>
-                <strong>Email:</strong> <Link href="mailto:privacy@trycrib.com" className="text-blue-600 hover:text-blue-700 underline">privacy@trycrib.com</Link>
+                <strong>Email:</strong> <Link href="mailto:anil.metabldr@gmail.com" className="text-blue-600 hover:text-blue-700 underline">anil.metabldr@gmail.com</Link>
               </li>
               <li>
                 <strong>Website:</strong> <Link href="https://www.trycrib.com" className="text-blue-600 hover:text-blue-700 underline">https://www.trycrib.com</Link>
