@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Search, Calendar, MapPin, Home, Building2, Building, Users, Warehouse, Factory } from "lucide-react"
+import { Home, Building2, Building, Users, Warehouse, Factory } from "lucide-react"
 import Link from "next/link"
 
 export function HeroSection() {
@@ -54,11 +53,6 @@ export function HeroSection() {
                 <br />
                 Before You Buy
               </h1>
-              <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-200">
-                Experience living in your potential new home before making an offer.
-                <br />
-                The perfect way to ensure it's the right fit for you.
-              </p>
             </>
           ) : (
             <>
@@ -67,11 +61,6 @@ export function HeroSection() {
                 <br />
                 Try-Before-You-Buy
               </h1>
-              <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-200">
-                Let potential buyers experience your property firsthand.
-                <br />
-                Increase serious offers and reduce time-wasting viewings.
-              </p>
             </>
           )}
 
@@ -99,36 +88,37 @@ export function HeroSection() {
             </Button>
           </div>
 
-          <div className="mx-auto mt-8 max-w-4xl rounded-lg bg-white p-4 shadow-lg">
-            {activeTab === "buyers" ? (
-              <div className="grid gap-4 md:grid-cols-4">
-                <div className="flex items-center gap-2 border-r border-gray-200 pr-4">
-                  <MapPin className="h-5 w-5 text-gray-400" />
-                  <Input placeholder="Where are you looking?" className="border-0 p-0 focus-visible:ring-0" />
-                </div>
-                <div className="flex items-center gap-2 border-r border-gray-200 pr-4">
-                  <Calendar className="h-5 w-5 text-gray-400" />
-                  <Input type="date" placeholder="Check in" className="border-0 p-0 focus-visible:ring-0" />
-                </div>
-                <div className="flex items-center gap-2 border-r border-gray-200 pr-4">
-                  <Calendar className="h-5 w-5 text-gray-400" />
-                  <Input type="date" placeholder="Check out" className="border-0 p-0 focus-visible:ring-0" />
-                </div>
-                <Button className="w-full rounded-lg bg-blue-600 hover:bg-blue-700">
-                  <Search className="mr-2 h-4 w-4" />
-                  Search
-                </Button>
+          {activeTab === "buyers" ? (
+            <>
+              <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-200">
+                Experience living in your potential new home before making an offer.
+                <br />
+                The perfect way to ensure it's the right fit for you.
+              </p>
+              <div className="mt-6">
+                <Link href="/properties">
+                  <Button className="rounded-full px-8 bg-blue-600 text-white hover:bg-blue-700">
+                    Book a stay
+                  </Button>
+                </Link>
               </div>
-            ) : (
-              <div className="flex gap-4">
-                <div className="flex flex-1 items-center gap-2">
-                  <Home className="h-5 w-5 text-gray-400" />
-                  <Input placeholder="Enter your property address" className="border-0 p-0 focus-visible:ring-0" />
-                </div>
-                <Button className="rounded-lg bg-blue-600 px-8 hover:bg-blue-700">List Property</Button>
+            </>
+          ) : (
+            <>
+              <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-200">
+                Let potential buyers experience your property firsthand.
+                <br />
+                Increase serious offers and reduce time-wasting viewings.
+              </p>
+              <div className="mt-6">
+                <Link href="/sign-up">
+                  <Button className="rounded-full px-8 bg-blue-600 text-white hover:bg-blue-700">
+                    List your Home
+                  </Button>
+                </Link>
               </div>
-            )}
-          </div>
+            </>
+          )}
         </div>
       </div>
 
