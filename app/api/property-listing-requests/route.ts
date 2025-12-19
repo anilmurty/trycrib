@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { createClient as createServiceClient } from "@supabase/supabase-js"
 import { NextResponse } from "next/server"
+import { sendPropertyListingRequestEmail } from "@/lib/email"
 
 export async function POST(request: Request) {
   try {
@@ -25,12 +26,41 @@ export async function POST(request: Request) {
       message
     })
 
+    // Get seller profile with agent info
+    const { data: sellerProfile, error: sellerError } = await supabase
+      .from("seller_profiles")
+      .select(`
+        agent_email,
+        agent_name,
+        profiles!seller_profiles_id_fkey (
+          full_name,
+          email
+        )
+      `)
+      .eq("id", seller_id)
+      .single()
+
+    if (sellerError || !sellerProfile) {
+      console.error("Error fetching seller profile:", sellerError)
+      return NextResponse.json({ 
+        error: `Failed to fetch seller profile: ${sellerError?.message || 'Seller profile not found'}` 
+      }, { status: 500 })
+    }
+
+    // Use agent_email from request body if provided, otherwise use from profile
+    const finalAgentEmail = agent_email || sellerProfile.agent_email
+    if (!finalAgentEmail) {
+      return NextResponse.json({ 
+        error: "No agent email found. Please add your agent information in settings." 
+      }, { status: 400 })
+    }
+
     // Insert into property_listing_requests table
     const { data, error } = await supabase
       .from("property_listing_requests")
       .insert([{
         seller_id,
-        agent_email,
+        agent_email: finalAgentEmail,
         property_id,
         request_type,
         property_address,
@@ -47,6 +77,56 @@ export async function POST(request: Request) {
       return NextResponse.json({ 
         error: `Database error: ${error.message}` 
       }, { status: 500 })
+    }
+
+    // Send email to seller's agent
+    try {
+      const sellerName = (sellerProfile.profiles as any)?.full_name || "Your client"
+      const sellerEmail = (sellerProfile.profiles as any)?.email || ""
+
+      // If it's an existing property, fetch property details
+      let propertyImage: string | undefined = undefined
+      let propertyUrl: string | undefined = undefined
+
+      if (property_id && request_type === "existing_property") {
+        const { data: property } = await supabase
+          .from("properties")
+          .select("images, original_image_urls, id")
+          .eq("id", property_id)
+          .single()
+
+        if (property) {
+          propertyImage = property.images && property.images.length > 0 
+            ? property.images[0] 
+            : property.original_image_urls && property.original_image_urls.length > 0
+            ? property.original_image_urls[0]
+            : undefined
+
+          const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+          propertyUrl = `${baseUrl}/properties/${property.id}`
+        }
+      }
+
+      await sendPropertyListingRequestEmail({
+        agentEmail: finalAgentEmail,
+        agentName: sellerProfile.agent_name || "Agent",
+        sellerName,
+        sellerEmail,
+        propertyAddress: property_address,
+        propertyCity: property_city,
+        propertyState: property_state,
+        propertyZip: property_zip,
+        requestType: request_type as "existing_property" | "new_property",
+        propertyImage,
+        propertyUrl,
+        message: message || undefined,
+      })
+
+      console.log("Property listing request email sent successfully")
+    } catch (emailError) {
+      console.error("Error sending property listing request email:", emailError)
+      // Don't fail the request if email fails, but log it
+      // The request is already saved in the database
     }
 
     console.log("Request saved successfully:", data)

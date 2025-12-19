@@ -77,10 +77,8 @@ export async function POST(req: Request) {
       await supabase.from("buyer_profiles").insert({ id })
     } else if (role === "seller") {
       await supabase.from("seller_profiles").insert({ id })
-    } else if (role === "seller_agent") {
-      await supabase.from("seller_agent_profiles").insert({ id })
-    } else if (role === "buyer_agent") {
-      await supabase.from("buyer_agent_profiles").insert({ id })
+    } else if (role === "agent") {
+      await supabase.from("agent_profiles").insert({ id, email })
     }
   }
 

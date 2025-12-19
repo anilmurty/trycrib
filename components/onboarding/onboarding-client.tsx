@@ -23,14 +23,14 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [step, setStep] = useState<"role" | "agent">("role")
-  const [selectedRole, setSelectedRole] = useState<"buyer" | "seller" | "seller_agent" | "buyer_agent" | null>(null)
+  const [selectedRole, setSelectedRole] = useState<"buyer" | "seller" | "agent" | null>(null)
   const [agentInfo, setAgentInfo] = useState<AgentInfo>({
     name: "",
     email: "",
     phone: ""
   })
 
-  const handleRoleSelection = (role: "buyer" | "seller" | "seller_agent" | "buyer_agent") => {
+  const handleRoleSelection = (role: "buyer" | "seller" | "agent") => {
     console.log("=== ONBOARDING CLIENT: Role selection started ===")
     console.log("Selected role:", role)
     
@@ -38,7 +38,7 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
     setError("")
 
     // If it's an agent role, go directly to dashboard
-    if (role === "buyer_agent" || role === "seller_agent") {
+    if (role === "agent") {
       handleCompleteOnboarding(role)
     } else {
       // For buyer/seller, collect agent info first
@@ -46,7 +46,7 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
     }
   }
 
-  const handleCompleteOnboarding = async (role: "buyer" | "seller" | "seller_agent" | "buyer_agent") => {
+  const handleCompleteOnboarding = async (role: "buyer" | "seller" | "agent") => {
     setLoading(true)
     setError("")
 
@@ -76,10 +76,12 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
 
       console.log("API call successful, redirecting to dashboard")
       // Redirect to appropriate dashboard based on role
-      if (role === "buyer" || role === "buyer_agent") {
+      if (role === "buyer") {
         router.push("/dashboard/buyer")
-      } else if (role === "seller" || role === "seller_agent") {
+      } else if (role === "seller") {
         router.push("/dashboard/seller")
+      } else if (role === "agent") {
+        router.push("/dashboard/agent")
       } else {
         router.push("/dashboard")
       }
@@ -118,7 +120,7 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-slate-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
+      <div className="w-full max-w-4xl mx-auto">
         {step === "role" ? (
           <>
             <div className="text-center mb-12">
@@ -130,7 +132,7 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-center">{error}</div>
             )}
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               {/* Buyer */}
               <Card
                 className="p-6 hover:shadow-xl transition-all cursor-pointer border-2 hover:border-blue-500 group"
@@ -163,34 +165,18 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
                 </div>
               </Card>
 
-              {/* Buyer's Agent */}
+              {/* Agent */}
               <Card
-                className="p-6 hover:shadow-xl transition-all cursor-pointer border-2 hover:border-orange-500 group"
-                onClick={() => !loading && handleRoleSelection("buyer_agent")}
+                className="p-6 hover:shadow-xl transition-all cursor-pointer border-2 hover:border-blue-500 group"
+                onClick={() => !loading && handleRoleSelection("agent")}
               >
                 <div className="text-center space-y-4">
-                  <div className="w-16 h-16 mx-auto bg-orange-100 rounded-full flex items-center justify-center group-hover:bg-orange-500 transition-colors">
-                    <Users className="w-8 h-8 text-orange-600 group-hover:text-white transition-colors" />
+                  <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-500 transition-colors">
+                    <UserCheck className="w-8 h-8 text-blue-600 group-hover:text-white transition-colors" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-slate-900 mb-2">Buyer's Agent</h2>
-                    <p className="text-sm text-slate-600">Help buyers find and experience homes</p>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Seller's Agent */}
-              <Card
-                className="p-6 hover:shadow-xl transition-all cursor-pointer border-2 hover:border-purple-500 group"
-                onClick={() => !loading && handleRoleSelection("seller_agent")}
-              >
-                <div className="text-center space-y-4">
-                  <div className="w-16 h-16 mx-auto bg-purple-100 rounded-full flex items-center justify-center group-hover:bg-purple-500 transition-colors">
-                    <UserCheck className="w-8 h-8 text-purple-600 group-hover:text-white transition-colors" />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-bold text-slate-900 mb-2">Seller's Agent</h2>
-                    <p className="text-sm text-slate-600">Help sellers list and manage their properties</p>
+                    <h2 className="text-xl font-bold text-slate-900 mb-2">Agent</h2>
+                    <p className="text-sm text-slate-600">Help buyers and sellers with their real estate needs</p>
                   </div>
                 </div>
               </Card>

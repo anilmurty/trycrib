@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation"
 import { auth } from "@clerk/nextjs/server"
 import { createClient } from "@/lib/supabase/server"
-import { BuyerAgentDashboard } from "@/components/agent/buyer-agent-dashboard"
+import { AgentDashboard } from "@/components/agent/agent-dashboard"
 
-export default async function BuyerAgentDashboardPage() {
+export default async function AgentDashboardPage() {
   const { userId } = await auth()
 
   if (!userId) {
@@ -19,19 +19,19 @@ export default async function BuyerAgentDashboardPage() {
     .eq("id", userId)
     .single()
 
-  if (!profile || profile.role !== "buyer_agent") {
+  if (!profile || profile.role !== "agent") {
     redirect("/dashboard")
   }
 
-  // Get buyer agent profile
+  // Get agent profile
   const { data: agentProfile } = await supabase
-    .from("buyer_agent_profiles")
+    .from("agent_profiles")
     .select("*")
     .eq("id", userId)
     .single()
 
   return (
-    <BuyerAgentDashboard 
+    <AgentDashboard 
       userId={userId} 
       profile={profile} 
       agentProfile={agentProfile}

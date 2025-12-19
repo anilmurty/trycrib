@@ -50,10 +50,8 @@ export default function DashboardRedirect() {
         // Redirect based on user role
         if (profile.role === "seller") {
           router.push("/dashboard/seller")
-        } else if (profile.role === "buyer_agent") {
-          router.push("/dashboard/buyer_agent")
-        } else if (profile.role === "seller_agent") {
-          router.push("/dashboard/seller_agent")
+        } else if (profile.role === "agent") {
+          router.push("/dashboard/agent")
         } else if (profile.role === "admin" || profile.role === "superadmin") {
           router.push("/admin")
         } else {

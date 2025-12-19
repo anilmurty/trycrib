@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth, currentUser } from "@clerk/nextjs/server"
 import { createClient } from "@/lib/supabase/server"
+import { createClient as createServiceClient } from "@supabase/supabase-js"
 
 export async function POST(request: Request) {
   try {
@@ -18,7 +19,7 @@ export async function POST(request: Request) {
     console.log("Role from request:", role)
     console.log("Agent info from request:", agentInfo)
 
-    if (!role || !["buyer", "seller", "seller_agent", "buyer_agent"].includes(role)) {
+    if (!role || !["buyer", "seller", "agent"].includes(role)) {
       console.log("Invalid role:", role)
       return NextResponse.json({ error: "Invalid role" }, { status: 400 })
     }
@@ -101,34 +102,32 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Failed to create seller profile" }, { status: 500 })
       }
       console.log("Seller profile created successfully")
-    } else if (role === "seller_agent") {
-      console.log("Creating seller agent profile...")
-      const { error: sellerAgentError } = await supabase.from("seller_agent_profiles").upsert({
+    } else if (role === "agent") {
+      console.log("Creating agent profile...")
+      console.log("Agent profile data:", { id: userId, email: userEmail })
+      
+      // Use service role client to bypass RLS (since Clerk auth doesn't work with Supabase RLS)
+      const serviceSupabase = createServiceClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      )
+      
+      const { error: agentError, data: agentData } = await serviceSupabase.from("agent_profiles").upsert({
         id: userId,
         email: userEmail,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
 
-      if (sellerAgentError) {
-        console.error("Error creating seller agent profile:", sellerAgentError)
-        return NextResponse.json({ error: "Failed to create seller agent profile" }, { status: 500 })
+      if (agentError) {
+        console.error("Error creating agent profile:", agentError)
+        console.error("Error details:", JSON.stringify(agentError, null, 2))
+        return NextResponse.json({ 
+          error: "Failed to create agent profile",
+          details: agentError.message || JSON.stringify(agentError)
+        }, { status: 500 })
       }
-      console.log("Seller agent profile created successfully")
-    } else if (role === "buyer_agent") {
-      console.log("Creating buyer agent profile...")
-      const { error: buyerAgentError } = await supabase.from("buyer_agent_profiles").upsert({
-        id: userId,
-        email: userEmail,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-
-      if (buyerAgentError) {
-        console.error("Error creating buyer agent profile:", buyerAgentError)
-        return NextResponse.json({ error: "Failed to create buyer agent profile" }, { status: 500 })
-      }
-      console.log("Buyer agent profile created successfully")
+      console.log("Agent profile created successfully:", agentData)
     }
 
     return NextResponse.json({ success: true })

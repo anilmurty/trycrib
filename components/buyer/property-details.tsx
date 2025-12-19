@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Bed, Bath, Square, MapPin, DollarSign, ChevronLeft, ChevronRight } from "lucide-react"
+import { StayRequestModal } from "@/components/buyer/stay-request-modal"
 
 interface Property {
   id: string
@@ -35,6 +36,7 @@ interface PropertyDetailsProps {
 export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
   const router = useRouter()
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [showStayRequestModal, setShowStayRequestModal] = useState(false)
 
   // Get available images (prioritize images over original_image_urls)
   const availableImages = property.images && property.images.length > 0 
@@ -126,13 +128,12 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
                         router.push("/auth")
                         return
                       }
-                      // TODO: Implement test drive request functionality
-                      alert("Test drive request functionality coming soon!")
+                      setShowStayRequestModal(true)
                     }}
                     disabled={!property.is_active}
                     className="bg-blue-600 hover:bg-blue-700 text-white disabled:bg-gray-400 disabled:cursor-not-allowed"
                   >
-                    {userId ? "Request Test Drive" : "Sign in to Request"}
+                    {userId ? "Request Stay" : "Sign in to Request"}
                   </Button>
                 </div>
               </CardHeader>
@@ -198,6 +199,27 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
             </Card>
         </div>
       </div>
+
+      {/* Stay Request Modal */}
+      {showStayRequestModal && userId && (
+        <StayRequestModal
+          property={{
+            id: property.id,
+            title: property.title,
+            address: property.address,
+            city: property.city,
+            state: property.state,
+            zip_code: property.zip_code,
+            listing_price: property.listing_price,
+          }}
+          userId={userId}
+          onClose={() => setShowStayRequestModal(false)}
+          onSuccess={() => {
+            setShowStayRequestModal(false)
+            // Optionally refresh data or show success message
+          }}
+        />
+      )}
     </div>
   )
 }
