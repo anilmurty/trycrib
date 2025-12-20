@@ -262,8 +262,93 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
     setSetupLoading(true)
     
     try {
-      // For existing properties, fetch the property data
-      if (request.request_type === 'existing_property' && request.property_id) {
+      // First, check if property_setup_data already exists (most important - preserves existing data)
+      if (request.property_setup_data) {
+        console.log("Loading existing property_setup_data:", request.property_setup_data)
+        setSetupData({
+          title: request.property_setup_data.title || request.property_address || "",
+          description: request.property_setup_data.description || "",
+          listing_price: request.property_setup_data.listing_price || 0,
+          price_per_night: request.property_setup_data.price_per_night || 0,
+          bedrooms: request.property_setup_data.bedrooms || 0,
+          bathrooms: request.property_setup_data.bathrooms || 0,
+          square_feet: request.property_setup_data.square_feet || 0,
+          property_type: request.property_setup_data.property_type || "house",
+          year_built: request.property_setup_data.year_built || null,
+          lot_size: request.property_setup_data.lot_size || null,
+          parking_spaces: request.property_setup_data.parking_spaces || null,
+          heating_type: request.property_setup_data.heating_type || null,
+          cooling_type: request.property_setup_data.cooling_type || null,
+          flooring_type: request.property_setup_data.flooring_type || null,
+          roof_type: request.property_setup_data.roof_type || null,
+          exterior_material: request.property_setup_data.exterior_material || null,
+          foundation_type: request.property_setup_data.foundation_type || null,
+          garage_type: request.property_setup_data.garage_type || null,
+          pool: request.property_setup_data.pool || false,
+          fireplace: request.property_setup_data.fireplace || false,
+          central_air: request.property_setup_data.central_air || false,
+          hardwood_floors: request.property_setup_data.hardwood_floors || false,
+          updated_kitchen: request.property_setup_data.updated_kitchen || false,
+          updated_bathrooms: request.property_setup_data.updated_bathrooms || false,
+          walk_in_closet: request.property_setup_data.walk_in_closet || false,
+          master_suite: request.property_setup_data.master_suite || false,
+          vaulted_ceiling: request.property_setup_data.vaulted_ceiling || false,
+          skylights: request.property_setup_data.skylights || false,
+          bay_windows: request.property_setup_data.bay_windows || false,
+          crown_molding: request.property_setup_data.crown_molding || false,
+          wainscoting: request.property_setup_data.wainscoting || false,
+          chair_rail: request.property_setup_data.chair_rail || false,
+          built_in_shelving: request.property_setup_data.built_in_shelving || false,
+          custom_cabinets: request.property_setup_data.custom_cabinets || false,
+          granite_countertops: request.property_setup_data.granite_countertops || false,
+          stainless_steel_appliances: request.property_setup_data.stainless_steel_appliances || false,
+          island: request.property_setup_data.island || false,
+          pantry: request.property_setup_data.pantry || false,
+          breakfast_nook: request.property_setup_data.breakfast_nook || false,
+          formal_dining: request.property_setup_data.formal_dining || false,
+          eat_in_kitchen: request.property_setup_data.eat_in_kitchen || false,
+          family_room: request.property_setup_data.family_room || false,
+          living_room: request.property_setup_data.living_room || false,
+          den: request.property_setup_data.den || false,
+          office: request.property_setup_data.office || false,
+          library: request.property_setup_data.library || false,
+          sunroom: request.property_setup_data.sunroom || false,
+          screened_porch: request.property_setup_data.screened_porch || false,
+          deck: request.property_setup_data.deck || false,
+          patio: request.property_setup_data.patio || false,
+          balcony: request.property_setup_data.balcony || false,
+          fenced_yard: request.property_setup_data.fenced_yard || false,
+          garden: request.property_setup_data.garden || false,
+          landscaping: request.property_setup_data.landscaping || false,
+          sprinkler_system: request.property_setup_data.sprinkler_system || false,
+          security_system: request.property_setup_data.security_system || false,
+          smoke_detectors: request.property_setup_data.smoke_detectors || false,
+          carbon_monoxide_detectors: request.property_setup_data.carbon_monoxide_detectors || false,
+          fire_sprinklers: request.property_setup_data.fire_sprinklers || false,
+          gated_community: request.property_setup_data.gated_community || false,
+          homeowners_association: request.property_setup_data.homeowners_association || false,
+          near_schools: request.property_setup_data.near_schools || false,
+          near_shopping: request.property_setup_data.near_shopping || false,
+          near_parks: request.property_setup_data.near_parks || false,
+          near_transit: request.property_setup_data.near_transit || false,
+          quiet_street: request.property_setup_data.quiet_street || false,
+          cul_de_sac: request.property_setup_data.cul_de_sac || false,
+          corner_lot: request.property_setup_data.corner_lot || false,
+          mountain_view: request.property_setup_data.mountain_view || false,
+          water_view: request.property_setup_data.water_view || false,
+          city_view: request.property_setup_data.city_view || false,
+          garden_view: request.property_setup_data.garden_view || false,
+          pool_view: request.property_setup_data.pool_view || false,
+          golf_course_view: request.property_setup_data.golf_course_view || false,
+          other_view: request.property_setup_data.other_view || false,
+          notes: request.property_setup_data.notes || ""
+        })
+        // Also set agent notes if they exist
+        if (request.property_setup_data.notes) {
+          setAgentNotes(request.property_setup_data.notes)
+        }
+      } else if (request.request_type === 'existing_property' && request.property_id) {
+        // For existing properties without setup data, fetch the property data
         try {
           const response = await fetch(`/api/properties/${request.property_id}`)
           if (response.ok) {
@@ -313,7 +398,7 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
           })
         }
       } else {
-        // For new properties, use basic data
+        // For new properties without setup data, use basic data
         setSetupData({
           ...setupData,
           title: request.property_address,
@@ -464,31 +549,82 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
                           <MessageSquare className="h-4 w-4 text-blue-600 mt-0.5" />
                           <div className="flex-1">
                             <p className="text-sm font-medium text-blue-900 mb-2">Conversation with Seller:</p>
-                            <div className="max-h-32 overflow-y-auto space-y-3 pr-2">
-                              {/* Show original seller message first */}
-                              {request.message && (
-                                <div className="text-sm">
-                                  <div className="font-medium text-slate-700">
-                                    Seller: <span className="text-slate-500 text-xs">[{new Date(request.created_at).toLocaleString()}]</span>
-                                  </div>
-                                  <div className="text-slate-600 mt-1 whitespace-pre-wrap">{request.message}</div>
-                                </div>
-                              )}
-                              
-                              {/* Show agent notes and change requests */}
-                              {request.agent_notes && request.agent_notes.split(/\n\n--- (?:Seller Change Request|Agent Response) ---\n/).map((message, index) => {
-                                const isChangeRequest = request.agent_notes.includes('--- Seller Change Request ---') && 
-                                  request.agent_notes.indexOf('--- Seller Change Request ---') < request.agent_notes.indexOf(message)
-                                const timestamp = new Date(request.updated_at).toLocaleString()
-                                return (
+                            <div className="max-h-48 overflow-y-auto space-y-3 pr-2">
+                              {/* Parse and display all conversation messages in chronological order */}
+                              {(() => {
+                                const messages: Array<{ author: string; text: string; timestamp: string }> = []
+                                
+                                // Add original seller message first
+                                if (request.message) {
+                                  messages.push({
+                                    author: 'Seller',
+                                    text: request.message,
+                                    timestamp: new Date(request.created_at).toLocaleString()
+                                  })
+                                }
+                                
+                                // Parse agent_notes to extract all messages
+                                if (request.agent_notes) {
+                                  // Split by both delimiters while preserving them
+                                  const parts = request.agent_notes.split(/(\n\n--- (?:Seller Change Request|Agent Response) ---\n)/)
+                                  
+                                  let currentAuthor = 'You' // First part is always from agent
+                                  let currentText = ''
+                                  
+                                  for (let i = 0; i < parts.length; i++) {
+                                    const part = parts[i]
+                                    
+                                    // Skip empty parts
+                                    if (!part || !part.trim()) continue
+                                    
+                                    if (part.includes('--- Seller Change Request ---')) {
+                                      // Save previous message if any before switching to seller
+                                      if (currentText.trim()) {
+                                        messages.push({
+                                          author: currentAuthor,
+                                          text: currentText.trim(),
+                                          timestamp: new Date(request.updated_at).toLocaleString()
+                                        })
+                                      }
+                                      currentAuthor = 'Seller'
+                                      currentText = ''
+                                    } else if (part.includes('--- Agent Response ---')) {
+                                      // Save previous message if any before switching to agent
+                                      if (currentText.trim()) {
+                                        messages.push({
+                                          author: currentAuthor,
+                                          text: currentText.trim(),
+                                          timestamp: new Date(request.updated_at).toLocaleString()
+                                        })
+                                      }
+                                      currentAuthor = 'You'
+                                      currentText = ''
+                                    } else {
+                                      // This is message content - accumulate it
+                                      currentText += (currentText ? '\n' : '') + part
+                                    }
+                                  }
+                                  
+                                  // Add the last message if any
+                                  if (currentText.trim()) {
+                                    messages.push({
+                                      author: currentAuthor,
+                                      text: currentText.trim(),
+                                      timestamp: new Date(request.updated_at).toLocaleString()
+                                    })
+                                  }
+                                }
+                                
+                                // Render all messages
+                                return messages.map((msg, index) => (
                                   <div key={index} className="text-sm">
                                     <div className="font-medium text-slate-700">
-                                      {isChangeRequest ? 'Seller' : 'You'}: <span className="text-slate-500 text-xs">[{timestamp}]</span>
+                                      {msg.author}: <span className="text-slate-500 text-xs">[{msg.timestamp}]</span>
                                     </div>
-                                    <div className="text-slate-600 mt-1 whitespace-pre-wrap">{message}</div>
+                                    <div className="text-slate-600 mt-1 whitespace-pre-wrap">{msg.text}</div>
                                   </div>
-                                )
-                              })}
+                                ))
+                              })()}
                             </div>
                           </div>
                         </div>
@@ -532,7 +668,7 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
                       >
                         {setupLoading ? 'Loading...' : 
                           request.status === 'listing_pending' ? 'Setup Property' : 
-                          request.status === 'approval_pending' ? 'View Details' : 
+                          request.status === 'approval_pending' ? 'Edit Details' : 
                           'Review Request'}
                       </Button>
                     </div>
@@ -664,7 +800,7 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
           <Card className="w-full max-w-2xl bg-white max-h-[90vh] overflow-y-auto">
             <CardHeader>
               <CardTitle className="text-lg">
-                {selectedRequest.status === 'approval_pending' ? 'Property Setup Details' : 'Setup Property Listing'}
+                {selectedRequest.status === 'approval_pending' ? 'Edit Property Listing' : 'Setup Property Listing'}
               </CardTitle>
               <p className="text-sm text-slate-600">
                 {selectedRequest.property_address}, {selectedRequest.property_city}, {selectedRequest.property_state}
@@ -679,8 +815,6 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
                     value={setupData.title}
                     onChange={(e) => setSetupData({...setupData, title: e.target.value})}
                     placeholder="Enter property title"
-                    readOnly={selectedRequest.status === 'approval_pending'}
-                    className={selectedRequest.status === 'approval_pending' ? 'bg-gray-50' : ''}
                   />
                 </div>
                 <div>
@@ -689,8 +823,7 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
                     id="property_type"
                     value={setupData.property_type}
                     onChange={(e) => setSetupData({...setupData, property_type: e.target.value})}
-                    className={`w-full px-3 py-2 border border-gray-300 rounded-md ${selectedRequest.status === 'approval_pending' ? 'bg-gray-50' : ''}`}
-                    disabled={selectedRequest.status === 'approval_pending'}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
                   >
                     <option value="house">House</option>
                     <option value="condo">Condo</option>
@@ -706,8 +839,6 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
                     value={setupData.listing_price}
                     onChange={(e) => setSetupData({...setupData, listing_price: parseInt(e.target.value) || 0})}
                     placeholder="Enter listing price"
-                    readOnly={selectedRequest.status === 'approval_pending'}
-                    className={selectedRequest.status === 'approval_pending' ? 'bg-gray-50' : ''}
                   />
                 </div>
                 <div>
@@ -718,8 +849,6 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
                     value={setupData.bedrooms}
                     onChange={(e) => setSetupData({...setupData, bedrooms: parseInt(e.target.value) || 0})}
                     placeholder="Number of bedrooms"
-                    readOnly={selectedRequest.status === 'approval_pending'}
-                    className={selectedRequest.status === 'approval_pending' ? 'bg-gray-50' : ''}
                   />
                 </div>
                 <div>
@@ -731,8 +860,6 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
                     value={setupData.bathrooms}
                     onChange={(e) => setSetupData({...setupData, bathrooms: parseFloat(e.target.value) || 0})}
                     placeholder="Number of bathrooms"
-                    readOnly={selectedRequest.status === 'approval_pending'}
-                    className={selectedRequest.status === 'approval_pending' ? 'bg-gray-50' : ''}
                   />
                 </div>
                 <div>
@@ -743,8 +870,6 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
                     value={setupData.square_feet}
                     onChange={(e) => setSetupData({...setupData, square_feet: parseInt(e.target.value) || 0})}
                     placeholder="Square footage"
-                    readOnly={selectedRequest.status === 'approval_pending'}
-                    className={selectedRequest.status === 'approval_pending' ? 'bg-gray-50' : ''}
                   />
                 </div>
                 <div>
@@ -755,8 +880,6 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
                     value={setupData.year_built || ""}
                     onChange={(e) => setSetupData({...setupData, year_built: parseInt(e.target.value) || null})}
                     placeholder="Year built"
-                    readOnly={selectedRequest.status === 'approval_pending'}
-                    className={selectedRequest.status === 'approval_pending' ? 'bg-gray-50' : ''}
                   />
                 </div>
               </div>
@@ -769,8 +892,6 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
                   onChange={(e) => setSetupData({...setupData, description: e.target.value})}
                   placeholder="Describe the property..."
                   rows={4}
-                  readOnly={selectedRequest.status === 'approval_pending'}
-                  className={selectedRequest.status === 'approval_pending' ? 'bg-gray-50' : ''}
                 />
               </div>
 
@@ -808,6 +929,85 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
                     setShowSetupModal(false)
                     setSelectedRequest(null)
                     setAgentNotes("")
+                    // Reset setupData to defaults when closing modal
+                    setSetupData({
+                      title: "",
+                      description: "",
+                      listing_price: 0,
+                      price_per_night: 0,
+                      bedrooms: 0,
+                      bathrooms: 0,
+                      square_feet: 0,
+                      property_type: "house",
+                      year_built: null,
+                      lot_size: null,
+                      parking_spaces: null,
+                      heating_type: null,
+                      cooling_type: null,
+                      flooring_type: null,
+                      roof_type: null,
+                      exterior_material: null,
+                      foundation_type: null,
+                      garage_type: null,
+                      pool: false,
+                      fireplace: false,
+                      central_air: false,
+                      hardwood_floors: false,
+                      updated_kitchen: false,
+                      updated_bathrooms: false,
+                      walk_in_closet: false,
+                      master_suite: false,
+                      vaulted_ceiling: false,
+                      skylights: false,
+                      bay_windows: false,
+                      crown_molding: false,
+                      wainscoting: false,
+                      chair_rail: false,
+                      built_in_shelving: false,
+                      custom_cabinets: false,
+                      granite_countertops: false,
+                      stainless_steel_appliances: false,
+                      island: false,
+                      pantry: false,
+                      breakfast_nook: false,
+                      formal_dining: false,
+                      eat_in_kitchen: false,
+                      family_room: false,
+                      living_room: false,
+                      den: false,
+                      office: false,
+                      library: false,
+                      sunroom: false,
+                      screened_porch: false,
+                      deck: false,
+                      patio: false,
+                      balcony: false,
+                      fenced_yard: false,
+                      garden: false,
+                      landscaping: false,
+                      sprinkler_system: false,
+                      security_system: false,
+                      smoke_detectors: false,
+                      carbon_monoxide_detectors: false,
+                      fire_sprinklers: false,
+                      gated_community: false,
+                      homeowners_association: false,
+                      near_schools: false,
+                      near_shopping: false,
+                      near_parks: false,
+                      near_transit: false,
+                      quiet_street: false,
+                      cul_de_sac: false,
+                      corner_lot: false,
+                      mountain_view: false,
+                      water_view: false,
+                      city_view: false,
+                      garden_view: false,
+                      pool_view: false,
+                      golf_course_view: false,
+                      other_view: false,
+                      notes: ""
+                    })
                   }}
                   className="flex-1"
                 >
@@ -818,7 +1018,7 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
                   disabled={actionLoading || !setupData.title || !setupData.listing_price || !setupData.price_per_night || setupData.price_per_night <= 0}
                   className="flex-1 bg-blue-600 hover:bg-blue-700 text-white disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                  {actionLoading ? "Setting up..." : "Complete Setup & Send to Seller"}
+                  {actionLoading ? "Saving..." : selectedRequest.status === 'approval_pending' ? "Save Changes & Send to Seller" : "Complete Setup & Send to Seller"}
                 </Button>
               </div>
             </CardContent>

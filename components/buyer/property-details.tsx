@@ -70,14 +70,14 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
                     <>
                       <button
                         onClick={prevImage}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors cursor-pointer"
                         aria-label="Previous image"
                       >
                         <ChevronLeft className="h-5 w-5" />
                       </button>
                       <button
                         onClick={nextImage}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors cursor-pointer"
                         aria-label="Next image"
                       >
                         <ChevronRight className="h-5 w-5" />
@@ -92,7 +92,7 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
                         <button
                           key={index}
                           onClick={() => setCurrentImageIndex(index)}
-                          className={`w-2 h-2 rounded-full transition-colors ${
+                          className={`w-2 h-2 rounded-full transition-colors cursor-pointer ${
                             index === currentImageIndex ? 'bg-white' : 'bg-white/50'
                           }`}
                           aria-label={`Go to image ${index + 1}`}

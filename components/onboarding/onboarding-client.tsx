@@ -39,14 +39,14 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
 
     // If it's an agent role, go directly to dashboard
     if (role === "agent") {
-      handleCompleteOnboarding(role)
+      handleCompleteOnboarding(role, undefined)
     } else {
       // For buyer/seller, collect agent info first
       setStep("agent")
     }
   }
 
-  const handleCompleteOnboarding = async (role: "buyer" | "seller" | "agent") => {
+  const handleCompleteOnboarding = async (role: "buyer" | "seller" | "agent", cleanedAgentInfo?: AgentInfo) => {
     setLoading(true)
     setError("")
 
@@ -59,7 +59,11 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
         },
         body: JSON.stringify({ 
           role,
-          agentInfo: (role === "buyer" || role === "seller") ? agentInfo : undefined
+          agentInfo: ((role === "buyer" || role === "seller") && cleanedAgentInfo) ? {
+            name: cleanedAgentInfo.name,
+            email: cleanedAgentInfo.email,
+            phone: cleanedAgentInfo.phone
+          } : undefined
         }),
       })
 
@@ -95,20 +99,45 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
   const handleAgentInfoSubmit = () => {
     if (!selectedRole) return
 
+    // Clear any previous errors
+    setError("")
+
     // Validate agent info
-    if (!agentInfo.name.trim() || !agentInfo.email.trim() || !agentInfo.phone.trim()) {
-      setError("Please fill in all agent information fields.")
+    if (!agentInfo.name.trim()) {
+      setError("Please enter your agent's name.")
       return
     }
 
-    // Basic email validation
+    if (!agentInfo.email.trim()) {
+      setError("Please enter your agent's email address.")
+      return
+    }
+
+    if (!agentInfo.phone.trim()) {
+      setError("Please enter your agent's phone number.")
+      return
+    }
+
+    // Basic email validation - trim whitespace first
+    const trimmedEmail = agentInfo.email.trim()
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(agentInfo.email)) {
-      setError("Please enter a valid email address for your agent.")
+    if (!emailRegex.test(trimmedEmail)) {
+      setError(`"${trimmedEmail}" is not a valid email address. Please enter a valid email address for your agent (e.g., agent@realestate.com).`)
       return
     }
 
-    handleCompleteOnboarding(selectedRole)
+    // Create cleaned agent info object
+    const cleanedAgentInfo: AgentInfo = {
+      name: agentInfo.name.trim(),
+      email: trimmedEmail,
+      phone: agentInfo.phone.trim()
+    }
+
+    // Update state for display
+    setAgentInfo(cleanedAgentInfo)
+
+    // Pass cleaned values to onboarding
+    handleCompleteOnboarding(selectedRole, cleanedAgentInfo)
   }
 
   const handleBackToRoleSelection = () => {
@@ -211,9 +240,16 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
                     type="text"
                     placeholder="John Smith"
                     value={agentInfo.name}
-                    onChange={(e) => setAgentInfo({ ...agentInfo, name: e.target.value })}
+                    onChange={(e) => {
+                      setAgentInfo({ ...agentInfo, name: e.target.value })
+                      // Clear error when user starts typing
+                      if (error) setError("")
+                    }}
                     required
                   />
+                  <p className="text-xs text-slate-500">
+                    Enter your agent's full name
+                  </p>
                 </div>
 
                 <div className="space-y-2">
@@ -223,9 +259,23 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
                     type="email"
                     placeholder="john.smith@realestate.com"
                     value={agentInfo.email}
-                    onChange={(e) => setAgentInfo({ ...agentInfo, email: e.target.value })}
+                    onChange={(e) => {
+                      setAgentInfo({ ...agentInfo, email: e.target.value })
+                      // Clear error when user starts typing
+                      if (error) setError("")
+                    }}
+                    onBlur={(e) => {
+                      // Trim whitespace on blur
+                      const trimmed = e.target.value.trim()
+                      if (trimmed !== agentInfo.email) {
+                        setAgentInfo({ ...agentInfo, email: trimmed })
+                      }
+                    }}
                     required
                   />
+                  <p className="text-xs text-slate-500">
+                    Enter your agent's professional email address
+                  </p>
                 </div>
 
                 <div className="space-y-2">

@@ -48,11 +48,11 @@ export function PropertySearch({ userRole, userId, onPropertySelected }: Propert
 
     setLoading(true)
     try {
-      // Use a simpler approach - search in address field only
+      // Search across multiple fields: title, address, city, and state
       const { data, error } = await supabase
         .from("properties")
         .select("*")
-        .ilike("address", `%${query}%`)
+        .or(`title.ilike.%${query}%,address.ilike.%${query}%,city.ilike.%${query}%,state.ilike.%${query}%`)
         .eq("is_active", true)
         .limit(10)
 
@@ -114,7 +114,7 @@ export function PropertySearch({ userRole, userId, onPropertySelected }: Propert
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
-                  placeholder="Enter street address. Example: 123 Main St"
+                  placeholder="Search by address, city, state, or property title..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"

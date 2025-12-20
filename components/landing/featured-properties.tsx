@@ -63,63 +63,63 @@ export async function FeaturedProperties() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900">Featured Properties</h2>
-          <Link href="/properties" className="text-sm font-medium text-blue-600 hover:text-blue-700">
+          <Link href="/properties" className="text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer">
             View all
           </Link>
         </div>
 
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {displayProperties.map((property) => (
-            <Card key={property.id} className="overflow-hidden border-0 shadow-md hover:shadow-xl transition-shadow">
-              <div className="aspect-[16/9] relative bg-gray-200 rounded-t-lg overflow-hidden">
-                {(property.images && property.images.length > 0) || (property.original_image_urls && property.original_image_urls.length > 0) ? (
-                  <img
-                    src={property.images?.[0] || property.original_image_urls?.[0] || "/placeholder.svg"}
-                    alt={property.title}
-                    className="object-cover w-full h-full"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full">
-                    <span className="text-slate-400">No image</span>
-                  </div>
-                )}
-              </div>
-              <CardContent className="p-3 pb-2">
-                {/* Property details in main title */}
-                <div className="flex items-center gap-4 text-sm font-bold text-gray-700">
-                  {property.bedrooms && (
-                    <span>{property.bedrooms} beds</span>
-                  )}
-                  {property.bathrooms && (
-                    <span>{property.bathrooms} baths</span>
-                  )}
-                  {property.square_feet && (
-                    <span>{property.square_feet.toLocaleString()} sqft</span>
-                  )}
-                </div>
-                <p className="text-sm font-bold text-gray-900 mt-1">
-                  {property.city}, {property.state}
-                </p>
-                
-                {/* Property Info and CTA */}
-                <div className="mt-1 flex items-center justify-between">
-                  {property.listing_price && (
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-gray-500" />
-                      <span className="text-sm text-gray-600">
-                        Listed at ${property.listing_price.toLocaleString()}
-                      </span>
+            <Link key={property.id} href={`/properties/${property.id}`} className="cursor-pointer">
+              <Card className="overflow-hidden border-0 shadow-md hover:shadow-xl transition-shadow">
+                <div className="aspect-[16/9] relative bg-gray-200 rounded-t-lg overflow-hidden">
+                  {(property.images && property.images.length > 0) || (property.original_image_urls && property.original_image_urls.length > 0) ? (
+                    <img
+                      src={property.images?.[0] || property.original_image_urls?.[0] || "/placeholder.svg"}
+                      alt={property.title}
+                      className="object-cover w-full h-full"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <span className="text-slate-400">No image</span>
                     </div>
                   )}
+                </div>
+                <CardContent className="p-3 pb-2">
+                  {/* Property details in main title */}
+                  <div className="flex items-center gap-4 text-sm font-bold text-gray-700">
+                    {property.bedrooms && (
+                      <span>{property.bedrooms} beds</span>
+                    )}
+                    {property.bathrooms && (
+                      <span>{property.bathrooms} baths</span>
+                    )}
+                    {property.square_feet && (
+                      <span>{property.square_feet.toLocaleString()} sqft</span>
+                    )}
+                  </div>
+                  <p className="text-sm font-bold text-gray-900 mt-1">
+                    {property.city}, {property.state}
+                  </p>
                   
-                  <Link href={`/properties/${property.id}`}>
+                  {/* Property Info and CTA */}
+                  <div className="mt-1 flex items-center justify-between">
+                    {property.listing_price && (
+                      <div className="flex items-center gap-2">
+                        <DollarSign className="h-4 w-4 text-gray-500" />
+                        <span className="text-sm text-gray-600">
+                          Listed at ${property.listing_price.toLocaleString()}
+                        </span>
+                      </div>
+                    )}
+                    
                     <Button className="rounded-lg bg-blue-600 hover:bg-blue-700 px-4 py-1.5 text-sm">
                       Request Test Drive
                     </Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       </div>

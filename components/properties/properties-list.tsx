@@ -43,6 +43,7 @@ export function PropertiesList() {
   const [totalPages, setTotalPages] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
   const [searchTerm, setSearchTerm] = useState("")
+  const [appliedSearchTerm, setAppliedSearchTerm] = useState("")
   const [sortBy, setSortBy] = useState<"created_at" | "listing_price" | "price_per_night">("created_at")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
 
@@ -82,9 +83,9 @@ export function PropertiesList() {
         .eq("is_active", true)
         .in("verification_status", ["approved", "pending"])
 
-      // Apply search filter
-      if (searchTerm) {
-        query = query.or(`title.ilike.%${searchTerm}%,address.ilike.%${searchTerm}%,city.ilike.%${searchTerm}%,state.ilike.%${searchTerm}%`)
+      // Apply search filter - only use appliedSearchTerm, not searchTerm
+      if (appliedSearchTerm) {
+        query = query.or(`title.ilike.%${appliedSearchTerm}%,address.ilike.%${appliedSearchTerm}%,city.ilike.%${appliedSearchTerm}%,state.ilike.%${appliedSearchTerm}%`)
       }
 
       // Apply sorting
@@ -112,12 +113,12 @@ export function PropertiesList() {
 
   useEffect(() => {
     fetchProperties()
-  }, [currentPage, searchTerm, sortBy, sortOrder])
+  }, [currentPage, appliedSearchTerm, sortBy, sortOrder])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
+    setAppliedSearchTerm(searchTerm.trim())
     setCurrentPage(1) // Reset to first page when searching
-    fetchProperties()
   }
 
   const handleSort = (field: "created_at" | "listing_price" | "price_per_night") => {
@@ -198,7 +199,7 @@ export function PropertiesList() {
       {properties.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg">No properties found</p>
-          {searchTerm && (
+          {appliedSearchTerm && (
             <p className="text-gray-400 mt-2">Try adjusting your search terms</p>
           )}
         </div>
@@ -206,56 +207,55 @@ export function PropertiesList() {
         <>
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {properties.map((property) => (
-              <Card key={property.id} className="overflow-hidden border-0 shadow-md hover:shadow-xl transition-shadow">
-                <div className="aspect-[16/9] relative bg-gray-200 rounded-t-lg overflow-hidden">
-                  {(property.images && property.images.length > 0) || (property.original_image_urls && property.original_image_urls.length > 0) ? (
-                    <img
-                      src={property.images?.[0] || property.original_image_urls?.[0] || "/placeholder.svg"}
-                      alt={property.title}
-                      className="object-cover w-full h-full"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center h-full">
-                      <span className="text-slate-400">No image</span>
-                    </div>
-                  )}
-                </div>
-                <CardContent className="p-3 pb-2">
-                  {/* Property details in main title */}
-                  <div className="flex items-center gap-4 text-sm font-bold text-gray-700">
-                    {property.bedrooms && (
-                      <span>{property.bedrooms} beds</span>
-                    )}
-                    {property.bathrooms && (
-                      <span>{property.bathrooms} baths</span>
-                    )}
-                    {property.square_feet && (
-                      <span>{property.square_feet.toLocaleString()} sqft</span>
+              <Link key={property.id} href={`/properties/${property.id}`} className="cursor-pointer">
+                <Card className="overflow-hidden border-0 shadow-md hover:shadow-xl transition-shadow cursor-pointer">
+                  <div className="aspect-[16/9] relative bg-gray-200 rounded-t-lg overflow-hidden">
+                    {(property.images && property.images.length > 0) || (property.original_image_urls && property.original_image_urls.length > 0) ? (
+                      <img
+                        src={property.images?.[0] || property.original_image_urls?.[0] || "/placeholder.svg"}
+                        alt={property.title}
+                        className="object-cover w-full h-full"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full">
+                        <span className="text-slate-400">No image</span>
+                      </div>
                     )}
                   </div>
-                  <p className="text-sm font-bold text-gray-900 mt-1">
-                    {property.city}, {property.state}
-                  </p>
-                  
-                  {/* Property Info and CTA */}
-                  <div className="mt-1 flex items-center justify-between">
+                  <CardContent className="p-3 pb-2">
+                    {/* Property details in main title */}
+                    <div className="flex items-center gap-4 text-sm font-bold text-gray-700">
+                      {property.bedrooms && (
+                        <span>{property.bedrooms} beds</span>
+                      )}
+                      {property.bathrooms && (
+                        <span>{property.bathrooms} baths</span>
+                      )}
+                      {property.square_feet && (
+                        <span>{property.square_feet.toLocaleString()} sqft</span>
+                      )}
+                    </div>
+                    <p className="text-sm font-bold text-gray-900 mt-1">
+                      {property.city}, {property.state}
+                    </p>
+                    {property.address && (
+                      <p className="text-sm text-gray-600 mt-0.5">
+                        {property.address}
+                      </p>
+                    )}
+                    
+                    {/* Property Info */}
                     {property.listing_price && (
-                      <div className="flex items-center gap-2">
+                      <div className="mt-1 flex items-center gap-2">
                         <DollarSign className="h-4 w-4 text-gray-500" />
                         <span className="text-sm text-gray-600">
                           Listed at ${property.listing_price.toLocaleString()}
                         </span>
                       </div>
                     )}
-                    
-                    <Link href={`/properties/${property.id}`}>
-                      <Button className="rounded-lg bg-blue-600 hover:bg-blue-700 px-4 py-1.5 text-sm">
-                        Request Test Drive
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
 

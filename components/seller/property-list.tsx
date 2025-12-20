@@ -52,7 +52,7 @@ export function PropertyList({ userId }: { userId: string }) {
       <Card>
         <CardContent className="py-12 text-center">
           <p className="text-slate-600 mb-4">You haven't listed any properties yet</p>
-          <Link href="/dashboard/seller/properties/new">
+          <Link href="/dashboard/seller/properties/new" className="cursor-pointer">
             <Button>Add Your First Property</Button>
           </Link>
         </CardContent>
@@ -120,13 +120,13 @@ export function PropertyList({ userId }: { userId: string }) {
               )}
             </div>
             <div className="flex gap-2 mt-4">
-              <Link href={`/properties/${property.id}`} className="flex-1">
+              <Link href={`/properties/${property.id}`} className="flex-1 cursor-pointer">
                 <Button variant="outline" size="sm" className="w-full bg-transparent">
                   <Eye className="h-4 w-4 mr-2" />
                   View
                 </Button>
               </Link>
-              <Link href={`/dashboard/seller/properties/${property.id}/edit`} className="flex-1">
+              <Link href={`/dashboard/seller/properties/${property.id}/edit`} className="flex-1 cursor-pointer">
                 <Button variant="outline" size="sm" className="w-full bg-transparent">
                   <Edit className="h-4 w-4 mr-2" />
                   Edit

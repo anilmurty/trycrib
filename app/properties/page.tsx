@@ -1,6 +1,7 @@
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 import { PropertiesList } from "@/components/properties/properties-list"
+import { ListingRequestBanner } from "@/components/properties/listing-request-banner"
 
 export default function PropertiesPage() {
   return (
@@ -13,6 +14,7 @@ export default function PropertiesPage() {
             <p className="mt-2 text-slate-600">Browse homes you can try before buying</p>
           </div>
 
+          <ListingRequestBanner />
           <PropertiesList />
         </div>
       </main>

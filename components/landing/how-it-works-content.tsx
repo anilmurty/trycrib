@@ -123,13 +123,13 @@ export function HowItWorksContent() {
           <div className="inline-flex flex-col sm:flex-row gap-4">
             <a
               href="/properties"
-              className="inline-flex items-center justify-center rounded-full bg-blue-600 px-8 py-3 text-base font-medium text-white hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center justify-center rounded-full bg-blue-600 px-8 py-3 text-base font-medium text-white hover:bg-blue-700 transition-colors cursor-pointer"
             >
               Browse Properties
             </a>
             <a
               href="/sign-up"
-              className="inline-flex items-center justify-center rounded-full border-2 border-gray-300 bg-white px-8 py-3 text-base font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center justify-center rounded-full border-2 border-gray-300 bg-white px-8 py-3 text-base font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-colors cursor-pointer"
             >
               Get Started
             </a>

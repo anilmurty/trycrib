@@ -67,14 +67,15 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
         
         console.log("All properties for seller:", { allProperties, allPropertiesError, userId })
 
-        // Get pending requests count
-        const { count: pendingRequests, error: requestsError } = await supabase
+        // Get pending requests count - fetch actual data to ensure accurate count
+        const { data: pendingRequestsData, error: requestsError } = await supabase
           .from("property_listing_requests")
-          .select("*", { count: "exact", head: true })
+          .select("id, status")
           .eq("seller_id", userId)
           .in("status", ["listing_requested", "approval_pending", "pending", "listing_pending"])
 
-        console.log("Pending requests query result:", { pendingRequests, requestsError })
+        const pendingRequests = pendingRequestsData?.length || 0
+        console.log("Pending requests query result:", { pendingRequests, requestsError, pendingRequestsData })
 
         // Get bookings
         const { data: properties } = await supabase.from("properties").select("id").eq("seller_id", userId)
@@ -188,7 +189,7 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
 
           <Tabs defaultValue="search" className="space-y-6">
             <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
-              <TabsList className="h-14 bg-transparent p-0 w-full grid grid-cols-4">
+              <TabsList className="h-14 bg-transparent p-0 w-full grid grid-cols-4 !inline-grid !w-full !rounded-none !items-stretch">
                 <TabsTrigger 
                   value="search" 
                   className="h-12 px-6 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"

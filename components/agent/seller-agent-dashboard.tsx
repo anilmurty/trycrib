@@ -275,7 +275,7 @@ export function SellerAgentDashboard({ userId, profile, agentProfile }: SellerAg
 
           <Tabs defaultValue="properties" className="space-y-6">
             <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
-              <TabsList className="h-14 bg-transparent p-0 w-full grid grid-cols-7">
+              <TabsList className="h-14 bg-transparent p-0 w-full grid grid-cols-7 !inline-grid !w-full !rounded-none !items-stretch">
                 <TabsTrigger 
                   value="properties" 
                   className="h-12 px-6 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"

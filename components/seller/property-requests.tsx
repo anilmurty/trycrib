@@ -325,31 +325,82 @@ export function PropertyRequests({ userId }: PropertyRequestsProps) {
                     <MessageSquare className="h-4 w-4 text-blue-600 mt-0.5" />
                     <div className="flex-1">
                       <p className="text-sm font-medium text-blue-900 mb-2">Conversation with Agent:</p>
-                      <div className="max-h-32 overflow-y-auto space-y-3 pr-2">
-                        {/* Show original seller message first */}
-                        {request.message && (
-                          <div className="text-sm">
-                            <div className="font-medium text-slate-700">
-                              You: <span className="text-slate-500 text-xs">[{new Date(request.created_at).toLocaleString()}]</span>
-                            </div>
-                            <div className="text-slate-600 mt-1 whitespace-pre-wrap">{request.message}</div>
-                          </div>
-                        )}
-                        
-                        {/* Show agent notes and change requests */}
-                        {request.agent_notes && request.agent_notes.split(/\n\n--- (?:Seller Change Request|Agent Response) ---\n/).map((message, index) => {
-                          const isChangeRequest = request.agent_notes.includes('--- Seller Change Request ---') && 
-                            request.agent_notes.indexOf('--- Seller Change Request ---') < request.agent_notes.indexOf(message)
-                          const timestamp = new Date(request.updated_at).toLocaleString()
-                          return (
+                      <div className="max-h-48 overflow-y-auto space-y-3 pr-2">
+                        {/* Parse and display all conversation messages in chronological order */}
+                        {(() => {
+                          const messages: Array<{ author: string; text: string; timestamp: string }> = []
+                          
+                          // Add original seller message first
+                          if (request.message) {
+                            messages.push({
+                              author: 'You',
+                              text: request.message,
+                              timestamp: new Date(request.created_at).toLocaleString()
+                            })
+                          }
+                          
+                          // Parse agent_notes to extract all messages
+                          if (request.agent_notes) {
+                            // Split by both delimiters while preserving them
+                            const parts = request.agent_notes.split(/(\n\n--- (?:Seller Change Request|Agent Response) ---\n)/)
+                            
+                            let currentAuthor = 'Listing Agent' // First part is always from agent
+                            let currentText = ''
+                            
+                            for (let i = 0; i < parts.length; i++) {
+                              const part = parts[i]
+                              
+                              // Skip empty parts
+                              if (!part || !part.trim()) continue
+                              
+                              if (part.includes('--- Seller Change Request ---')) {
+                                // Save previous message if any before switching to seller
+                                if (currentText.trim()) {
+                                  messages.push({
+                                    author: currentAuthor,
+                                    text: currentText.trim(),
+                                    timestamp: new Date(request.updated_at).toLocaleString()
+                                  })
+                                }
+                                currentAuthor = 'You'
+                                currentText = ''
+                              } else if (part.includes('--- Agent Response ---')) {
+                                // Save previous message if any before switching to agent
+                                if (currentText.trim()) {
+                                  messages.push({
+                                    author: currentAuthor,
+                                    text: currentText.trim(),
+                                    timestamp: new Date(request.updated_at).toLocaleString()
+                                  })
+                                }
+                                currentAuthor = 'Listing Agent'
+                                currentText = ''
+                              } else {
+                                // This is message content - accumulate it
+                                currentText += (currentText ? '\n' : '') + part
+                              }
+                            }
+                            
+                            // Add the last message if any
+                            if (currentText.trim()) {
+                              messages.push({
+                                author: currentAuthor,
+                                text: currentText.trim(),
+                                timestamp: new Date(request.updated_at).toLocaleString()
+                              })
+                            }
+                          }
+                          
+                          // Render all messages
+                          return messages.map((msg, index) => (
                             <div key={index} className="text-sm">
                               <div className="font-medium text-slate-700">
-                                {isChangeRequest ? 'You' : 'Listing Agent'}: <span className="text-slate-500 text-xs">[{timestamp}]</span>
+                                {msg.author}: <span className="text-slate-500 text-xs">[{msg.timestamp}]</span>
                               </div>
-                              <div className="text-slate-600 mt-1 whitespace-pre-wrap">{message}</div>
+                              <div className="text-slate-600 mt-1 whitespace-pre-wrap">{msg.text}</div>
                             </div>
-                          )
-                        })}
+                          ))
+                        })()}
                       </div>
                     </div>
                   </div>

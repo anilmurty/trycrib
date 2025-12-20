@@ -96,7 +96,7 @@ export function HeroSection() {
                 The perfect way to ensure it's the right fit for you.
               </p>
               <div className="mt-6">
-                <Link href="/properties">
+                <Link href="/properties" className="cursor-pointer">
                   <Button className="rounded-full px-8 bg-blue-600 text-white hover:bg-blue-700">
                     Book a stay
                   </Button>
@@ -111,7 +111,7 @@ export function HeroSection() {
                 Increase serious offers and reduce time-wasting viewings.
               </p>
               <div className="mt-6">
-                <Link href="/sign-up">
+                <Link href="/sign-up" className="cursor-pointer">
                   <Button className="rounded-full px-8 bg-blue-600 text-white hover:bg-blue-700">
                     List your Home
                   </Button>
@@ -128,42 +128,42 @@ export function HeroSection() {
           <div className="grid grid-cols-3 gap-6 md:grid-cols-6">
             <Link
               href="/properties?type=house"
-              className="flex flex-col items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex flex-col items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
             >
               <Home className="h-5 w-5" />
               <span className="text-xs">Houses</span>
             </Link>
             <Link
               href="/properties?type=townhouse"
-              className="flex flex-col items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex flex-col items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
             >
               <Building2 className="h-5 w-5" />
               <span className="text-xs">Townhomes</span>
             </Link>
             <Link
               href="/properties?type=multi-family"
-              className="flex flex-col items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex flex-col items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
             >
               <Building className="h-5 w-5" />
               <span className="text-xs">Multi-family</span>
             </Link>
             <Link
               href="/properties?type=condo"
-              className="flex flex-col items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex flex-col items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
             >
               <Warehouse className="h-5 w-5" />
               <span className="text-xs">Condos/Co-ops</span>
             </Link>
             <Link
               href="/properties?type=apartment"
-              className="flex flex-col items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex flex-col items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
             >
               <Users className="h-5 w-5" />
               <span className="text-xs">Apartments</span>
             </Link>
             <Link
               href="/properties?type=manufactured"
-              className="flex flex-col items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex flex-col items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
             >
               <Factory className="h-5 w-5" />
               <span className="text-xs">Manufactured</span>

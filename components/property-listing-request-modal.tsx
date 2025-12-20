@@ -167,7 +167,7 @@ export function PropertyListingRequestModal({
 
         <div className="space-y-6">
           {/* Property Info */}
-          {property ? (
+          {property && (
             <div className="bg-slate-50 p-4 rounded-lg">
               <h3 className="font-semibold text-slate-900 mb-2">{property.title}</h3>
               <div className="flex items-center gap-1 text-sm text-slate-600 mb-2">
@@ -192,16 +192,6 @@ export function PropertyListingRequestModal({
               <Badge variant="outline" className="mt-2">
                 {property.seller_id ? "Already Listed" : "Available"}
               </Badge>
-            </div>
-          ) : (
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <AlertCircle className="h-5 w-5 text-blue-600" />
-                <h3 className="font-semibold text-blue-900">New Property Request</h3>
-              </div>
-              <p className="text-sm text-blue-700">
-                This property is not currently in our database. Please provide the property details below.
-              </p>
             </div>
           )}
 

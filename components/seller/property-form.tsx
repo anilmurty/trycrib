@@ -265,7 +265,7 @@ export function PropertyForm({ userId, property }: PropertyFormProps) {
               <Button type="submit" disabled={isLoading} className="flex-1">
                 {isLoading ? "Saving..." : property ? "Update Property" : "Create Property"}
               </Button>
-              <Link href="/dashboard/seller" className="flex-1">
+              <Link href="/dashboard/seller" className="flex-1 cursor-pointer">
                 <Button type="button" variant="outline" className="w-full bg-transparent">
                   Cancel
                 </Button>

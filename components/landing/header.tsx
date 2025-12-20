@@ -65,7 +65,7 @@ export function Header() {
             </div>
           ) : isSignedIn ? (
             <>
-              <Link href="/dashboard">
+              <Link href="/dashboard" className="cursor-pointer">
                 <Button variant="ghost" className="text-sm text-gray-600 hover:text-gray-900">
                   Dashboard
                 </Button>
@@ -112,7 +112,7 @@ export function Header() {
               <Link href="/auth?tab=login" className="text-sm text-gray-600 hover:text-gray-900 cursor-pointer">
                 Login
               </Link>
-              <Link href="/auth?tab=signup">
+              <Link href="/auth?tab=signup" className="cursor-pointer">
                 <Button className="rounded-full bg-blue-600 px-6 hover:bg-blue-700">Sign Up</Button>
               </Link>
             </>
