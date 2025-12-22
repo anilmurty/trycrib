@@ -25,6 +25,27 @@ export async function POST(request: Request) {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
 
+    // Check if user has reached the limit of 20 requests
+    const { count, error: countError } = await supabase
+      .from("buyer_listing_requests")
+      .select("*", { count: "exact", head: true })
+      .eq("buyer_id", userId)
+
+    if (countError) {
+      console.error("Error counting buyer listing requests:", countError)
+      return NextResponse.json(
+        { error: "Failed to check request limit" },
+        { status: 500 }
+      )
+    }
+
+    if (count && count >= 20) {
+      return NextResponse.json(
+        { error: "You have reached the maximum limit of 20 property addresses. Please remove some addresses before adding new ones." },
+        { status: 400 }
+      )
+    }
+
     // Insert the listing request
     const { data, error } = await supabase
       .from("buyer_listing_requests")

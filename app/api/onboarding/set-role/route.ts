@@ -130,6 +130,38 @@ export async function POST(request: Request) {
       console.log("Agent profile created successfully:", agentData)
     }
 
+    // Check if this user was invited and mark invitation as accepted
+    // Use service role client to bypass RLS for checking invitations
+    const serviceSupabase = createServiceClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
+    if (userEmail && (role === "buyer" || role === "seller")) {
+      const { data: invitations } = await serviceSupabase
+        .from("client_invitations")
+        .select("*")
+        .eq("email", userEmail.toLowerCase())
+        .eq("role", role)
+        .eq("status", "pending")
+
+      if (invitations && invitations.length > 0) {
+        // Update pending invitations for this email and role to accepted
+        await serviceSupabase
+          .from("client_invitations")
+          .update({
+            status: "accepted",
+            accepted_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
+          .eq("email", userEmail.toLowerCase())
+          .eq("role", role)
+          .eq("status", "pending")
+        
+        console.log(`Marked ${invitations.length} invitation(s) as accepted for ${userEmail} (${role})`)
+      }
+    }
+
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Error in set-role API:", error)

@@ -80,6 +80,31 @@ export async function POST(req: Request) {
     } else if (role === "agent") {
       await supabase.from("agent_profiles").insert({ id, email })
     }
+
+    // Check if this user was invited and mark invitation as accepted
+    // Only mark if role matches (buyer or seller - not agent)
+    if (email && (role === "buyer" || role === "seller")) {
+      const { data: invitations } = await supabase
+        .from("client_invitations")
+        .select("*")
+        .eq("email", email.toLowerCase())
+        .eq("role", role)
+        .eq("status", "pending")
+
+      if (invitations && invitations.length > 0) {
+        // Update pending invitations for this email and role to accepted
+        await supabase
+          .from("client_invitations")
+          .update({
+            status: "accepted",
+            accepted_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
+          .eq("email", email.toLowerCase())
+          .eq("role", role)
+          .eq("status", "pending")
+      }
+    }
   }
 
   if (eventType === "user.updated") {

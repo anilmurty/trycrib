@@ -1,6 +1,6 @@
 import { HeroSection } from "@/components/landing/hero-section"
 import { FeaturedProperties } from "@/components/landing/featured-properties"
-import { HowItWorks } from "@/components/landing/how-it-works"
+import { HowItWorksContent } from "@/components/landing/how-it-works-content"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 
@@ -12,7 +12,7 @@ export default function HomePage() {
         <HeroSection />
         {/* Hidden: Featured Properties section */}
         {/* <FeaturedProperties /> */}
-        <HowItWorks />
+        <HowItWorksContent />
       </main>
       <Footer />
     </div>

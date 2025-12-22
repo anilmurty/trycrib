@@ -248,3 +248,213 @@ export async function sendPropertyListingRequestEmail(data: PropertyListingReque
     throw error
   }
 }
+
+interface InviteClientEmailData {
+  agentFirstName: string
+  agentEmail: string
+  clientFirstName: string
+  clientLastName: string
+  clientEmail: string
+  clientRole: "buyer" | "seller"
+}
+
+/**
+ * Send invitation email to a client from an agent
+ */
+export async function sendInviteClientEmail(data: InviteClientEmailData) {
+  try {
+    const { agentFirstName, agentEmail, clientFirstName, clientLastName, clientEmail, clientRole } = data
+
+    // Validate Resend API key
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error("RESEND_API_KEY environment variable is not set")
+    }
+
+    console.log("Sending client invitation email via Resend:", {
+      to: clientEmail,
+      from: process.env.RESEND_FROM_EMAIL || "TryCrib <noreply@trycrib.com>",
+      subject: `${agentFirstName} has invited you to join TryCrib`,
+      role: clientRole,
+    })
+
+    // Construct base URL for CTA links
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+    const signupUrl = `${baseUrl}/auth?tab=signup`
+
+    // Tailor email content based on role
+    const isSeller = clientRole === "seller"
+    const platformDescription = isSeller 
+      ? "a platform that allows home sellers to earn money while their home is listed and attract more serious buyers, faster."
+      : "a platform that helps buyers experience homes before purchasing them."
+    
+    const benefitsList = isSeller
+      ? `
+        <ul style="line-height: 1.8;">
+          <li>Earn 2-3x typical rental rates while your home is on the market</li>
+          <li>Offset carrying costs, staging fees, utility expenses and more</li>
+          <li>Attract serious, pre-qualified buyers who are genuinely interested in purchasing</li>
+        </ul>
+      `
+      : `
+        <ul style="line-height: 1.8;">
+          <li>Browse homes currently on the market</li>
+          <li>Request short-term stays to experience living in a home before making an offer</li>
+          <li>Make confident purchasing decisions</li>
+        </ul>
+      `
+
+    const emailContent = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #1e40af;">You've been invited to TryCrib</h2>
+        <p>Hello ${clientFirstName}${clientLastName ? ` ${clientLastName}` : ''},</p>
+        
+        <p>
+          <strong>${agentFirstName}</strong> has invited you to join TryCrib, ${platformDescription}
+        </p>
+
+        <p>
+          TryCrib allows you to:
+        </p>
+        ${benefitsList}
+
+        <div style="margin: 30px 0; text-align: center;">
+          <a href="${signupUrl}" style="display: inline-block; background-color: #1e40af; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Create Your Account</a>
+        </div>
+
+        <p style="color: #6b7280; font-size: 14px; margin-top: 20px;">
+          If you have any questions, feel free to reach out to ${agentFirstName} at ${agentEmail}.
+        </p>
+        
+        <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
+          Best regards,<br>
+          The TryCrib Team
+        </p>
+      </div>
+    `
+
+    const resend = getResendClient()
+    const result = await resend.emails.send({
+      from: process.env.RESEND_FROM_EMAIL || "TryCrib <noreply@trycrib.com>",
+      to: clientEmail,
+      replyTo: agentEmail,
+      subject: `${agentFirstName} has invited you to join TryCrib`,
+      html: emailContent,
+    })
+
+    console.log("Resend API response:", {
+      success: result.data ? true : false,
+      id: result.data?.id,
+      error: result.error,
+    })
+
+    if (result.error) {
+      throw new Error(`Resend API error: ${JSON.stringify(result.error)}`)
+    }
+
+    if (!result.data) {
+      throw new Error("Resend API returned no data")
+    }
+
+    return { success: true, id: result.data.id }
+  } catch (error: any) {
+    console.error("Error sending invite client email:", error)
+    console.error("Error type:", typeof error)
+    console.error("Error message:", error?.message)
+    throw error
+  }
+}
+
+interface ConfirmAgentEmailData {
+  agentFirstName: string
+  agentEmail: string
+  agentName: string
+  clientFirstName: string
+  clientLastName: string
+  clientEmail: string
+  clientRole: "buyer" | "seller"
+}
+
+/**
+ * Send confirmation email to existing user asking them to confirm agent relationship
+ */
+export async function sendConfirmAgentEmail(data: ConfirmAgentEmailData) {
+  try {
+    const { agentFirstName, agentEmail, agentName, clientFirstName, clientLastName, clientEmail, clientRole } = data
+
+    // Validate Resend API key
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error("RESEND_API_KEY environment variable is not set")
+    }
+
+    console.log("Sending agent confirmation email via Resend:", {
+      to: clientEmail,
+      from: process.env.RESEND_FROM_EMAIL || "TryCrib <noreply@trycrib.com>",
+      subject: `${agentFirstName} wants to work with you on TryCrib`,
+    })
+
+    // Construct base URL for CTA links
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+    const settingsUrl = `${baseUrl}/settings`
+
+    const isSeller = clientRole === "seller"
+    const roleText = isSeller ? "seller" : "buyer"
+
+    const emailContent = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #1e40af;">Agent Connection Request</h2>
+        <p>Hello ${clientFirstName}${clientLastName ? ` ${clientLastName}` : ''},</p>
+        
+        <p>
+          <strong>${agentFirstName}</strong> (${agentName}) has requested to work with you as your ${roleText}'s agent on TryCrib.
+        </p>
+
+        <p>
+          To connect with ${agentFirstName}, please visit your settings and add them as your agent.
+        </p>
+
+        <div style="margin: 30px 0; text-align: center;">
+          <a href="${settingsUrl}" style="display: inline-block; background-color: #1e40af; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Update Agent Settings</a>
+        </div>
+
+        <p style="color: #6b7280; font-size: 14px; margin-top: 20px;">
+          If you have any questions, feel free to reach out to ${agentFirstName} at ${agentEmail}.
+        </p>
+        
+        <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
+          Best regards,<br>
+          The TryCrib Team
+        </p>
+      </div>
+    `
+
+    const resend = getResendClient()
+    const result = await resend.emails.send({
+      from: process.env.RESEND_FROM_EMAIL || "TryCrib <noreply@trycrib.com>",
+      to: clientEmail,
+      replyTo: agentEmail,
+      subject: `${agentFirstName} wants to work with you on TryCrib`,
+      html: emailContent,
+    })
+
+    console.log("Resend API response:", {
+      success: result.data ? true : false,
+      id: result.data?.id,
+      error: result.error,
+    })
+
+    if (result.error) {
+      throw new Error(`Resend API error: ${JSON.stringify(result.error)}`)
+    }
+
+    if (!result.data) {
+      throw new Error("Resend API returned no data")
+    }
+
+    return { success: true, id: result.data.id }
+  } catch (error: any) {
+    console.error("Error sending confirm agent email:", error)
+    console.error("Error type:", typeof error)
+    console.error("Error message:", error?.message)
+    throw error
+  }
+}

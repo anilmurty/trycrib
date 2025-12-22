@@ -52,9 +52,10 @@ export function Header() {
             {/* <Link href="/properties" className="text-lg font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
               Browse Properties
             </Link> */}
-            <Link href="/how-it-works" className="text-lg font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
+            {/* Hidden: How it Works link - content moved to homepage */}
+            {/* <Link href="/how-it-works" className="text-lg font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
               How it Works
-            </Link>
+            </Link> */}
           </nav>
         )}
 

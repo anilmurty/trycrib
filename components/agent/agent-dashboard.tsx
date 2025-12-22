@@ -6,11 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Users, Home, MessageSquare, Calendar, Trash2 } from "lucide-react"
+import { Users, Home, MessageSquare, Calendar, Trash2, UserPlus } from "lucide-react"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 import { ContactSellerAgentModal } from "@/components/agent/contact-seller-agent-modal"
 import { PropertyRequestsQueue } from "./property-requests-queue"
+import { InviteClientModal } from "./invite-client-modal"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { toast } from "sonner"
 
@@ -34,6 +35,17 @@ interface Client {
   email: string | null
   created_at: string
   client_type: "buyer" | "seller"
+}
+
+interface InvitedClient {
+  id: string
+  first_name: string
+  last_name: string | null
+  email: string
+  role: "buyer" | "seller"
+  status: "pending" | "accepted" | "expired"
+  invited_at: string
+  accepted_at: string | null
 }
 
 interface StayRequest {
@@ -61,6 +73,7 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
   const supabase = createClient()
   const [buyerClients, setBuyerClients] = useState<Client[]>([])
   const [sellerClients, setSellerClients] = useState<Client[]>([])
+  const [invitedClients, setInvitedClients] = useState<InvitedClient[]>([])
   const [stayRequests, setStayRequests] = useState<StayRequest[]>([])
   const [propertyListingRequests, setPropertyListingRequests] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -68,6 +81,7 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
   const [activeTab, setActiveTab] = useState("clients")
   const [clientToDelete, setClientToDelete] = useState<Client | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [showInviteModal, setShowInviteModal] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -234,6 +248,76 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
           console.error("Error fetching property listing requests:", error)
           setPropertyListingRequests([])
         }
+
+        // Fetch invited clients via API (bypasses RLS)
+        // This also processes invitations and may add existing users as clients
+        try {
+          const response = await fetch('/api/agent/invited-clients')
+          if (response.ok) {
+            const data = await response.json()
+            setInvitedClients(data.invitations || [])
+            
+            // If any invitations were processed and users were added as clients,
+            // refresh the client lists to show them
+            const hasAcceptedInvitations = data.invitations?.some((inv: any) => inv.agent_confirmed === true)
+            if (hasAcceptedInvitations) {
+              // Refresh buyer and seller clients
+              const { data: buyerClientsData } = await supabase
+                .from("buyer_profiles")
+                .select(`
+                  id,
+                  profiles!buyer_profiles_id_fkey (
+                    id,
+                    full_name,
+                    email,
+                    created_at
+                  ),
+                  agent_email
+                `)
+                .eq("agent_email", profile.email)
+
+              const formattedBuyerClients = buyerClientsData?.map(client => ({
+                id: client.id,
+                full_name: client.profiles?.full_name,
+                email: client.profiles?.email,
+                created_at: client.profiles?.created_at,
+                client_type: "buyer" as const
+              })) || []
+
+              setBuyerClients(formattedBuyerClients)
+
+              const { data: sellerClientsData } = await supabase
+                .from("seller_profiles")
+                .select(`
+                  id,
+                  profiles!seller_profiles_id_fkey (
+                    id,
+                    full_name,
+                    email,
+                    created_at
+                  ),
+                  agent_email
+                `)
+                .eq("agent_email", profile.email)
+
+              const formattedSellerClients = sellerClientsData?.map(client => ({
+                id: client.id,
+                full_name: client.profiles?.full_name,
+                email: client.profiles?.email,
+                created_at: client.profiles?.created_at,
+                client_type: "seller" as const
+              })) || []
+
+              setSellerClients(formattedSellerClients)
+            }
+          } else {
+            console.error("Error fetching invitations:", response.statusText)
+            setInvitedClients([])
+          }
+        } catch (error) {
+          console.error("Error fetching invited clients:", error)
+          setInvitedClients([])
+        }
       } catch (error) {
         console.error("Error fetching agent data:", error)
       } finally {
@@ -323,6 +407,17 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
       })) || []
 
       setSellerClients(formattedSellerClients)
+
+      // Refresh invited clients list via API
+      try {
+        const response = await fetch('/api/agent/invited-clients')
+        if (response.ok) {
+          const data = await response.json()
+          setInvitedClients(data.invitations || [])
+        }
+      } catch (error) {
+        console.error("Error refreshing invited clients:", error)
+      }
     } catch (error) {
       console.error("Error deleting client:", error)
       toast.error("Failed to remove client")
@@ -448,7 +543,17 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
             <TabsContent value="clients">
               <Card className="border-0 shadow-md">
                 <CardHeader>
-                  <CardTitle>All Clients</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>All Clients</CardTitle>
+                    <Button
+                      onClick={() => setShowInviteModal(true)}
+                      className="bg-blue-600 hover:bg-blue-700"
+                      size="sm"
+                    >
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Invite a Client
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   {loading ? (
@@ -495,6 +600,63 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
                           </div>
                         </div>
                       ))}
+                    </div>
+                  )}
+
+                  {/* Invited Clients Section */}
+                  {invitedClients.length > 0 && (
+                    <div className="mt-8 pt-8 border-t">
+                      <h3 className="text-lg font-semibold text-slate-900 mb-4">Invited Clients</h3>
+                      <div className="space-y-3">
+                        {invitedClients.map((invited) => {
+                          const needsConfirmation = (invited as any).user_exists && !(invited as any).agent_confirmed
+                          return (
+                            <div key={invited.id} className={`flex items-center justify-between p-4 border rounded-lg ${needsConfirmation ? 'bg-orange-50 border-orange-200' : 'bg-slate-50'}`}>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <h4 className="font-medium text-slate-900">
+                                    {invited.first_name} {invited.last_name || ''}
+                                  </h4>
+                                  <Badge variant={invited.role === "buyer" ? "default" : "secondary"}>
+                                    {invited.role === "buyer" ? "Buyer" : "Seller"}
+                                  </Badge>
+                                  <Badge 
+                                    variant={
+                                      invited.status === "accepted" ? "default" : 
+                                      invited.status === "expired" ? "secondary" : 
+                                      "outline"
+                                    }
+                                    className={
+                                      invited.status === "pending" ? "bg-yellow-100 text-yellow-800 border-yellow-300" : ""
+                                    }
+                                  >
+                                    {invited.status === "pending" ? "Pending" : 
+                                     invited.status === "accepted" ? "Accepted" : 
+                                     "Expired"}
+                                  </Badge>
+                                  {needsConfirmation && (
+                                    <Badge variant="outline" className="bg-orange-100 text-orange-800 border-orange-300">
+                                      Awaiting Confirmation
+                                    </Badge>
+                                  )}
+                                </div>
+                                <p className="text-sm text-slate-600 mt-1">{invited.email}</p>
+                                <p className="text-xs text-slate-500 mt-1">
+                                  Invited {new Date(invited.invited_at).toLocaleDateString()}
+                                  {invited.accepted_at && (
+                                    <span> • Accepted {new Date(invited.accepted_at).toLocaleDateString()}</span>
+                                  )}
+                                </p>
+                                {needsConfirmation && (
+                                  <p className="text-xs text-orange-700 mt-1 font-medium">
+                                    User exists but hasn't confirmed you as their agent. Confirmation email sent.
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
                     </div>
                   )}
                 </CardContent>
@@ -615,6 +777,24 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Invite Client Modal */}
+      <InviteClientModal
+        open={showInviteModal}
+        onClose={() => setShowInviteModal(false)}
+        onSuccess={async () => {
+          // Refresh invited clients list via API
+          try {
+            const response = await fetch('/api/agent/invited-clients')
+            if (response.ok) {
+              const data = await response.json()
+              setInvitedClients(data.invitations || [])
+            }
+          } catch (error) {
+            console.error("Error refreshing invited clients:", error)
+          }
+        }}
+      />
     </div>
   )
 }

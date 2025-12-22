@@ -48,6 +48,23 @@ export function BuyerListingRequests() {
   }, [])
 
   const addNewForm = () => {
+    // Check if user has reached the limit
+    if (savedRequests.length >= 20) {
+      toast.error("Limit reached", {
+        description: "You have reached the maximum limit of 20 property addresses. Please remove some addresses before adding new ones.",
+      })
+      return
+    }
+    
+    // Check if adding this form would exceed the limit
+    const totalForms = addressForms.length + savedRequests.length
+    if (totalForms >= 20) {
+      toast.error("Limit reached", {
+        description: "You have reached the maximum limit of 20 property addresses. Please save or remove existing addresses before adding new ones.",
+      })
+      return
+    }
+
     setAddressForms([
       ...addressForms,
       { id: crypto.randomUUID(), address: "", isSubmitting: false, error: null }
@@ -233,10 +250,21 @@ export function BuyerListingRequests() {
           onClick={addNewForm}
           variant="outline"
           className="w-full"
+          disabled={savedRequests.length >= 20 || (addressForms.length + savedRequests.length) >= 20}
         >
           <Plus className="h-4 w-4 mr-2" />
           Add Another Address
+          {savedRequests.length > 0 && (
+            <span className="ml-2 text-xs text-slate-500">
+              ({savedRequests.length}/20)
+            </span>
+          )}
         </Button>
+        {savedRequests.length >= 20 && (
+          <p className="text-sm text-slate-600 text-center">
+            You have reached the maximum limit of 20 property addresses.
+          </p>
+        )}
       </div>
 
       {/* Saved Requests */}
