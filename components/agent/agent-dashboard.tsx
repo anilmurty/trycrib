@@ -6,11 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Users, Home, MessageSquare, Calendar } from "lucide-react"
+import { Users, Home, MessageSquare, Calendar, Trash2 } from "lucide-react"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 import { ContactSellerAgentModal } from "@/components/agent/contact-seller-agent-modal"
 import { PropertyRequestsQueue } from "./property-requests-queue"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { toast } from "sonner"
 
 interface AgentDashboardProps {
   userId: string
@@ -64,6 +66,8 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
   const [loading, setLoading] = useState(true)
   const [selectedRequest, setSelectedRequest] = useState<StayRequest | null>(null)
   const [activeTab, setActiveTab] = useState("clients")
+  const [clientToDelete, setClientToDelete] = useState<Client | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -246,6 +250,87 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
     (r: any) => r.status === "pending" || r.status === "listing_requested" || r.status === "listing_pending"
   )
 
+  const handleDeleteClient = async () => {
+    if (!clientToDelete) return
+
+    setDeleting(true)
+    try {
+      const tableName = clientToDelete.client_type === "buyer" ? "buyer_profiles" : "seller_profiles"
+      
+      const { error } = await supabase
+        .from(tableName)
+        .update({
+          agent_name: null,
+          agent_email: null,
+          agent_phone: null
+        })
+        .eq("id", clientToDelete.id)
+
+      if (error) {
+        console.error("Error deleting client:", error)
+        toast.error("Failed to remove client")
+        return
+      }
+
+      toast.success("Client removed successfully")
+      setClientToDelete(null)
+      
+      // Refresh the client lists
+      const { data: buyerClientsData } = await supabase
+        .from("buyer_profiles")
+        .select(`
+          id,
+          profiles!buyer_profiles_id_fkey (
+            id,
+            full_name,
+            email,
+            created_at
+          ),
+          agent_email
+        `)
+        .eq("agent_email", profile.email)
+
+      const formattedBuyerClients = buyerClientsData?.map(client => ({
+        id: client.id,
+        full_name: client.profiles?.full_name,
+        email: client.profiles?.email,
+        created_at: client.profiles?.created_at,
+        client_type: "buyer" as const
+      })) || []
+
+      setBuyerClients(formattedBuyerClients)
+
+      const { data: sellerClientsData } = await supabase
+        .from("seller_profiles")
+        .select(`
+          id,
+          profiles!seller_profiles_id_fkey (
+            id,
+            full_name,
+            email,
+            created_at
+          ),
+          agent_email
+        `)
+        .eq("agent_email", profile.email)
+
+      const formattedSellerClients = sellerClientsData?.map(client => ({
+        id: client.id,
+        full_name: client.profiles?.full_name,
+        email: client.profiles?.email,
+        created_at: client.profiles?.created_at,
+        client_type: "seller" as const
+      })) || []
+
+      setSellerClients(formattedSellerClients)
+    } catch (error) {
+      console.error("Error deleting client:", error)
+      toast.error("Failed to remove client")
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -399,6 +484,14 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
                               <MessageSquare className="h-4 w-4 mr-2" />
                               Message
                             </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setClientToDelete(client)}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
                         </div>
                       ))}
@@ -493,6 +586,35 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
           }}
         />
       )}
+
+      {/* Delete Client Confirmation Dialog */}
+      <Dialog open={!!clientToDelete} onOpenChange={(open) => !open && setClientToDelete(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Remove Client</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to remove {clientToDelete?.full_name || clientToDelete?.email || "this client"} from your client list? 
+              This will remove your association with them, but they can add you again later if needed.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setClientToDelete(null)}
+              disabled={deleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteClient}
+              disabled={deleting}
+            >
+              {deleting ? "Removing..." : "Remove Client"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

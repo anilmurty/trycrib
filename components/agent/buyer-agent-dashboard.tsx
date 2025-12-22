@@ -281,9 +281,9 @@ export function BuyerAgentDashboard({ userId, profile, agentProfile }: BuyerAgen
                               Client: {request.buyer_profiles.full_name || request.buyer_profiles.email}
                             </p>
                             {(request.check_in || request.check_out) && (
-                              <p className="text-sm text-slate-600">
+                            <p className="text-sm text-slate-600">
                                 {request.check_in ? new Date(request.check_in).toLocaleDateString() : 'TBD'} - {request.check_out ? new Date(request.check_out).toLocaleDateString() : 'TBD'}
-                              </p>
+                            </p>
                             )}
                           </div>
                           <div className="flex gap-2">

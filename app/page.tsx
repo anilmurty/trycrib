@@ -10,7 +10,8 @@ export default function HomePage() {
       <Header />
       <main className="flex-1">
         <HeroSection />
-        <FeaturedProperties />
+        {/* Hidden: Featured Properties section */}
+        {/* <FeaturedProperties /> */}
         <HowItWorks />
       </main>
       <Footer />

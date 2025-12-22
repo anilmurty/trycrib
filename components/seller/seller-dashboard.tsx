@@ -10,7 +10,6 @@ import { Home, Calendar, DollarSign, Clock } from "lucide-react"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 import { PropertyList } from "./property-list"
-import { PropertySearch } from "@/components/property-search"
 import { BookingsList } from "./bookings-list"
 import { PropertyRequests } from "./property-requests"
 import { useClerk } from "@clerk/clerk-react"
@@ -131,72 +130,20 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
           <div className="mb-8">
             <div>
               <h1 className="text-3xl font-bold text-slate-900">Seller Dashboard</h1>
-              <p className="text-slate-600 mt-2">View your claimed properties and request your agent to add them to TryCrib listings</p>
+              <p className="text-slate-600 mt-2">Manage existing properties. Request new listings.</p>
             </div>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-5 mb-8">
-            <Card className="border-0 shadow-md">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
-                <Home className="h-4 w-4 text-slate-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalProperties}</div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-md">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Listings</CardTitle>
-                <Badge variant="secondary">{stats.activeProperties}</Badge>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.activeProperties}</div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-md">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
-                <Calendar className="h-4 w-4 text-slate-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalBookings}</div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-md">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
-                <DollarSign className="h-4 w-4 text-slate-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">${stats.totalEarnings.toLocaleString()}</div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-md">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Pending Requests</CardTitle>
-                <Clock className="h-4 w-4 text-slate-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.pendingRequests}</div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Tabs defaultValue="search" className="space-y-6">
+          <Tabs defaultValue="properties" className="space-y-6">
             <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
-              <TabsList className="h-14 bg-transparent p-0 w-full grid grid-cols-4 !inline-grid !w-full !rounded-none !items-stretch">
+              <TabsList className="h-14 bg-transparent p-0 w-full grid grid-cols-3 !inline-grid !w-full !rounded-none !items-stretch">
                 <TabsTrigger 
-                  value="search" 
+                  value="properties" 
                   className="h-12 px-6 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
                 >
                   <div className="flex flex-col items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                    <span>Find Properties</span>
+                    <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                    <span>Active Listings</span>
                   </div>
                 </TabsTrigger>
                 <TabsTrigger 
@@ -205,16 +152,7 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
                 >
                   <div className="flex flex-col items-center gap-1">
                     <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                    <span>My Requests</span>
-                  </div>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="properties" 
-                  className="h-12 px-6 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-gray-200"
-                >
-                  <div className="flex flex-col items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-purple-500"></div>
-                    <span>My Properties</span>
+                    <span>Pending Listings</span>
                   </div>
                 </TabsTrigger>
                 <TabsTrigger 
@@ -229,23 +167,68 @@ export function SellerDashboard({ userId, profile }: SellerDashboardProps) {
               </TabsList>
             </div>
 
-            <TabsContent value="search">
-              <PropertySearch 
-                userRole="seller" 
-                userId={userId}
-              />
-            </TabsContent>
-
-            <TabsContent value="requests">
-              <PropertyRequests userId={userId} />
-            </TabsContent>
-
             <TabsContent value="properties">
-              <PropertyList userId={userId} />
+              <div className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <Card className="border-0 shadow-md">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
+                      <Home className="h-4 w-4 text-slate-600" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{stats.totalProperties}</div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-0 shadow-md">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Active Listings</CardTitle>
+                      <Badge variant="secondary">{stats.activeProperties}</Badge>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{stats.activeProperties}</div>
+                    </CardContent>
+                  </Card>
+                </div>
+                <PropertyList userId={userId} />
+              </div>
             </TabsContent>
 
             <TabsContent value="bookings">
-              <BookingsList userId={userId} />
+              <div className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-3">
+                  <Card className="border-0 shadow-md">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
+                      <Calendar className="h-4 w-4 text-slate-600" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{stats.totalBookings}</div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-0 shadow-md">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
+                      <DollarSign className="h-4 w-4 text-slate-600" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">${stats.totalEarnings.toLocaleString()}</div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-0 shadow-md">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Pending Requests</CardTitle>
+                      <Clock className="h-4 w-4 text-slate-600" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{stats.pendingRequests}</div>
+                    </CardContent>
+                  </Card>
+                </div>
+                <BookingsList userId={userId} />
+              </div>
             </TabsContent>
           </Tabs>
         </div>

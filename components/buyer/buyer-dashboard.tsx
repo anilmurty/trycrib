@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation"
 import { useClerk } from "@clerk/nextjs"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
-import { PropertiesList } from "@/components/properties/properties-list"
+import { BuyerListingRequests } from "./buyer-listing-requests"
 
 interface Booking {
   id: string
@@ -84,38 +84,6 @@ export function BuyerDashboard({ userId, profile }: BuyerDashboardProps) {
             <p className="text-slate-600 mt-2">Browse properties and manage your bookings</p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3 mb-8">
-            <Card className="border-0 shadow-md">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
-                <Calendar className="h-4 w-4 text-slate-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{bookings.length}</div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-md">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Upcoming Stays</CardTitle>
-                <Badge variant="secondary">{upcomingBookings.length}</Badge>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{upcomingBookings.length}</div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-md">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Past Stays</CardTitle>
-                <Home className="h-4 w-4 text-slate-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{pastBookings.length}</div>
-              </CardContent>
-            </Card>
-          </div>
-
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
               <TabsList className="h-14 bg-transparent p-0 w-full grid grid-cols-2">
@@ -141,27 +109,62 @@ export function BuyerDashboard({ userId, profile }: BuyerDashboardProps) {
             </div>
 
             <TabsContent value="browse">
-              <PropertiesList />
+              <BuyerListingRequests />
             </TabsContent>
 
             <TabsContent value="bookings">
-              {loading ? (
-                <div className="text-center py-8 text-slate-600">Loading bookings...</div>
-              ) : bookings.length === 0 ? (
-                <Card className="border-0 shadow-md">
-                  <CardContent className="py-12 text-center">
-                    <p className="text-slate-600 mb-4">You haven't booked any stays yet</p>
-                    <Button 
-                      onClick={() => setActiveTab("browse")}
-                      className="rounded-lg bg-blue-600 hover:bg-blue-700"
-                    >
-                      <Search className="h-4 w-4 mr-2" />
-                      Browse Properties
-                    </Button>
-                  </CardContent>
-                </Card>
-              ) : (
-                <div className="space-y-8">
+              <div className="space-y-8">
+                {/* Stats Cards */}
+                <div className="grid gap-6 md:grid-cols-3">
+                  <Card className="border-0 shadow-md">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
+                      <Calendar className="h-4 w-4 text-slate-600" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{bookings.length}</div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-0 shadow-md">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Upcoming Stays</CardTitle>
+                      <Badge variant="secondary">{upcomingBookings.length}</Badge>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{upcomingBookings.length}</div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-0 shadow-md">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Past Stays</CardTitle>
+                      <Home className="h-4 w-4 text-slate-600" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{pastBookings.length}</div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Bookings Content */}
+                {loading ? (
+                  <div className="text-center py-8 text-slate-600">Loading bookings...</div>
+                ) : bookings.length === 0 ? (
+                  <Card className="border-0 shadow-md">
+                    <CardContent className="py-12 text-center">
+                      <p className="text-slate-600 mb-4">You haven't booked any stays yet</p>
+                      <Button 
+                        onClick={() => setActiveTab("browse")}
+                        className="rounded-lg bg-blue-600 hover:bg-blue-700"
+                      >
+                        <Search className="h-4 w-4 mr-2" />
+                        Browse Properties
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="space-y-8">
                   {upcomingBookings.length > 0 && (
                     <div>
                       <h2 className="text-xl font-semibold text-slate-900 mb-4">Upcoming Stays</h2>
@@ -253,8 +256,9 @@ export function BuyerDashboard({ userId, profile }: BuyerDashboardProps) {
                       </div>
                     </div>
                   )}
-                </div>
-              )}
+                  </div>
+                )}
+              </div>
             </TabsContent>
           </Tabs>
         </div>

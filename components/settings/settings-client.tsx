@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -9,7 +10,8 @@ import { Label } from "@/components/ui/label"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 import { toast } from "sonner"
-import { Edit2, Save, X } from "lucide-react"
+import { Edit2, Save, X, Trash2, AlertCircle } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 
 interface SettingsClientProps {
   profile: {
@@ -29,6 +31,7 @@ interface SettingsClientProps {
 export function SettingsClient({ profile, roleProfile, userId }: SettingsClientProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [agentInfo, setAgentInfo] = useState({
     agent_name: roleProfile?.agent_name || "",
     agent_email: roleProfile?.agent_email || "",
@@ -36,6 +39,16 @@ export function SettingsClient({ profile, roleProfile, userId }: SettingsClientP
   })
 
   const supabase = createClient()
+  const router = useRouter()
+
+  // Update local state when roleProfile prop changes (e.g., after router.refresh())
+  useEffect(() => {
+    setAgentInfo({
+      agent_name: roleProfile?.agent_name || "",
+      agent_email: roleProfile?.agent_email || "",
+      agent_phone: roleProfile?.agent_phone || ""
+    })
+  }, [roleProfile])
 
   const handleSave = async () => {
     if (!profile?.role || (profile.role !== "buyer" && profile.role !== "seller")) {
@@ -64,6 +77,9 @@ export function SettingsClient({ profile, roleProfile, userId }: SettingsClientP
 
       toast.success("Agent information updated successfully")
       setIsEditing(false)
+      // Update local state immediately so UI reflects changes without waiting for refresh
+      // The router.refresh() will ensure props are synced for future renders
+      router.refresh()
     } catch (error) {
       console.error("Error updating agent info:", error)
       toast.error("Failed to update agent information")
@@ -79,6 +95,49 @@ export function SettingsClient({ profile, roleProfile, userId }: SettingsClientP
       agent_phone: roleProfile?.agent_phone || ""
     })
     setIsEditing(false)
+  }
+
+  const handleDelete = async () => {
+    if (!profile?.role || (profile.role !== "buyer" && profile.role !== "seller")) {
+      toast.error("Invalid user role")
+      return
+    }
+
+    setLoading(true)
+    try {
+      const tableName = profile.role === "buyer" ? "buyer_profiles" : "seller_profiles"
+      
+      const { error } = await supabase
+        .from(tableName)
+        .update({
+          agent_name: null,
+          agent_email: null,
+          agent_phone: null
+        })
+        .eq("id", userId)
+
+      if (error) {
+        console.error("Error deleting agent info:", error)
+        toast.error("Failed to delete agent information")
+        return
+      }
+
+      toast.success("Agent information deleted successfully")
+      setShowDeleteDialog(false)
+      // Reset local state
+      setAgentInfo({
+        agent_name: "",
+        agent_email: "",
+        agent_phone: ""
+      })
+      // Refresh the page to update the roleProfile prop
+      router.refresh()
+    } catch (error) {
+      console.error("Error deleting agent info:", error)
+      toast.error("Failed to delete agent information")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -126,15 +185,28 @@ export function SettingsClient({ profile, roleProfile, userId }: SettingsClientP
                       </CardDescription>
                     </div>
                     {!isEditing && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setIsEditing(true)}
-                        className="flex items-center gap-2"
-                      >
-                        <Edit2 className="h-4 w-4" />
-                        Edit
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setIsEditing(true)}
+                          className="flex items-center gap-2 cursor-pointer"
+                        >
+                          <Edit2 className="h-4 w-4" />
+                          Edit
+                        </Button>
+                        {(agentInfo.agent_name || agentInfo.agent_email || agentInfo.agent_phone) && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setShowDeleteDialog(true)}
+                            className="flex items-center gap-2 cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            Delete
+                          </Button>
+                        )}
+                      </div>
                     )}
                   </div>
                 </CardHeader>
@@ -190,6 +262,17 @@ export function SettingsClient({ profile, roleProfile, userId }: SettingsClientP
                           <X className="h-4 w-4" />
                           Cancel
                         </Button>
+                        {(agentInfo.agent_name || agentInfo.agent_email || agentInfo.agent_phone) && (
+                          <Button
+                            variant="outline"
+                            onClick={() => setShowDeleteDialog(true)}
+                            disabled={loading}
+                            className="flex items-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 ml-auto cursor-pointer"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            Delete
+                          </Button>
+                        )}
                       </div>
                     </>
                   ) : (
@@ -216,6 +299,38 @@ export function SettingsClient({ profile, roleProfile, userId }: SettingsClientP
       </main>
 
       <Footer />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-red-500" />
+              Delete Agent Information
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete all agent information? This action cannot be undone. You'll need to add agent information again if you want to {profile?.role === "buyer" ? "request stays" : "request property listings"}.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={loading}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={loading}
+              className="cursor-pointer"
+            >
+              {loading ? "Removing..." : "Remove"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

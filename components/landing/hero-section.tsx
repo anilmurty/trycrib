@@ -96,7 +96,7 @@ export function HeroSection() {
                 The perfect way to ensure it's the right fit for you.
               </p>
               <div className="mt-6">
-                <Link href="/properties" className="cursor-pointer">
+                <Link href="/auth" className="cursor-pointer">
                   <Button className="rounded-full px-8 bg-blue-600 text-white hover:bg-blue-700">
                     Book a stay
                   </Button>
@@ -122,8 +122,8 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Property Types */}
-      <div className="relative border-t border-gray-200 bg-gray-50 py-4">
+      {/* Hidden: Property Types section */}
+      {/* <div className="relative border-t border-gray-200 bg-gray-50 py-4">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-3 gap-6 md:grid-cols-6">
             <Link
@@ -170,7 +170,7 @@ export function HeroSection() {
             </Link>
           </div>
         </div>
-      </div>
+      </div> */}
     </section>
   )
 }

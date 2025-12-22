@@ -48,9 +48,10 @@ export function Header() {
 
         {!isSignedIn && (
           <nav className="hidden items-center gap-8 md:flex">
-            <Link href="/properties" className="text-lg font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
+            {/* Hidden: Browse Properties link */}
+            {/* <Link href="/properties" className="text-lg font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
               Browse Properties
-            </Link>
+            </Link> */}
             <Link href="/how-it-works" className="text-lg font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
               How it Works
             </Link>
