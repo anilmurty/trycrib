@@ -21,9 +21,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
+        {/* Clerk CAPTCHA element - required for bot protection, available globally */}
+        <div id="clerk-captcha" style={{ display: 'none' }}></div>
         <ClerkProvider
           signInUrl="/auth?tab=login"
           signUpUrl="/auth?tab=signup"
+          afterSignInUrl="/dashboard"
+          afterSignUpUrl="/onboarding"
+          fallbackRedirectUrl="/auth"
         >
           <Suspense fallback={null}>{children}</Suspense>
           <Analytics />

@@ -85,7 +85,7 @@ export async function sendStayRequestEmail(data: StayRequestEmailData) {
           ${checkInDate ? `<p style="margin: 5px 0;"><strong>Check-in:</strong> ${checkInDate}</p>` : ''}
           ${checkOutDate ? `<p style="margin: 5px 0;"><strong>Check-out:</strong> ${checkOutDate}</p>` : ''}
           <p style="margin-top: 10px;">
-            <a href="${propertyUrl}" style="color: #3b82f6; text-decoration: underline; font-size: 14px;">View property on TryCrib →</a>
+            View property on <a href="https://trycrib.com" style="color: #3b82f6; text-decoration: underline;">TryCrib</a> → <a href="${propertyUrl}" style="color: #3b82f6; text-decoration: underline; font-size: 14px;">(View property)</a>
           </p>
         </div>
 
@@ -107,7 +107,7 @@ export async function sendStayRequestEmail(data: StayRequestEmailData) {
         
         <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
           Best regards,<br>
-          The TryCrib Team
+          The <a href="https://trycrib.com" style="color: #6b7280; text-decoration: underline;">TryCrib</a> Team
         </p>
       </div>
     `
@@ -189,7 +189,7 @@ export async function sendPropertyListingRequestEmail(data: PropertyListingReque
           <p style="margin: 5px 0;"><strong>ZIP:</strong> ${propertyZip}</p>
           ${propertyUrl ? `
             <p style="margin-top: 10px;">
-              <a href="${propertyUrl}" style="color: #059669; text-decoration: underline; font-size: 14px;">View property on TryCrib →</a>
+              View property on <a href="https://trycrib.com" style="color: #059669; text-decoration: underline;">TryCrib</a> → <a href="${propertyUrl}" style="color: #059669; text-decoration: underline; font-size: 14px;">(View property)</a>
             </p>
           ` : ''}
         </div>
@@ -212,7 +212,7 @@ export async function sendPropertyListingRequestEmail(data: PropertyListingReque
         
         <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
           Best regards,<br>
-          The TryCrib Team
+          The <a href="https://trycrib.com" style="color: #6b7280; text-decoration: underline;">TryCrib</a> Team
         </p>
       </div>
     `
@@ -305,15 +305,15 @@ export async function sendInviteClientEmail(data: InviteClientEmailData) {
 
     const emailContent = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #1e40af;">You've been invited to TryCrib</h2>
+        <h2 style="color: #1e40af;">You've been invited to <a href="https://trycrib.com" style="color: #1e40af; text-decoration: underline;">TryCrib</a></h2>
         <p>Hello ${clientFirstName}${clientLastName ? ` ${clientLastName}` : ''},</p>
         
         <p>
-          <strong>${agentFirstName}</strong> has invited you to join TryCrib, ${platformDescription}
+          <strong>${agentFirstName}</strong> has invited you to join <a href="https://trycrib.com" style="color: #1e40af; text-decoration: underline;">TryCrib</a>, ${platformDescription}
         </p>
 
         <p>
-          TryCrib allows you to:
+          <a href="https://trycrib.com" style="color: #1e40af; text-decoration: underline;">TryCrib</a> allows you to:
         </p>
         ${benefitsList}
 
@@ -327,7 +327,7 @@ export async function sendInviteClientEmail(data: InviteClientEmailData) {
         
         <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
           Best regards,<br>
-          The TryCrib Team
+          The <a href="https://trycrib.com" style="color: #6b7280; text-decoration: underline;">TryCrib</a> Team
         </p>
       </div>
     `
@@ -405,7 +405,7 @@ export async function sendConfirmAgentEmail(data: ConfirmAgentEmailData) {
         <p>Hello ${clientFirstName}${clientLastName ? ` ${clientLastName}` : ''},</p>
         
         <p>
-          <strong>${agentFirstName}</strong> (${agentName}) has requested to work with you as your ${roleText}'s agent on TryCrib.
+          <strong>${agentFirstName}</strong> (${agentName}) has requested to work with you as your ${roleText}'s agent on <a href="https://trycrib.com" style="color: #1e40af; text-decoration: underline;">TryCrib</a>.
         </p>
 
         <p>
@@ -422,7 +422,7 @@ export async function sendConfirmAgentEmail(data: ConfirmAgentEmailData) {
         
         <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
           Best regards,<br>
-          The TryCrib Team
+          The <a href="https://trycrib.com" style="color: #6b7280; text-decoration: underline;">TryCrib</a> Team
         </p>
       </div>
     `
@@ -503,7 +503,7 @@ export async function sendAgentOnboardingNotificationEmail(data: AgentOnboarding
           <p>Hello ${agentName || 'there'},</p>
           
           <p>
-            <strong>${clientName}</strong> (${clientEmail}) has added you as their ${roleText}'s agent on TryCrib.
+            <strong>${clientName}</strong> (${clientEmail}) has added you as their ${roleText}'s agent on <a href="https://trycrib.com" style="color: #1e40af; text-decoration: underline;">TryCrib</a>.
           </p>
 
           <p>
@@ -515,7 +515,7 @@ export async function sendAgentOnboardingNotificationEmail(data: AgentOnboarding
           </div>
 
           <p style="color: #6b7280; font-size: 14px; margin-top: 20px;">
-            No action is required from you at this time. ${clientName} will be able to request stays and manage their property listings through TryCrib.
+            No action is required from you at this time. ${clientName} will be able to request stays and manage their property listings through <a href="https://trycrib.com" style="color: #6b7280; text-decoration: underline;">TryCrib</a>.
           </p>
           
           <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
@@ -534,11 +534,11 @@ export async function sendAgentOnboardingNotificationEmail(data: AgentOnboarding
           <p>Hello,</p>
           
           <p>
-            <strong>${clientName}</strong> (${clientEmail}) has indicated that you are their ${roleText}'s agent and wants to work with you on TryCrib.
+            <strong>${clientName}</strong> (${clientEmail}) has indicated that you are their ${roleText}'s agent and wants to work with you on <a href="https://trycrib.com" style="color: #1e40af; text-decoration: underline;">TryCrib</a>.
           </p>
 
           <p>
-            TryCrib is a platform that helps ${roleText === "seller" ? "sellers" : "buyers"} ${roleText === "seller" ? "earn money while their home is listed and attract more serious buyers" : "experience homes before purchasing them"}.
+            <a href="https://trycrib.com" style="color: #1e40af; text-decoration: underline;">TryCrib</a> is a platform that helps ${roleText === "seller" ? "sellers" : "buyers"} ${roleText === "seller" ? "earn money while their home is listed and attract more serious buyers" : "experience homes before purchasing them"}.
           </p>
 
           <p>
@@ -565,7 +565,7 @@ export async function sendAgentOnboardingNotificationEmail(data: AgentOnboarding
           </div>
 
           <p style="color: #6b7280; font-size: 14px; margin-top: 20px;">
-            Once you create an account, you'll be automatically connected with ${clientName} and can start managing their ${roleText} activities on TryCrib.
+            Once you create an account, you'll be automatically connected with ${clientName} and can start managing their ${roleText} activities on <a href="https://trycrib.com" style="color: #6b7280; text-decoration: underline;">TryCrib</a>.
           </p>
           
           <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">

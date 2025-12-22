@@ -52,28 +52,49 @@ export async function GET(request: Request) {
       }, { status: 500 })
     }
 
+    console.log(`Found ${invitationsData?.length || 0} invitations for agent ${userId}`)
+    console.log("Raw invitations data:", invitationsData?.map((inv: any) => ({ 
+      id: inv.id, 
+      email: inv.email, 
+      status: inv.status, 
+      role: inv.role,
+      agent_id: inv.agent_id 
+    })))
+
     // Process each invitation to check if user exists and has agent set
     const processedInvitations = await Promise.all(
       (invitationsData || []).map(async (invitation) => {
         // Check if user exists by email
-        const { data: existingUser } = await supabase
+        const { data: existingUser, error: userCheckError } = await supabase
           .from("profiles")
           .select("id, email, role")
           .eq("email", invitation.email.toLowerCase())
-          .single()
+          .maybeSingle()
+
+        if (userCheckError) {
+          console.error(`Error checking user for ${invitation.email}:`, userCheckError)
+        }
 
         if (!existingUser) {
           // User doesn't exist, return invitation as-is (pending)
-          return invitation
+          console.log(`User ${invitation.email} does not exist, returning pending invitation with status: ${invitation.status}`)
+          return {
+            ...invitation,
+            status: invitation.status || "pending" // Ensure status is set
+          }
         }
 
         // User exists - check if they have this agent set
         const profileTable = invitation.role === "buyer" ? "buyer_profiles" : "seller_profiles"
-        const { data: roleProfile } = await supabase
+        const { data: roleProfile, error: roleProfileError } = await supabase
           .from(profileTable)
           .select("agent_email")
           .eq("id", existingUser.id)
-          .single()
+          .maybeSingle()
+
+        if (roleProfileError) {
+          console.error(`Error checking role profile for ${invitation.email}:`, roleProfileError)
+        }
 
         if (roleProfile?.agent_email?.toLowerCase() === agentEmail.toLowerCase()) {
           // User has this agent set - automatically add as client and mark invitation as accepted
@@ -147,6 +168,7 @@ export async function GET(request: Request) {
 
           return {
             ...invitation,
+            status: invitation.status || "pending", // Preserve original status
             user_exists: true,
             agent_confirmed: false,
             needs_confirmation: true,
@@ -155,6 +177,9 @@ export async function GET(request: Request) {
         }
       })
     )
+
+    console.log(`Returning ${processedInvitations.length} processed invitations`)
+    console.log(`Invitation statuses:`, processedInvitations.map((inv: any) => ({ email: inv.email, status: inv.status })))
 
     return NextResponse.json({ 
       invitations: processedInvitations

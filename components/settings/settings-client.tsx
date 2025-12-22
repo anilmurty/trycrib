@@ -33,6 +33,7 @@ export function SettingsClient({ profile, roleProfile, userId }: SettingsClientP
   const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [hasPendingInvitation, setHasPendingInvitation] = useState(false)
   const [agentInfo, setAgentInfo] = useState({
     agent_name: roleProfile?.agent_name || "",
     agent_email: roleProfile?.agent_email || "",
@@ -42,14 +43,53 @@ export function SettingsClient({ profile, roleProfile, userId }: SettingsClientP
   const supabase = createClient()
   const router = useRouter()
 
+  // Check for pending invitations on mount
+  useEffect(() => {
+    async function checkPendingInvitations() {
+      if (!profile?.email || (profile.role !== "buyer" && profile.role !== "seller")) {
+        return
+      }
+
+      // Only check if agent info is not already set
+      if (roleProfile?.agent_email) {
+        return
+      }
+
+      try {
+        const response = await fetch('/api/user/pending-invitations')
+        if (response.ok) {
+          const data = await response.json()
+          const pendingInvitation = data.invitations?.[0] // Get the most recent one
+
+          if (pendingInvitation && pendingInvitation.agent) {
+            // There's a pending invitation with agent details
+            setHasPendingInvitation(true)
+            setAgentInfo({
+              agent_name: pendingInvitation.agent.name || "",
+              agent_email: pendingInvitation.agent.email || "",
+              agent_phone: pendingInvitation.agent.phone || ""
+            })
+          }
+        }
+      } catch (error) {
+        console.error("Error checking pending invitations:", error)
+      }
+    }
+
+    checkPendingInvitations()
+  }, [profile?.email, profile?.role, roleProfile?.agent_email])
+
   // Update local state when roleProfile prop changes (e.g., after router.refresh())
   useEffect(() => {
-    setAgentInfo({
-      agent_name: roleProfile?.agent_name || "",
-      agent_email: roleProfile?.agent_email || "",
-      agent_phone: roleProfile?.agent_phone || ""
-    })
-  }, [roleProfile])
+    // Only update if we don't have a pending invitation (to preserve prefilled data)
+    if (!hasPendingInvitation) {
+      setAgentInfo({
+        agent_name: roleProfile?.agent_name || "",
+        agent_email: roleProfile?.agent_email || "",
+        agent_phone: roleProfile?.agent_phone || ""
+      })
+    }
+  }, [roleProfile, hasPendingInvitation])
 
   const handleSave = async () => {
     if (!profile?.role || (profile.role !== "buyer" && profile.role !== "seller")) {
@@ -219,6 +259,19 @@ export function SettingsClient({ profile, roleProfile, userId }: SettingsClientP
                       <CardDescription>
                         Your {profile.role === "buyer" ? "buyer's" : "seller's"} agent contact details
                       </CardDescription>
+                      {hasPendingInvitation && (
+                        <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                          <div className="flex items-start gap-2">
+                            <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-blue-900">Pending Invitation</p>
+                              <p className="text-sm text-blue-700 mt-1">
+                                You have been invited by an agent. Agent information has been prefilled below. Please review and save.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                     {!isEditing && (
                       <div className="flex items-center gap-2">
@@ -361,7 +414,8 @@ export function SettingsClient({ profile, roleProfile, userId }: SettingsClientP
                         <label className="text-sm font-medium text-slate-700">Agent Phone</label>
                         <p className="text-slate-900 mt-1">{roleProfile?.agent_phone || "Not provided"}</p>
                       </div>
-                      {roleProfile?.agent_confirmed === true && (
+                      {roleProfile?.agent_confirmed === true && 
+                       (roleProfile?.agent_name || roleProfile?.agent_email || roleProfile?.agent_phone) && (
                         <div className="pt-2">
                           <div className="inline-flex items-center gap-2 text-sm text-green-600">
                             <CheckCircle className="h-4 w-4" />

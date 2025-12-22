@@ -16,9 +16,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { role, agentInfo } = await request.json()
+    const body = await request.json()
+    const { role, agentInfo } = body
     console.log("Role from request:", role)
     console.log("Agent info from request:", agentInfo)
+    console.log("Full request body:", JSON.stringify(body, null, 2))
 
     if (!role || !["buyer", "seller", "agent"].includes(role)) {
       console.log("Invalid role:", role)
@@ -203,7 +205,20 @@ export async function POST(request: Request) {
 
     // Send email to agent if agent info was manually provided (not from invitation)
     // Only send if agentInfo exists and we didn't use invitation agent info
-    if (!hasInvitation && agentInfo && agentInfo.email && (role === "buyer" || role === "seller")) {
+    console.log("Checking if should send agent email:", { 
+      hasInvitation, 
+      agentInfo: agentInfo ? { email: agentInfo.email, name: agentInfo.name } : null,
+      role,
+      agentInfoType: typeof agentInfo,
+      agentInfoIsNull: agentInfo === null,
+      agentInfoIsUndefined: agentInfo === undefined
+    })
+    
+    // Check if agentInfo exists, is not null/undefined, and has an email
+    const hasAgentInfo = agentInfo && typeof agentInfo === 'object' && agentInfo.email
+    
+    if (!hasInvitation && hasAgentInfo && (role === "buyer" || role === "seller")) {
+      console.log("Sending agent onboarding notification email...")
       try {
         // Check if agent exists in the system
         const { data: agentProfile } = await serviceSupabase
@@ -215,8 +230,14 @@ export async function POST(request: Request) {
         const agentExists = !!agentProfile
         const agentName = agentProfile?.full_name || agentInfo.name || null
 
+        console.log("Agent profile check:", { 
+          agentEmail: agentInfo.email, 
+          agentExists, 
+          agentName 
+        })
+
         // Send notification email to agent
-        await sendAgentOnboardingNotificationEmail({
+        const emailResult = await sendAgentOnboardingNotificationEmail({
           agentEmail: agentInfo.email,
           agentName: agentName || undefined,
           clientName: userFullName || userEmail.split('@')[0],
@@ -225,11 +246,16 @@ export async function POST(request: Request) {
           agentExists
         })
 
-        console.log(`Sent onboarding notification email to agent ${agentInfo.email} (exists: ${agentExists})`)
+        console.log(`Successfully sent onboarding notification email to agent ${agentInfo.email} (exists: ${agentExists}), email ID: ${emailResult.id}`)
       } catch (emailError) {
         // Log error but don't fail the onboarding process
         console.error("Error sending agent onboarding notification email:", emailError)
+        console.error("Email error details:", JSON.stringify(emailError, null, 2))
       }
+    } else {
+      console.log("Skipping agent email:", {
+        reason: hasInvitation ? "has invitation" : !agentInfo ? "no agentInfo" : !agentInfo.email ? "no agent email" : `role is ${role}`
+      })
     }
 
     return NextResponse.json({ success: true })

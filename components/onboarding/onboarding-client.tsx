@@ -51,20 +51,23 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
     setError("")
 
     try {
-      console.log("Making API call to /api/onboarding/set-role")
+      const requestBody = { 
+        role,
+        agentInfo: ((role === "buyer" || role === "seller") && cleanedAgentInfo) ? {
+          name: cleanedAgentInfo.name,
+          email: cleanedAgentInfo.email,
+          phone: cleanedAgentInfo.phone
+        } : null
+      }
+      
+      console.log("Making API call to /api/onboarding/set-role with body:", JSON.stringify(requestBody, null, 2))
+      
       const response = await fetch("/api/onboarding/set-role", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
-          role,
-          agentInfo: ((role === "buyer" || role === "seller") && cleanedAgentInfo) ? {
-            name: cleanedAgentInfo.name,
-            email: cleanedAgentInfo.email,
-            phone: cleanedAgentInfo.phone
-          } : undefined
-        }),
+        body: JSON.stringify(requestBody),
       })
 
       console.log("API response status:", response.status)

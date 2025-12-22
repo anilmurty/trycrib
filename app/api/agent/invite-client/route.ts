@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     const { data: agentProfile, error: profileError } = await supabase
       .from("profiles")
       .select("full_name, email")
-      .eq("id", user.id)
+      .eq("id", userId)
       .single()
 
     if (profileError || !agentProfile) {
@@ -48,20 +48,30 @@ export async function POST(request: Request) {
     const agentFirstName = agentProfile.full_name?.split(' ')[0] || agentProfile.email?.split('@')[0] || "Your agent"
 
     // Store invitation in database
-    const { error: inviteError } = await supabase
+    const invitationData = {
+      agent_id: userId,
+      first_name: firstName.trim(),
+      last_name: lastName?.trim() || null,
+      email: email.trim().toLowerCase(),
+      role: clientRole,
+      status: 'pending'
+    }
+    
+    console.log("Storing invitation:", invitationData)
+    
+    const { data: insertedInvitation, error: inviteError } = await supabase
       .from("client_invitations")
-      .insert([{
-        agent_id: userId,
-        first_name: firstName.trim(),
-        last_name: lastName?.trim() || null,
-        email: email.trim().toLowerCase(),
-        status: 'pending'
-      }])
+      .insert([invitationData])
+      .select()
 
     if (inviteError) {
       console.error("Error storing invitation:", inviteError)
-      // Continue anyway - email is more important than tracking
+      return NextResponse.json({ 
+        error: `Failed to store invitation: ${inviteError.message}` 
+      }, { status: 500 })
     }
+
+    console.log("Invitation stored successfully:", insertedInvitation)
 
     // Send invitation email
     try {

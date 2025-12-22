@@ -257,6 +257,8 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
           const response = await fetch('/api/agent/invited-clients')
           if (response.ok) {
             const data = await response.json()
+            console.log("Fetched invited clients:", data.invitations?.length || 0, "invitations")
+            console.log("Invitation statuses:", data.invitations?.map((inv: any) => ({ email: inv.email, status: inv.status })))
             setInvitedClients(data.invitations || [])
             
             // If any invitations were processed and users were added as clients,
@@ -628,11 +630,20 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
                   )}
 
                   {/* Invited Clients Section - Only show pending invitations */}
-                  {invitedClients.filter(inv => inv.status !== "accepted").length > 0 && (
-                    <div className="mt-8 pt-8 border-t">
-                      <h3 className="text-lg font-semibold text-slate-900 mb-4">Invited Clients</h3>
-                      <div className="space-y-3">
-                        {invitedClients.filter(inv => inv.status !== "accepted").map((invited) => {
+                  {(() => {
+                    const pendingInvitations = invitedClients.filter(inv => inv.status === "pending")
+                    console.log("All invited clients:", invitedClients.length)
+                    console.log("Pending invitations to display:", pendingInvitations.length)
+                    console.log("All invitation statuses:", invitedClients.map((inv: any) => ({ 
+                      email: inv.email, 
+                      status: inv.status,
+                      role: inv.role 
+                    })))
+                    return pendingInvitations.length > 0 && (
+                      <div className="mt-8 pt-8 border-t">
+                        <h3 className="text-lg font-semibold text-slate-900 mb-4">Invited Clients</h3>
+                        <div className="space-y-3">
+                          {pendingInvitations.map((invited) => {
                           const needsConfirmation = (invited as any).user_exists && !(invited as any).agent_confirmed
                           return (
                             <div key={invited.id} className={`flex items-start justify-between p-4 border rounded-lg ${needsConfirmation ? 'bg-orange-50 border-orange-200' : 'bg-slate-50'}`}>
@@ -697,10 +708,11 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
                               )}
                             </div>
                           )
-                        })}
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )
+                  })()}
                 </CardContent>
               </Card>
             </TabsContent>
