@@ -91,9 +91,6 @@ export function HowItWorksContent() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4 text-balance">How TryCrib Works</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto text-pretty">
-            Experience homes before you buy. Earn income while you sell.
-          </p>
         </div>
 
         {/* Tabs */}
@@ -166,7 +163,7 @@ export function HowItWorksContent() {
               Browse Properties
             </a> */}
             <a
-              href="/sign-up"
+              href="/auth?tab=signup"
               className="inline-flex items-center justify-center rounded-full border-2 border-gray-300 bg-white px-8 py-3 text-base font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-colors cursor-pointer"
             >
               Get Started

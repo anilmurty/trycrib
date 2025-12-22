@@ -212,7 +212,7 @@ export function OnboardingClient({ firstName }: OnboardingClientProps) {
             </div>
 
             <p className="text-center text-sm text-slate-500 mt-8">
-              Don't worry, you can always change this later in your settings
+              Don't worry, you can always change this later in your profile settings
             </p>
           </>
         ) : (

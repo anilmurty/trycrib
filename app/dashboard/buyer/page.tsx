@@ -7,7 +7,7 @@ export default async function BuyerDashboardPage() {
   const { userId } = await auth()
 
   if (!userId) {
-    redirect("/auth")
+    redirect("/auth?tab=login")
   }
 
   const supabase = await createClient()

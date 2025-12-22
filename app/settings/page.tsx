@@ -7,7 +7,7 @@ export default async function SettingsPage() {
   const { userId } = await auth()
 
   if (!userId) {
-    redirect("/auth")
+    redirect("/auth?tab=login")
   }
 
   const supabase = await createClient()

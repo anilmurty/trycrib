@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     const { data: agentProfile, error: profileError } = await supabase
       .from("profiles")
       .select("full_name, email")
-      .eq("id", userId)
+      .eq("id", user.id)
       .single()
 
     if (profileError || !agentProfile) {

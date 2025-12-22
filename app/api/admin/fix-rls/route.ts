@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user is admin or superadmin
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')

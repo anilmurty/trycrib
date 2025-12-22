@@ -12,8 +12,8 @@ import { Footer } from "@/components/landing/footer"
 import { PropertyList } from "./property-list"
 import { BookingsList } from "./bookings-list"
 import { PropertyRequests } from "./property-requests"
-import { useClerk } from "@clerk/clerk-react"
 import { useRouter } from "next/navigation"
+import { useClerk } from "@clerk/nextjs"
 
 interface SellerDashboardProps {
   userId: string

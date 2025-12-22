@@ -82,6 +82,8 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
   const [clientToDelete, setClientToDelete] = useState<Client | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [showInviteModal, setShowInviteModal] = useState(false)
+  const [invitationToDelete, setInvitationToDelete] = useState<InvitedClient | null>(null)
+  const [deletingInvitation, setDeletingInvitation] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -328,7 +330,23 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
     fetchData()
   }, [userId, profile.email])
 
-  const allClients = [...buyerClients, ...sellerClients]
+  // Combine buyer and seller clients, deduplicating by email to avoid showing the same person twice
+  const allClientsMap = new Map<string, Client>()
+  buyerClients.forEach(client => {
+    if (client.email) {
+      allClientsMap.set(client.email.toLowerCase(), client)
+    }
+  })
+  sellerClients.forEach(client => {
+    if (client.email) {
+      // If client already exists, prefer the one with the earlier created_at date
+      const existing = allClientsMap.get(client.email.toLowerCase())
+      if (!existing || (client.created_at && existing.created_at && new Date(client.created_at) < new Date(existing.created_at))) {
+        allClientsMap.set(client.email.toLowerCase(), client)
+      }
+    }
+  })
+  const allClients = Array.from(allClientsMap.values())
   const pendingStayRequests = stayRequests.filter(r => r.status === "pending")
   const pendingListingRequests = propertyListingRequests.filter(
     (r: any) => r.status === "pending" || r.status === "listing_requested" || r.status === "listing_pending"
@@ -575,7 +593,13 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
                               <h3 className="font-semibold text-slate-900">
                                 {client.full_name || "Unknown Client"}
                               </h3>
-                              <Badge variant={client.client_type === "buyer" ? "default" : "secondary"}>
+                              <Badge 
+                                variant="outline"
+                                className={client.client_type === "buyer" 
+                                  ? "bg-green-100 text-green-800 border-green-300" 
+                                  : "bg-blue-100 text-blue-800 border-blue-300"
+                                }
+                              >
                                 {client.client_type === "buyer" ? "Buyer" : "Seller"}
                               </Badge>
                             </div>
@@ -603,23 +627,29 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
                     </div>
                   )}
 
-                  {/* Invited Clients Section */}
-                  {invitedClients.length > 0 && (
+                  {/* Invited Clients Section - Only show pending invitations */}
+                  {invitedClients.filter(inv => inv.status !== "accepted").length > 0 && (
                     <div className="mt-8 pt-8 border-t">
                       <h3 className="text-lg font-semibold text-slate-900 mb-4">Invited Clients</h3>
                       <div className="space-y-3">
-                        {invitedClients.map((invited) => {
+                        {invitedClients.filter(inv => inv.status !== "accepted").map((invited) => {
                           const needsConfirmation = (invited as any).user_exists && !(invited as any).agent_confirmed
                           return (
-                            <div key={invited.id} className={`flex items-center justify-between p-4 border rounded-lg ${needsConfirmation ? 'bg-orange-50 border-orange-200' : 'bg-slate-50'}`}>
-                              <div>
-                                <div className="flex items-center gap-2">
+                            <div key={invited.id} className={`flex items-start justify-between p-4 border rounded-lg ${needsConfirmation ? 'bg-orange-50 border-orange-200' : 'bg-slate-50'}`}>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 flex-wrap">
                                   <h4 className="font-medium text-slate-900">
                                     {invited.first_name} {invited.last_name || ''}
                                   </h4>
-                                  <Badge variant={invited.role === "buyer" ? "default" : "secondary"}>
-                                    {invited.role === "buyer" ? "Buyer" : "Seller"}
-                                  </Badge>
+                                <Badge 
+                                  variant="outline"
+                                  className={invited.role === "buyer" 
+                                    ? "bg-green-100 text-green-800 border-green-300" 
+                                    : "bg-blue-100 text-blue-800 border-blue-300"
+                                  }
+                                >
+                                  {invited.role === "buyer" ? "Buyer" : "Seller"}
+                                </Badge>
                                   <Badge 
                                     variant={
                                       invited.status === "accepted" ? "default" : 
@@ -653,6 +683,18 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
                                   </p>
                                 )}
                               </div>
+                              {invited.status === "pending" && (
+                                <div className="ml-4 flex-shrink-0">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setInvitationToDelete(invited)}
+                                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              )}
                             </div>
                           )
                         })}
@@ -795,6 +837,69 @@ export function AgentDashboard({ userId, profile, agentProfile }: AgentDashboard
           }
         }}
       />
+
+      {/* Delete Invitation Confirmation Dialog */}
+      <Dialog open={!!invitationToDelete} onOpenChange={(open) => !open && setInvitationToDelete(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Invitation</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete the invitation for {invitationToDelete?.first_name} {invitationToDelete?.last_name || ''} ({invitationToDelete?.email})? 
+              This action cannot be undone. They will no longer receive invitation emails.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setInvitationToDelete(null)}
+              disabled={deletingInvitation}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                if (!invitationToDelete) return
+
+                setDeletingInvitation(true)
+                try {
+                  const response = await fetch(`/api/agent/invited-clients?id=${invitationToDelete.id}`, {
+                    method: 'DELETE'
+                  })
+
+                  if (!response.ok) {
+                    const data = await response.json()
+                    toast.error(data.error || "Failed to delete invitation")
+                    return
+                  }
+
+                  toast.success("Invitation deleted successfully")
+                  setInvitationToDelete(null)
+
+                  // Refresh invited clients list
+                  try {
+                    const refreshResponse = await fetch('/api/agent/invited-clients')
+                    if (refreshResponse.ok) {
+                      const refreshData = await refreshResponse.json()
+                      setInvitedClients(refreshData.invitations || [])
+                    }
+                  } catch (error) {
+                    console.error("Error refreshing invited clients:", error)
+                  }
+                } catch (error) {
+                  console.error("Error deleting invitation:", error)
+                  toast.error("Failed to delete invitation")
+                } finally {
+                  setDeletingInvitation(false)
+                }
+              }}
+              disabled={deletingInvitation}
+            >
+              {deletingInvitation ? "Deleting..." : "Delete Invitation"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

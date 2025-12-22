@@ -109,7 +109,7 @@ export function BuyerDashboard({ userId, profile }: BuyerDashboardProps) {
             </div>
 
             <TabsContent value="browse">
-              <BuyerListingRequests />
+              <BuyerListingRequests userEmail={profile.email} />
             </TabsContent>
 
             <TabsContent value="bookings">

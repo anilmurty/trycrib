@@ -22,7 +22,7 @@ export async function GET(request: Request) {
     const { data: agentProfile } = await supabase
       .from("profiles")
       .select("email")
-      .eq("id", userId)
+      .eq("id", user.id)
       .single()
 
     // Get all stay requests

@@ -502,9 +502,9 @@ export function PropertyRequestsQueue({ agentEmail }: PropertyRequestsQueueProps
           <Card>
             <CardContent className="p-6">
               <div className="text-center text-slate-600">
-                <Clock className="h-12 w-12 mx-auto mb-4 text-slate-400" />
+                <Home className="h-12 w-12 mx-auto mb-4 text-slate-400" />
                 <h3 className="text-lg font-semibold mb-2">No property requests</h3>
-                <p className="text-sm">New property requests from sellers will appear here.</p>
+                <p className="text-sm">New property requests from your seller clients will appear here.</p>
               </div>
             </CardContent>
           </Card>

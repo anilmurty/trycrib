@@ -11,13 +11,13 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import Link from "next/link"
 
-export default function SignUpPage() {
-  const [activeTab] = useState<"login" | "signup">("signup")
+export default function SignInPage() {
+  const [activeTab] = useState<"login" | "signup">("login")
   const { isLoaded: signInLoaded, signIn, setActive: setSignInActive } = useSignIn()
   const { isLoaded: signUpLoaded, signUp, setActive: setSignUpActive } = useSignUp()
   const router = useRouter()
 
-  // Sign Up state
+  // Sign Up state (not used but needed for shared handlers)
   const [signUpEmail, setSignUpEmail] = useState("")
   const [signUpPassword, setSignUpPassword] = useState("")
   const [firstName, setFirstName] = useState("")
@@ -25,53 +25,48 @@ export default function SignUpPage() {
   const [signUpError, setSignUpError] = useState("")
   const [signUpLoading, setSignUpLoading] = useState(false)
 
-  // Sign In state (not used but needed for shared handlers)
+  // Sign In state
   const [signInEmail, setSignInEmail] = useState("")
   const [signInPassword, setSignInPassword] = useState("")
   const [signInError, setSignInError] = useState("")
   const [signInLoading, setSignInLoading] = useState(false)
 
-  const handleSignUp = async (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!signUpLoaded) return
+    if (!signInLoaded) return
 
-    setSignUpLoading(true)
-    setSignUpError("")
+    setSignInLoading(true)
+    setSignInError("")
 
     try {
-      const result = await signUp.create({
-        emailAddress: signUpEmail,
-        password: signUpPassword,
-        firstName,
-        lastName,
-        unsafeMetadata: {
-          role: "buyer",
-        },
+      const result = await signIn.create({
+        identifier: signInEmail,
+        password: signInPassword,
       })
 
       if (result.status === "complete") {
-        await setSignUpActive({ session: result.createdSessionId })
+        await setSignInActive({ session: result.createdSessionId })
         router.push("/dashboard")
       }
     } catch (err: any) {
-      setSignUpError(err.errors?.[0]?.message || "An error occurred during sign up")
+      setSignInError(err.errors?.[0]?.message || "Invalid email or password")
     } finally {
-      setSignUpLoading(false)
+      setSignInLoading(false)
     }
   }
 
-  const handleGoogleSignUp = async () => {
-    if (!signUpLoaded) return
+  const handleGoogleSignIn = async () => {
+    if (!signInLoaded) return
 
     try {
-      await signUp.authenticateWithRedirect({
+      await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: "/sso-callback",
         redirectUrlComplete: "/dashboard",
       })
     } catch (err: any) {
-      console.error("[v0] Google sign up error:", err)
-      setSignUpError("Failed to sign up with Google")
+      console.error("[v0] Google sign in error:", err)
+      setSignInError("Failed to sign in with Google")
     }
   }
 
@@ -86,86 +81,61 @@ export default function SignUpPage() {
         <div className="mb-6">
           <div className="flex border-b border-slate-200">
             <button
-              onClick={() => router.push("/auth?tab=login")}
-              className="flex-1 py-3 text-center font-medium transition-colors text-slate-600 hover:text-slate-900 cursor-pointer"
+              className="flex-1 py-3 text-center font-medium transition-colors text-blue-600 border-b-2 border-blue-600 cursor-pointer"
             >
               Log In
             </button>
             <button
-              className="flex-1 py-3 text-center font-medium transition-colors text-blue-600 border-b-2 border-blue-600 cursor-pointer"
+              onClick={() => router.push("/auth?tab=signup")}
+              className="flex-1 py-3 text-center font-medium transition-colors text-slate-600 hover:text-slate-900 cursor-pointer"
             >
               Sign Up
             </button>
           </div>
         </div>
 
-        <form onSubmit={handleSignUp} className="space-y-4">
-          {signUpError && (
+        <form onSubmit={handleSignIn} className="space-y-4">
+          {signInError && (
             <Alert variant="destructive">
-              <AlertDescription>{signUpError}</AlertDescription>
+              <AlertDescription>{signInError}</AlertDescription>
             </Alert>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
-              <Input
-                id="firstName"
-                type="text"
-                placeholder="John"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
-              <Input
-                id="lastName"
-                type="text"
-                placeholder="Doe"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-
           <div className="space-y-2">
-            <Label htmlFor="signUpEmail">Email</Label>
+            <Label htmlFor="signInEmail">Email</Label>
             <Input
-              id="signUpEmail"
+              id="signInEmail"
               type="email"
               placeholder="you@example.com"
-              value={signUpEmail}
-              onChange={(e) => setSignUpEmail(e.target.value)}
+              value={signInEmail}
+              onChange={(e) => setSignInEmail(e.target.value)}
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="signUpPassword">Password</Label>
+            <Label htmlFor="signInPassword">Password</Label>
             <Input
-              id="signUpPassword"
+              id="signInPassword"
               type="password"
               placeholder="••••••••"
-              value={signUpPassword}
-              onChange={(e) => setSignUpPassword(e.target.value)}
+              value={signInPassword}
+              onChange={(e) => setSignInPassword(e.target.value)}
               required
             />
           </div>
 
-          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={signUpLoading}>
-            {signUpLoading ? "Creating account..." : "Create Account"}
+          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={signInLoading}>
+            {signInLoading ? "Signing in..." : "Log In"}
           </Button>
 
           <Button
             type="button"
             variant="outline"
             className="w-full bg-transparent"
-            onClick={() => router.push("/auth?tab=login")}
+            onClick={() => router.push("/auth?tab=signup")}
           >
-            Already have an account? Log in
+            Don't have an account? Sign up
           </Button>
 
           <div className="relative">
@@ -177,7 +147,7 @@ export default function SignUpPage() {
             </div>
           </div>
 
-          <Button type="button" variant="outline" className="w-full bg-transparent" onClick={handleGoogleSignUp}>
+          <Button type="button" variant="outline" className="w-full bg-transparent" onClick={handleGoogleSignIn}>
             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
               <path
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -198,17 +168,6 @@ export default function SignUpPage() {
             </svg>
             Google
           </Button>
-
-          <p className="text-center text-xs text-slate-500">
-            By continuing, you agree to TryCrib's{" "}
-            <Link href="/terms" className="underline hover:text-slate-700">
-              Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link href="/privacy" className="underline hover:text-slate-700">
-              Privacy Policy
-            </Link>
-          </p>
         </form>
       </div>
     </div>

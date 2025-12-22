@@ -2,16 +2,17 @@ import { NextResponse } from "next/server"
 import { auth, currentUser } from "@clerk/nextjs/server"
 import { createClient } from "@/lib/supabase/server"
 import { createClient as createServiceClient } from "@supabase/supabase-js"
+import { sendAgentOnboardingNotificationEmail } from "@/lib/email"
 
 export async function POST(request: Request) {
   try {
     console.log("=== ONBOARDING SET-ROLE API CALLED ===")
     
     const { userId } = await auth()
-    console.log("User ID from auth:", userId)
+    console.log("User from auth:", userId)
 
     if (!userId) {
-      console.log("No userId found, returning 401")
+      console.log("No user found, returning 401")
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -27,7 +28,7 @@ export async function POST(request: Request) {
     const supabase = await createClient()
     console.log("Supabase client created")
 
-    // Get user details from Clerk (needed for both creating and updating profiles)
+    // Get user details from Clerk
     const user = await currentUser()
     const userEmail = user?.emailAddresses?.[0]?.emailAddress || "unknown@example.com"
     const userFullName = user?.firstName && user?.lastName 
@@ -68,14 +69,66 @@ export async function POST(request: Request) {
 
     // Create the appropriate profile (buyer_profiles, seller_profiles, or agent_profiles)
     console.log("Creating role-specific profile for role:", role)
+    
+    // Use service role client to bypass RLS for role-specific profiles
+    const serviceSupabase = createServiceClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
+    // Check if this user was invited BEFORE creating profile
+    // This ensures invitation agent info takes precedence over manually entered info
+    let invitationAgentInfo = null
+    let hasInvitation = false
+    
+    if (userEmail && (role === "buyer" || role === "seller")) {
+      const { data: invitations } = await serviceSupabase
+        .from("client_invitations")
+        .select("*")
+        .eq("email", userEmail.toLowerCase())
+        .eq("role", role)
+        .eq("status", "pending")
+
+      if (invitations && invitations.length > 0) {
+        hasInvitation = true
+        const invitation = invitations[0]
+        const { data: agentProfile } = await serviceSupabase
+          .from("profiles")
+          .select("email, full_name")
+          .eq("id", invitation.agent_id)
+          .single()
+
+        const { data: agentProfileDetails } = await serviceSupabase
+          .from("agent_profiles")
+          .select("phone")
+          .eq("id", invitation.agent_id)
+          .single()
+
+        invitationAgentInfo = {
+          email: agentProfile?.email || "",
+          name: agentProfile?.full_name || agentProfile?.email || "",
+          phone: agentProfileDetails?.phone || null,
+          confirmed: false // Require user confirmation
+        }
+      }
+    }
+    
     if (role === "buyer") {
       console.log("Creating buyer profile...")
-      const { error: buyerError } = await supabase.from("buyer_profiles").upsert({
+      // Use invitation agent info if available, otherwise use manually entered info
+      const finalAgentInfo = invitationAgentInfo || (agentInfo ? {
+        name: agentInfo.name,
+        email: agentInfo.email,
+        phone: agentInfo.phone,
+        confirmed: true // User entered it themselves
+      } : null)
+
+      const { error: buyerError } = await serviceSupabase.from("buyer_profiles").upsert({
         id: userId,
-        email: userEmail,
-        agent_name: agentInfo?.name || null,
-        agent_email: agentInfo?.email || null,
-        agent_phone: agentInfo?.phone || null,
+        agent_name: finalAgentInfo?.name || null,
+        agent_email: finalAgentInfo?.email || null,
+        agent_phone: finalAgentInfo?.phone || null,
+        agent_confirmed: finalAgentInfo?.confirmed ?? false,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -87,12 +140,20 @@ export async function POST(request: Request) {
       console.log("Buyer profile created successfully")
     } else if (role === "seller") {
       console.log("Creating seller profile...")
-      const { error: sellerError } = await supabase.from("seller_profiles").upsert({
+      // Use invitation agent info if available, otherwise use manually entered info
+      const finalAgentInfo = invitationAgentInfo || (agentInfo ? {
+        name: agentInfo.name,
+        email: agentInfo.email,
+        phone: agentInfo.phone,
+        confirmed: true // User entered it themselves
+      } : null)
+
+      const { error: sellerError } = await serviceSupabase.from("seller_profiles").upsert({
         id: userId,
-        email: userEmail,
-        agent_name: agentInfo?.name || null,
-        agent_email: agentInfo?.email || null,
-        agent_phone: agentInfo?.phone || null,
+        agent_name: finalAgentInfo?.name || null,
+        agent_email: finalAgentInfo?.email || null,
+        agent_phone: finalAgentInfo?.phone || null,
+        agent_confirmed: finalAgentInfo?.confirmed ?? false,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -105,12 +166,6 @@ export async function POST(request: Request) {
     } else if (role === "agent") {
       console.log("Creating agent profile...")
       console.log("Agent profile data:", { id: userId, email: userEmail })
-      
-      // Use service role client to bypass RLS (since Clerk auth doesn't work with Supabase RLS)
-      const serviceSupabase = createServiceClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
-      )
       
       const { error: agentError, data: agentData } = await serviceSupabase.from("agent_profiles").upsert({
         id: userId,
@@ -130,35 +185,50 @@ export async function POST(request: Request) {
       console.log("Agent profile created successfully:", agentData)
     }
 
-    // Check if this user was invited and mark invitation as accepted
-    // Use service role client to bypass RLS for checking invitations
-    const serviceSupabase = createServiceClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    )
-
-    if (userEmail && (role === "buyer" || role === "seller")) {
-      const { data: invitations } = await serviceSupabase
+    // Mark invitation as accepted if there was one
+    if (hasInvitation && userEmail && (role === "buyer" || role === "seller")) {
+      await serviceSupabase
         .from("client_invitations")
-        .select("*")
+        .update({
+          status: "accepted",
+          accepted_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
         .eq("email", userEmail.toLowerCase())
         .eq("role", role)
         .eq("status", "pending")
+      
+      console.log(`Marked invitation(s) as accepted for ${userEmail} (${role})`)
+    }
 
-      if (invitations && invitations.length > 0) {
-        // Update pending invitations for this email and role to accepted
-        await serviceSupabase
-          .from("client_invitations")
-          .update({
-            status: "accepted",
-            accepted_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })
-          .eq("email", userEmail.toLowerCase())
-          .eq("role", role)
-          .eq("status", "pending")
-        
-        console.log(`Marked ${invitations.length} invitation(s) as accepted for ${userEmail} (${role})`)
+    // Send email to agent if agent info was manually provided (not from invitation)
+    // Only send if agentInfo exists and we didn't use invitation agent info
+    if (!hasInvitation && agentInfo && agentInfo.email && (role === "buyer" || role === "seller")) {
+      try {
+        // Check if agent exists in the system
+        const { data: agentProfile } = await serviceSupabase
+          .from("profiles")
+          .select("id, email, full_name")
+          .eq("email", agentInfo.email.toLowerCase())
+          .single()
+
+        const agentExists = !!agentProfile
+        const agentName = agentProfile?.full_name || agentInfo.name || null
+
+        // Send notification email to agent
+        await sendAgentOnboardingNotificationEmail({
+          agentEmail: agentInfo.email,
+          agentName: agentName || undefined,
+          clientName: userFullName || userEmail.split('@')[0],
+          clientEmail: userEmail,
+          clientRole: role as "buyer" | "seller",
+          agentExists
+        })
+
+        console.log(`Sent onboarding notification email to agent ${agentInfo.email} (exists: ${agentExists})`)
+      } catch (emailError) {
+        // Log error but don't fail the onboarding process
+        console.error("Error sending agent onboarding notification email:", emailError)
       }
     }
 

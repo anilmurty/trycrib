@@ -5,10 +5,9 @@ import { OnboardingClient } from "@/components/onboarding/onboarding-client"
 
 export default async function OnboardingPage() {
   const { userId } = await auth()
-  const user = await currentUser()
 
-  if (!userId || !user) {
-    redirect("/auth")
+  if (!userId) {
+    redirect("/auth?tab=login")
   }
 
   const supabase = await createClient()
@@ -19,5 +18,8 @@ export default async function OnboardingPage() {
     redirect("/dashboard")
   }
 
-  return <OnboardingClient firstName={user.firstName || "there"} />
+  const user = await currentUser()
+  const firstName = user?.firstName || user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] || "there"
+
+  return <OnboardingClient firstName={firstName} />
 }

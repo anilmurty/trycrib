@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       )
     }
 
-    // Use service role client to bypass RLS (since we're using Clerk auth)
+    // Use service role client to bypass RLS
     const supabase = createServiceClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -83,7 +83,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Use service role client to bypass RLS (since we're using Clerk auth)
+    // Use service role client to bypass RLS
     const supabase = createServiceClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!

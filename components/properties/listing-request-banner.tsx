@@ -21,7 +21,7 @@ export function ListingRequestBanner() {
     if (!isLoaded) return
     
     if (!isSignedIn) {
-      router.push("/sign-up")
+      router.push("/auth?tab=signup")
       return
     }
 
@@ -38,7 +38,7 @@ export function ListingRequestBanner() {
 
     if (!user?.id) {
       toast.error("You must be logged in to submit a request")
-      router.push("/sign-up")
+      router.push("/auth?tab=signup")
       return
     }
 

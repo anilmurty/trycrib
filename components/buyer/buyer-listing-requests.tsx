@@ -22,7 +22,11 @@ interface AddressForm {
   error: string | null
 }
 
-export function BuyerListingRequests() {
+interface BuyerListingRequestsProps {
+  userEmail?: string | null
+}
+
+export function BuyerListingRequests({ userEmail }: BuyerListingRequestsProps) {
   const [savedRequests, setSavedRequests] = useState<BuyerListingRequest[]>([])
   const [addressForms, setAddressForms] = useState<AddressForm[]>([
     { id: crypto.randomUUID(), address: "", isSubmitting: false, error: null }
@@ -254,11 +258,6 @@ export function BuyerListingRequests() {
         >
           <Plus className="h-4 w-4 mr-2" />
           Add Another Address
-          {savedRequests.length > 0 && (
-            <span className="ml-2 text-xs text-slate-500">
-              ({savedRequests.length}/20)
-            </span>
-          )}
         </Button>
         {savedRequests.length >= 20 && (
           <p className="text-sm text-slate-600 text-center">
@@ -271,7 +270,10 @@ export function BuyerListingRequests() {
       {!loading && savedRequests.length > 0 && (
         <Card className="border-0 shadow-md">
           <CardHeader>
-            <CardTitle>Your Submitted Addresses</CardTitle>
+            <CardTitle>Your Property Requests</CardTitle>
+            <p className="text-sm text-slate-600 mt-2">
+              Thank you for your submissions. TryCrib will notify you the moment these properties are listed at your {userEmail || "email"} address.
+            </p>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">

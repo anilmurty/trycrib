@@ -36,7 +36,7 @@ export default function DashboardRedirect() {
             profile = data
           } else if (error) {
             console.log("Profile not found, attempt", retries + 1)
-            // Wait a bit for profile to be created
+            // Wait a bit for webhook to create profile
             await new Promise((resolve) => setTimeout(resolve, 300))
             retries++
           }
@@ -60,7 +60,7 @@ export default function DashboardRedirect() {
         }
       } catch (error) {
         console.error("Error checking profile:", error)
-        router.push("/auth")
+        router.push("/auth?tab=login")
       } finally {
         setLoading(false)
       }

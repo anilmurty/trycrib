@@ -96,7 +96,7 @@ export function HeroSection() {
                 The perfect way to ensure it's the right fit for you.
               </p>
               <div className="mt-6">
-                <Link href="/auth" className="cursor-pointer">
+                <Link href="/properties" className="cursor-pointer">
                   <Button className="rounded-full px-8 bg-blue-600 text-white hover:bg-blue-700">
                     Book a stay
                   </Button>
@@ -111,7 +111,7 @@ export function HeroSection() {
                 Increase serious offers and reduce time-wasting viewings.
               </p>
               <div className="mt-6">
-                <Link href="/sign-up" className="cursor-pointer">
+                <Link href="/auth?tab=signup" className="cursor-pointer">
                   <Button className="rounded-full px-8 bg-blue-600 text-white hover:bg-blue-700">
                     List your Home
                   </Button>

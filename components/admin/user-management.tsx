@@ -6,7 +6,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { User, Crown, Shield, UserCheck, UserX } from "lucide-react"
-import { useUser } from "@clerk/nextjs"
 
 interface Profile {
   id: string

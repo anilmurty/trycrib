@@ -458,3 +458,158 @@ export async function sendConfirmAgentEmail(data: ConfirmAgentEmailData) {
     throw error
   }
 }
+
+interface AgentOnboardingNotificationEmailData {
+  agentEmail: string
+  agentName?: string
+  clientName: string
+  clientEmail: string
+  clientRole: "buyer" | "seller"
+  agentExists: boolean // Whether agent is already in the system
+}
+
+/**
+ * Send email to agent when a client onboards and adds them as their agent
+ */
+export async function sendAgentOnboardingNotificationEmail(data: AgentOnboardingNotificationEmailData) {
+  try {
+    const { agentEmail, agentName, clientName, clientEmail, clientRole, agentExists } = data
+
+    // Validate Resend API key
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error("RESEND_API_KEY environment variable is not set")
+    }
+
+    // Construct base URL for CTA links
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+    const loginUrl = `${baseUrl}/auth?tab=login`
+    const signupUrl = `${baseUrl}/auth?tab=signup&role=agent`
+    const dashboardUrl = `${baseUrl}/dashboard/agent`
+
+    const roleText = clientRole === "seller" ? "seller" : "buyer"
+    const roleTextCapitalized = clientRole === "seller" ? "Seller" : "Buyer"
+
+    // Different email content based on whether agent exists
+    let subject: string
+    let emailContent: string
+
+    if (agentExists) {
+      // Agent is already in the system - just notify them
+      subject = `${clientName} has added you as agent in TryCrib`
+      
+      emailContent = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #1e40af;">New Client Added You as Their Agent</h2>
+          <p>Hello ${agentName || 'there'},</p>
+          
+          <p>
+            <strong>${clientName}</strong> (${clientEmail}) has added you as their ${roleText}'s agent on TryCrib.
+          </p>
+
+          <p>
+            You can now view and manage ${clientName}'s ${roleText} profile, stay requests, and property listings from your dashboard.
+          </p>
+
+          <div style="margin: 30px 0; text-align: center;">
+            <a href="${dashboardUrl}" style="display: inline-block; background-color: #1e40af; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">View Dashboard</a>
+          </div>
+
+          <p style="color: #6b7280; font-size: 14px; margin-top: 20px;">
+            No action is required from you at this time. ${clientName} will be able to request stays and manage their property listings through TryCrib.
+          </p>
+          
+          <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
+            Best regards,<br>
+            The TryCrib Team
+          </p>
+        </div>
+      `
+    } else {
+      // Agent is not in the system - invite them to join
+      subject = `${clientName} wants to work with you on TryCrib`
+      
+      emailContent = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #1e40af;">Your Client Wants to Work with You on TryCrib</h2>
+          <p>Hello,</p>
+          
+          <p>
+            <strong>${clientName}</strong> (${clientEmail}) has indicated that you are their ${roleText}'s agent and wants to work with you on TryCrib.
+          </p>
+
+          <p>
+            TryCrib is a platform that helps ${roleText === "seller" ? "sellers" : "buyers"} ${roleText === "seller" ? "earn money while their home is listed and attract more serious buyers" : "experience homes before purchasing them"}.
+          </p>
+
+          <p>
+            As ${clientName}'s agent, you can:
+          </p>
+          <ul style="line-height: 1.8;">
+            ${roleText === "seller" 
+              ? `
+                <li>Help manage property listings and stay requests</li>
+                <li>Coordinate stays with prospective buyers</li>
+                <li>Track property performance and earnings</li>
+              `
+              : `
+                <li>Review and coordinate stay requests from your clients</li>
+                <li>Help clients experience homes before making offers</li>
+                <li>Streamline the home buying process</li>
+              `
+            }
+          </ul>
+
+          <div style="margin: 30px 0; text-align: center;">
+            <a href="${signupUrl}" style="display: inline-block; background-color: #1e40af; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-right: 10px;">Create Your Agent Account</a>
+            <a href="${loginUrl}" style="display: inline-block; background-color: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Already have an account? Log in</a>
+          </div>
+
+          <p style="color: #6b7280; font-size: 14px; margin-top: 20px;">
+            Once you create an account, you'll be automatically connected with ${clientName} and can start managing their ${roleText} activities on TryCrib.
+          </p>
+          
+          <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
+            Best regards,<br>
+            The TryCrib Team
+          </p>
+        </div>
+      `
+    }
+
+    console.log("Sending agent onboarding notification email via Resend:", {
+      to: agentEmail,
+      from: process.env.RESEND_FROM_EMAIL || "TryCrib <noreply@trycrib.com>",
+      subject,
+      agentExists,
+    })
+
+    const resend = getResendClient()
+    const result = await resend.emails.send({
+      from: process.env.RESEND_FROM_EMAIL || "TryCrib <noreply@trycrib.com>",
+      to: agentEmail,
+      subject,
+      html: emailContent,
+    })
+
+    console.log("Resend API response:", {
+      success: result.data ? true : false,
+      id: result.data?.id,
+      error: result.error,
+    })
+
+    if (result.error) {
+      throw new Error(`Resend API error: ${JSON.stringify(result.error)}`)
+    }
+
+    if (!result.data) {
+      throw new Error("Resend API returned no data")
+    }
+
+    return { success: true, id: result.data.id }
+  } catch (error: any) {
+    console.error("Error sending agent onboarding notification email:", error)
+    console.error("Error type:", typeof error)
+    console.error("Error message:", error?.message)
+    throw error
+  }
+}

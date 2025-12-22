@@ -14,11 +14,31 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { createClient } from "@/lib/supabase/client"
+import { useEffect, useState } from "react"
 
 export function Header() {
-  const { isSignedIn, isLoaded, user } = useUser()
+  const { user, isSignedIn, isLoaded } = useUser()
   const { signOut } = useClerk()
   const router = useRouter()
+  const [profile, setProfile] = useState<any>(null)
+  const supabase = createClient()
+
+  useEffect(() => {
+    if (isSignedIn && user) {
+      // Fetch user profile
+      supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single()
+        .then(({ data }) => {
+          if (data) {
+            setProfile(data)
+          }
+        })
+    }
+  }, [isSignedIn, user, supabase])
 
   const handleSignOut = async () => {
     await signOut()
@@ -27,16 +47,25 @@ export function Header() {
 
   // Get user initials for avatar fallback
   const getUserInitials = () => {
-    if (user?.firstName && user?.lastName) {
-      return `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
+    if (profile?.full_name) {
+      const names = profile.full_name.split(" ")
+      if (names.length >= 2) {
+        return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase()
+      }
+      return names[0][0].toUpperCase()
     }
-    if (user?.firstName) {
-      return user.firstName[0].toUpperCase()
-    }
-    if (user?.emailAddresses[0]?.emailAddress) {
+    if (user?.emailAddresses?.[0]?.emailAddress) {
       return user.emailAddresses[0].emailAddress[0].toUpperCase()
     }
     return "U"
+  }
+
+  const getUserName = () => {
+    return profile?.full_name || user?.firstName || user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] || "User"
+  }
+
+  const getUserEmail = () => {
+    return user?.emailAddresses?.[0]?.emailAddress || ""
   }
 
   return (
@@ -46,18 +75,17 @@ export function Header() {
           TryCrib
         </Link>
 
-        {!isSignedIn && (
-          <nav className="hidden items-center gap-8 md:flex">
-            {/* Hidden: Browse Properties link */}
-            {/* <Link href="/properties" className="text-lg font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
-              Browse Properties
-            </Link> */}
-            {/* Hidden: How it Works link - content moved to homepage */}
-            {/* <Link href="/how-it-works" className="text-lg font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
-              How it Works
-            </Link> */}
-          </nav>
-        )}
+        {/* Always render nav structure to prevent hydration mismatch */}
+        <nav className="hidden items-center gap-8 md:flex">
+          {/* Hidden: Browse Properties link */}
+          {/* <Link href="/properties" className="text-lg font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
+            Browse Properties
+          </Link> */}
+          {/* Hidden: How it Works link - content moved to homepage */}
+          {/* <Link href="/how-it-works" className="text-lg font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
+            How it Works
+          </Link> */}
+        </nav>
 
         <div className="flex items-center gap-3">
           {!isLoaded ? (
@@ -65,7 +93,7 @@ export function Header() {
             <div className="flex items-center gap-3">
               <div className="h-8 w-8 bg-gray-200 rounded-full animate-pulse"></div>
             </div>
-          ) : isSignedIn ? (
+          ) : isSignedIn && user ? (
             <>
               <Link href="/dashboard" className="cursor-pointer">
                 <Button variant="ghost" className="text-sm text-gray-600 hover:text-gray-900">
@@ -76,7 +104,7 @@ export function Header() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user?.imageUrl || "/placeholder.svg"} alt={user?.firstName || "User"} />
+                      <AvatarImage src={user.imageUrl || "/placeholder.svg"} alt={getUserName()} />
                       <AvatarFallback className="bg-blue-600 text-white text-sm">{getUserInitials()}</AvatarFallback>
                     </Avatar>
                   </Button>
@@ -85,12 +113,10 @@ export function Header() {
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">
-                        {user?.firstName && user?.lastName
-                          ? `${user.firstName} ${user.lastName}`
-                          : user?.firstName || "User"}
+                        {getUserName()}
                       </p>
                       <p className="text-xs leading-none text-muted-foreground">
-                        {user?.emailAddresses[0]?.emailAddress}
+                        {getUserEmail()}
                       </p>
                     </div>
                   </DropdownMenuLabel>
@@ -109,7 +135,7 @@ export function Header() {
               </DropdownMenu>
             </>
           ) : (
-            // Unauthenticated state - keep original auth links
+            // Unauthenticated state
             <>
               <Link href="/auth?tab=login" className="text-sm text-gray-600 hover:text-gray-900 cursor-pointer">
                 Login

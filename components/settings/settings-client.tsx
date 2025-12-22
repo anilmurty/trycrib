@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 import { toast } from "sonner"
-import { Edit2, Save, X, Trash2, AlertCircle } from "lucide-react"
+import { Edit2, Save, X, Trash2, AlertCircle, CheckCircle } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 
 interface SettingsClientProps {
@@ -24,6 +24,7 @@ interface SettingsClientProps {
     agent_name: string | null
     agent_email: string | null
     agent_phone: string | null
+    agent_confirmed?: boolean | null
   } | null
   userId: string
 }
@@ -97,6 +98,40 @@ export function SettingsClient({ profile, roleProfile, userId }: SettingsClientP
     setIsEditing(false)
   }
 
+  const handleConfirmAgent = async () => {
+    if (!profile?.role || (profile.role !== "buyer" && profile.role !== "seller")) {
+      toast.error("Invalid user role")
+      return
+    }
+
+    setLoading(true)
+    try {
+      const tableName = profile.role === "buyer" ? "buyer_profiles" : "seller_profiles"
+      
+      const { error } = await supabase
+        .from(tableName)
+        .update({
+          agent_confirmed: true,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", userId)
+
+      if (error) {
+        console.error("Error confirming agent:", error)
+        toast.error("Failed to confirm agent")
+        return
+      }
+
+      toast.success("Agent relationship confirmed successfully")
+      router.refresh()
+    } catch (error) {
+      console.error("Error confirming agent:", error)
+      toast.error("Failed to confirm agent")
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleDelete = async () => {
     if (!profile?.role || (profile.role !== "buyer" && profile.role !== "seller")) {
       toast.error("Invalid user role")
@@ -112,7 +147,8 @@ export function SettingsClient({ profile, roleProfile, userId }: SettingsClientP
         .update({
           agent_name: null,
           agent_email: null,
-          agent_phone: null
+          agent_phone: null,
+          agent_confirmed: false
         })
         .eq("id", userId)
 
@@ -211,6 +247,42 @@ export function SettingsClient({ profile, roleProfile, userId }: SettingsClientP
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* Confirmation Banner - Show when agent info exists but not confirmed */}
+                  {!isEditing && 
+                   (roleProfile?.agent_name || roleProfile?.agent_email || roleProfile?.agent_phone) && 
+                   roleProfile?.agent_confirmed === false && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                      <div className="flex items-start gap-3">
+                        <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1">
+                          <h4 className="font-medium text-blue-900 mb-1">Confirm Your Agent</h4>
+                          <p className="text-sm text-blue-800 mb-3">
+                            An agent has been added to your account. Please confirm this relationship to proceed.
+                          </p>
+                          <div className="flex gap-2">
+                            <Button
+                              onClick={handleConfirmAgent}
+                              disabled={loading}
+                              className="bg-blue-600 hover:bg-blue-700 text-white"
+                            >
+                              <CheckCircle className="h-4 w-4 mr-2" />
+                              {loading ? "Confirming..." : "Confirm Agent"}
+                            </Button>
+                            <Button
+                              variant="outline"
+                              onClick={() => setShowDeleteDialog(true)}
+                              disabled={loading}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Remove Agent
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {isEditing ? (
                     <>
                       <div>
@@ -289,6 +361,14 @@ export function SettingsClient({ profile, roleProfile, userId }: SettingsClientP
                         <label className="text-sm font-medium text-slate-700">Agent Phone</label>
                         <p className="text-slate-900 mt-1">{roleProfile?.agent_phone || "Not provided"}</p>
                       </div>
+                      {roleProfile?.agent_confirmed === true && (
+                        <div className="pt-2">
+                          <div className="inline-flex items-center gap-2 text-sm text-green-600">
+                            <CheckCircle className="h-4 w-4" />
+                            <span>Agent relationship confirmed</span>
+                          </div>
+                        </div>
+                      )}
                     </>
                   )}
                 </CardContent>

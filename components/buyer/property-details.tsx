@@ -125,7 +125,7 @@ export function PropertyDetails({ property, userId }: PropertyDetailsProps) {
                     size="lg"
                     onClick={() => {
                       if (!userId) {
-                        router.push("/auth")
+                        router.push("/auth?tab=signup")
                         return
                       }
                       setShowStayRequestModal(true)

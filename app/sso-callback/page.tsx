@@ -15,7 +15,7 @@ export default function SSOCallback() {
         router.push("/dashboard")
       } catch (err) {
         console.error("[v0] SSO callback error:", err)
-        router.push("/auth")
+        router.push("/auth?tab=login")
       }
     }
 

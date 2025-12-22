@@ -14,7 +14,6 @@ import { UserManagement } from "./user-management"
 import { BookingsOverview } from "./bookings-overview"
 import { PricingManagement } from "./pricing-management"
 import { useRouter } from "next/navigation"
-import { useClerk } from "@clerk/nextjs"
 
 interface AdminDashboardProps {
   userId: string

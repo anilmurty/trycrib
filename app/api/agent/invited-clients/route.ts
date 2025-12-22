@@ -78,12 +78,14 @@ export async function GET(request: Request) {
         if (roleProfile?.agent_email?.toLowerCase() === agentEmail.toLowerCase()) {
           // User has this agent set - automatically add as client and mark invitation as accepted
           // Update the role profile to ensure all agent info is set
+          // Set agent_confirmed to false - user needs to confirm
           await supabase
             .from(profileTable)
             .update({
               agent_email: agentEmail,
               agent_name: agentName,
               agent_phone: agentPhone,
+              agent_confirmed: false, // Require user confirmation
               updated_at: new Date().toISOString()
             })
             .eq("id", existingUser.id)
@@ -162,6 +164,82 @@ export async function GET(request: Request) {
     return NextResponse.json({ 
       error: `Failed to fetch invitations: ${error instanceof Error ? error.message : 'Unknown error'}`,
       invitations: []
+    }, { status: 500 })
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { userId } = await auth()
+    
+    if (!userId) {
+      return NextResponse.json({ 
+        error: "Unauthorized" 
+      }, { status: 401 })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const invitationId = searchParams.get("id")
+
+    if (!invitationId) {
+      return NextResponse.json({ 
+        error: "Invitation ID is required" 
+      }, { status: 400 })
+    }
+
+    // Use service role client to bypass RLS
+    const supabase = createServiceClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
+    // Verify that the invitation belongs to this agent
+    const { data: invitation, error: fetchError } = await supabase
+      .from("client_invitations")
+      .select("id, agent_id, status")
+      .eq("id", invitationId)
+      .single()
+
+    if (fetchError || !invitation) {
+      return NextResponse.json({ 
+        error: "Invitation not found" 
+      }, { status: 404 })
+    }
+
+    if (invitation.agent_id !== userId) {
+      return NextResponse.json({ 
+        error: "Unauthorized - invitation does not belong to this agent" 
+      }, { status: 403 })
+    }
+
+    // Only allow deletion of pending invitations
+    if (invitation.status !== "pending") {
+      return NextResponse.json({ 
+        error: "Only pending invitations can be deleted" 
+      }, { status: 400 })
+    }
+
+    // Delete the invitation
+    const { error: deleteError } = await supabase
+      .from("client_invitations")
+      .delete()
+      .eq("id", invitationId)
+
+    if (deleteError) {
+      console.error("Error deleting invitation:", deleteError)
+      return NextResponse.json({ 
+        error: "Failed to delete invitation" 
+      }, { status: 500 })
+    }
+
+    return NextResponse.json({ 
+      success: true,
+      message: "Invitation deleted successfully"
+    })
+  } catch (error) {
+    console.error("Error deleting invitation:", error)
+    return NextResponse.json({ 
+      error: `Failed to delete invitation: ${error instanceof Error ? error.message : 'Unknown error'}`
     }, { status: 500 })
   }
 }
