@@ -193,6 +193,9 @@ The properties table includes rich data fields:
    CLOUDINARY_API_KEY=your_cloudinary_api_key
    CLOUDINARY_API_SECRET=your_cloudinary_api_secret
    
+   # Google Analytics (optional)
+   NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
+   
    # App
    NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL=http://localhost:3000
 
@@ -253,6 +256,7 @@ Ensure all environment variables are set in your deployment platform:
 - `CLOUDINARY_CLOUD_NAME`
 - `CLOUDINARY_API_KEY`
 - `CLOUDINARY_API_SECRET`
+- `NEXT_PUBLIC_GA_ID` (optional - Google Analytics tracking ID)
 
 ## 📁 Project Structure
 

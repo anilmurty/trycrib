@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
 import { ClerkProvider } from "@clerk/nextjs"
 import { Suspense } from "react"
+import { GoogleAnalytics } from "@/components/analytics/google-analytics"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -30,7 +31,10 @@ export default function RootLayout({
           afterSignUpUrl="/onboarding"
           fallbackRedirectUrl="/auth"
         >
-          <Suspense fallback={null}>{children}</Suspense>
+          <Suspense fallback={null}>
+            <GoogleAnalytics />
+            {children}
+          </Suspense>
           <Analytics />
         </ClerkProvider>
       </body>
