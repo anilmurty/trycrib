@@ -68,7 +68,7 @@ export async function sendStayRequestEmail(data: StayRequestEmailData) {
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #1e40af;">New Stay Request from Your Client</h2>
         <p>Hello ${agentName},</p>
-        <p>Your client <strong>${buyerName}</strong> (${buyerEmail}) has requested a stay at the following property:</p>
+        <p>Your client <strong>${buyerName}</strong> (${buyerEmail}) has requested a stay at the following property on <a href="https://trycrib.com" style="color: #1e40af; text-decoration: underline;">TryCrib</a>:</p>
         
         <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
           ${propertyImage ? `
@@ -85,7 +85,7 @@ export async function sendStayRequestEmail(data: StayRequestEmailData) {
           ${checkInDate ? `<p style="margin: 5px 0;"><strong>Check-in:</strong> ${checkInDate}</p>` : ''}
           ${checkOutDate ? `<p style="margin: 5px 0;"><strong>Check-out:</strong> ${checkOutDate}</p>` : ''}
           <p style="margin-top: 10px;">
-            View property on <a href="https://trycrib.com" style="color: #3b82f6; text-decoration: underline;">TryCrib</a> → <a href="${propertyUrl}" style="color: #3b82f6; text-decoration: underline; font-size: 14px;">(View property)</a>
+            View property → <a href="${propertyUrl}" style="color: #3b82f6; text-decoration: underline; font-size: 14px;">(View property)</a>
           </p>
         </div>
 
@@ -107,7 +107,7 @@ export async function sendStayRequestEmail(data: StayRequestEmailData) {
         
         <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
           Best regards,<br>
-          The <a href="https://trycrib.com" style="color: #6b7280; text-decoration: underline;">TryCrib</a> Team
+          The TryCrib Team
         </p>
       </div>
     `
@@ -172,7 +172,7 @@ export async function sendPropertyListingRequestEmail(data: PropertyListingReque
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #059669;">New Property Listing Request from Your Client</h2>
         <p>Hello ${agentName},</p>
-        <p>Your client <strong>${sellerName}</strong> (${sellerEmail}) has requested to list their property for stays:</p>
+        <p>Your client <strong>${sellerName}</strong> (${sellerEmail}) has requested to list their property for stays on <a href="https://trycrib.com" style="color: #059669; text-decoration: underline;">TryCrib</a>:</p>
         
         <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
           ${propertyImage ? `
@@ -189,7 +189,7 @@ export async function sendPropertyListingRequestEmail(data: PropertyListingReque
           <p style="margin: 5px 0;"><strong>ZIP:</strong> ${propertyZip}</p>
           ${propertyUrl ? `
             <p style="margin-top: 10px;">
-              View property on <a href="https://trycrib.com" style="color: #059669; text-decoration: underline;">TryCrib</a> → <a href="${propertyUrl}" style="color: #059669; text-decoration: underline; font-size: 14px;">(View property)</a>
+              View property → <a href="${propertyUrl}" style="color: #059669; text-decoration: underline; font-size: 14px;">(View property)</a>
             </p>
           ` : ''}
         </div>
@@ -212,7 +212,7 @@ export async function sendPropertyListingRequestEmail(data: PropertyListingReque
         
         <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
           Best regards,<br>
-          The <a href="https://trycrib.com" style="color: #6b7280; text-decoration: underline;">TryCrib</a> Team
+          The TryCrib Team
         </p>
       </div>
     `
@@ -305,7 +305,7 @@ export async function sendInviteClientEmail(data: InviteClientEmailData) {
 
     const emailContent = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #1e40af;">You've been invited to <a href="https://trycrib.com" style="color: #1e40af; text-decoration: underline;">TryCrib</a></h2>
+        <h2 style="color: #1e40af;">You've been invited to TryCrib</h2>
         <p>Hello ${clientFirstName}${clientLastName ? ` ${clientLastName}` : ''},</p>
         
         <p>
@@ -313,7 +313,7 @@ export async function sendInviteClientEmail(data: InviteClientEmailData) {
         </p>
 
         <p>
-          <a href="https://trycrib.com" style="color: #1e40af; text-decoration: underline;">TryCrib</a> allows you to:
+          TryCrib allows you to:
         </p>
         ${benefitsList}
 
@@ -327,7 +327,7 @@ export async function sendInviteClientEmail(data: InviteClientEmailData) {
         
         <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
           Best regards,<br>
-          The <a href="https://trycrib.com" style="color: #6b7280; text-decoration: underline;">TryCrib</a> Team
+          The TryCrib Team
         </p>
       </div>
     `
@@ -422,7 +422,7 @@ export async function sendConfirmAgentEmail(data: ConfirmAgentEmailData) {
         
         <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
           Best regards,<br>
-          The <a href="https://trycrib.com" style="color: #6b7280; text-decoration: underline;">TryCrib</a> Team
+          The TryCrib Team
         </p>
       </div>
     `
@@ -515,7 +515,7 @@ export async function sendAgentOnboardingNotificationEmail(data: AgentOnboarding
           </div>
 
           <p style="color: #6b7280; font-size: 14px; margin-top: 20px;">
-            No action is required from you at this time. ${clientName} will be able to request stays and manage their property listings through <a href="https://trycrib.com" style="color: #6b7280; text-decoration: underline;">TryCrib</a>.
+            No action is required from you at this time. ${clientName} will be able to request stays and manage their property listings through TryCrib.
           </p>
           
           <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
@@ -538,7 +538,7 @@ export async function sendAgentOnboardingNotificationEmail(data: AgentOnboarding
           </p>
 
           <p>
-            <a href="https://trycrib.com" style="color: #1e40af; text-decoration: underline;">TryCrib</a> is a platform that helps ${roleText === "seller" ? "sellers" : "buyers"} ${roleText === "seller" ? "earn money while their home is listed and attract more serious buyers" : "experience homes before purchasing them"}.
+            TryCrib is a platform that helps ${roleText === "seller" ? "sellers" : "buyers"} ${roleText === "seller" ? "earn money while their home is listed and attract more serious buyers" : "experience homes before purchasing them"}.
           </p>
 
           <p>
@@ -565,7 +565,7 @@ export async function sendAgentOnboardingNotificationEmail(data: AgentOnboarding
           </div>
 
           <p style="color: #6b7280; font-size: 14px; margin-top: 20px;">
-            Once you create an account, you'll be automatically connected with ${clientName} and can start managing their ${roleText} activities on <a href="https://trycrib.com" style="color: #6b7280; text-decoration: underline;">TryCrib</a>.
+            Once you create an account, you'll be automatically connected with ${clientName} and can start managing their ${roleText} activities on TryCrib.
           </p>
           
           <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
