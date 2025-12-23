@@ -19,54 +19,17 @@ export function GoogleAnalytics() {
   const searchParams = useSearchParams()
   const gaId = process.env.NEXT_PUBLIC_GA_ID
 
-  // Initialize Google Analytics
+  // Track page views on route changes (script is loaded via Next.js Script component)
   useEffect(() => {
-    if (!gaId) {
-      console.warn("Google Analytics ID not found. Set NEXT_PUBLIC_GA_ID in your environment variables.")
-      return
-    }
-
-    // Load gtag script
-    const script1 = document.createElement("script")
-    script1.async = true
-    script1.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`
-    document.head.appendChild(script1)
-
-    // Initialize dataLayer and gtag function
-    window.dataLayer = window.dataLayer || []
-    function gtag(...args: any[]) {
-      window.dataLayer.push(args)
-    }
-    window.gtag = gtag as typeof window.gtag
-
-    gtag("js", new Date())
-    gtag("config", gaId, {
-      page_path: window.location.pathname,
-    })
-
-    return () => {
-      // Cleanup: remove script if component unmounts
-      const existingScript = document.querySelector(`script[src*="googletagmanager.com/gtag/js"]`)
-      if (existingScript) {
-        existingScript.remove()
-      }
-    }
-  }, [gaId])
-
-  // Track page views on route changes
-  useEffect(() => {
-    if (!gaId || !window.gtag) return
+    if (!gaId || typeof window === "undefined" || !window.gtag) return
 
     const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : "")
 
     window.gtag("config", gaId, {
       page_path: url,
+      send_page_view: true,
     })
   }, [pathname, searchParams, gaId])
-
-  if (!gaId) {
-    return null
-  }
 
   return null
 }
