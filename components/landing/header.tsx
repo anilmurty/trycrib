@@ -1,10 +1,12 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useUser, useClerk } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
 import { LogOut, Settings } from "lucide-react"
+import { ContactModal } from "@/components/landing/contact-modal"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,13 +17,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { createClient } from "@/lib/supabase/client"
-import { useEffect, useState } from "react"
 
 export function Header() {
   const { user, isSignedIn, isLoaded } = useUser()
   const { signOut } = useClerk()
   const router = useRouter()
   const [profile, setProfile] = useState<any>(null)
+  const [contactModalOpen, setContactModalOpen] = useState(false)
   const supabase = createClient()
 
   useEffect(() => {
@@ -137,6 +139,15 @@ export function Header() {
           ) : (
             // Unauthenticated state
             <>
+              <Link href="/#how-it-works" className="text-sm text-gray-600 hover:text-gray-900 cursor-pointer">
+                How it Works
+              </Link>
+              <button
+                onClick={() => setContactModalOpen(true)}
+                className="text-sm text-gray-600 hover:text-gray-900 cursor-pointer"
+              >
+                Contact
+              </button>
               <Link href="/auth?tab=login" className="text-sm text-gray-600 hover:text-gray-900 cursor-pointer">
                 Login
               </Link>
@@ -147,6 +158,7 @@ export function Header() {
           )}
         </div>
       </div>
+      <ContactModal open={contactModalOpen} onClose={() => setContactModalOpen(false)} />
     </header>
   )
 }

@@ -96,7 +96,7 @@ export function HeroSection() {
                 The perfect way to ensure it's the right fit for you.
               </p>
               <div className="mt-6">
-                <Link href="/properties" className="cursor-pointer">
+                <Link href="/auth?tab=signup" className="cursor-pointer">
                   <Button className="rounded-full px-8 bg-blue-600 text-white hover:bg-blue-700">
                     Book a stay
                   </Button>
@@ -106,9 +106,7 @@ export function HeroSection() {
           ) : (
             <>
               <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-200">
-                Let potential buyers experience your property firsthand.
-                <br />
-                Increase serious offers and reduce time-wasting viewings.
+                Increase serious offers and reduce casual viewings, while offsetting staging & holding costs.
               </p>
               <div className="mt-6">
                 <Link href="/auth?tab=signup" className="cursor-pointer">
