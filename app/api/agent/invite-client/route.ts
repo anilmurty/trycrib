@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     const agentFirstName = agentProfile.full_name?.split(' ')[0] || agentProfile.email?.split('@')[0] || "Your agent"
 
     // Store invitation in database
-    const invitationData = {
+    const invitationData: any = {
       agent_id: userId,
       first_name: firstName.trim(),
       last_name: lastName?.trim() || null,
@@ -66,8 +66,23 @@ export async function POST(request: Request) {
 
     if (inviteError) {
       console.error("Error storing invitation:", inviteError)
+      
+      // If we get a PGRST204 error, it means PostgREST's schema cache doesn't know about the role column
+      // This usually means the migration hasn't been run or PostgREST needs to refresh its cache
+      if (inviteError.code === 'PGRST204' && inviteError.message?.includes('role')) {
+        return NextResponse.json({ 
+          error: `Database schema issue: The 'role' column is missing from the client_invitations table. Please run migration 067 (via /api/admin/run-migration-067) or manually execute scripts/067_ensure_client_invitations_role_column.sql in your Supabase SQL editor. After running the migration, PostgREST's schema cache will refresh automatically within a few minutes.` 
+        }, { status: 500 })
+      }
+      
       return NextResponse.json({ 
         error: `Failed to store invitation: ${inviteError.message}` 
+      }, { status: 500 })
+    }
+    
+    if (!insertedInvitation || insertedInvitation.length === 0) {
+      return NextResponse.json({ 
+        error: `Failed to store invitation: No data returned` 
       }, { status: 500 })
     }
 
