@@ -53,7 +53,7 @@ export function Header() {
       const names = profile.full_name.split(" ")
       if (names.length >= 2) {
         return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase()
-      }
+    }
       return names[0][0].toUpperCase()
     }
     if (user?.emailAddresses?.[0]?.emailAddress) {
@@ -78,16 +78,16 @@ export function Header() {
         </Link>
 
         {/* Always render nav structure to prevent hydration mismatch */}
-        <nav className="hidden items-center gap-8 md:flex">
-          {/* Hidden: Browse Properties link */}
-          {/* <Link href="/properties" className="text-lg font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
-            Browse Properties
-          </Link> */}
+          <nav className="hidden items-center gap-8 md:flex">
+            {/* Hidden: Browse Properties link */}
+            {/* <Link href="/properties" className="text-lg font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
+              Browse Properties
+            </Link> */}
           {/* Hidden: How it Works link - content moved to homepage */}
           {/* <Link href="/how-it-works" className="text-lg font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
-            How it Works
+              How it Works
           </Link> */}
-        </nav>
+          </nav>
 
         <div className="flex items-center gap-3">
           {!isLoaded ? (
