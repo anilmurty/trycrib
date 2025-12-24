@@ -1,6 +1,6 @@
 export function WhyTryCribSection() {
   return (
-    <section className="bg-gradient-to-b from-blue-50 to-blue-100/50 py-16 sm:py-16">
+    <section className="bg-gradient-to-b from-white to-slate-50 py-16 sm:py-16">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
           <h2 className="text-4xl font-bold text-gray-900 mb-6 text-balance">Why TryCrib, Why Now</h2>
