@@ -61,15 +61,22 @@ async function getUnsubscribeToken(email: string, userId?: string): Promise<stri
  * Generate unsubscribe link for an email
  */
 async function getUnsubscribeLink(email: string, userId?: string): Promise<string> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
-  const token = await getUnsubscribeToken(email, userId)
-  
-  if (token) {
-    return `${baseUrl}/unsubscribe?token=${token}`
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+    const token = await getUnsubscribeToken(email, userId)
+    
+    if (token) {
+      return `${baseUrl}/unsubscribe?token=${token}`
+    }
+    
+    // Fallback to email-based unsubscribe if token not available
+    return `${baseUrl}/unsubscribe?email=${encodeURIComponent(email)}`
+  } catch (error) {
+    console.error("Error generating unsubscribe link:", error)
+    // Return fallback link even if token generation fails
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+    return `${baseUrl}/unsubscribe?email=${encodeURIComponent(email)}`
   }
-  
-  // Fallback to email-based unsubscribe if token not available
-  return `${baseUrl}/unsubscribe?email=${encodeURIComponent(email)}`
 }
 
 /**
@@ -210,7 +217,7 @@ export async function sendStayRequestEmail(data: StayRequestEmailData) {
           The TryCrib Team
         </p>
         <p style="margin-top: 20px; color: #9ca3af; font-size: 12px; text-align: center;">
-          <a href="${await getUnsubscribeLink(agentEmail)}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe from marketing emails</a> (transactional emails will still be sent)
+          <a href="${unsubscribeLink}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe from marketing emails</a> (transactional emails will still be sent)
         </p>
       </div>
     `
@@ -321,7 +328,7 @@ export async function sendPropertyListingRequestEmail(data: PropertyListingReque
           The TryCrib Team
         </p>
         <p style="margin-top: 20px; color: #9ca3af; font-size: 12px; text-align: center;">
-          <a href="${await getUnsubscribeLink(agentEmail)}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe from marketing emails</a> (transactional emails will still be sent)
+          <a href="${unsubscribeLink}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe from marketing emails</a> (transactional emails will still be sent)
         </p>
       </div>
     `
@@ -439,7 +446,7 @@ export async function sendInviteClientEmail(data: InviteClientEmailData) {
           The TryCrib Team
         </p>
         <p style="margin-top: 20px; color: #9ca3af; font-size: 12px; text-align: center;">
-          <a href="${await getUnsubscribeLink(clientEmail)}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe from marketing emails</a> (transactional emails will still be sent)
+          <a href="${unsubscribeLink}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe from marketing emails</a> (transactional emails will still be sent)
         </p>
       </div>
     `
@@ -540,7 +547,7 @@ export async function sendConfirmAgentEmail(data: ConfirmAgentEmailData) {
           The TryCrib Team
         </p>
         <p style="margin-top: 20px; color: #9ca3af; font-size: 12px; text-align: center;">
-          <a href="${await getUnsubscribeLink(clientEmail)}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe from marketing emails</a> (transactional emails will still be sent)
+          <a href="${unsubscribeLink}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe from marketing emails</a> (transactional emails will still be sent)
         </p>
       </div>
     `
@@ -610,6 +617,9 @@ export async function sendAgentOnboardingNotificationEmail(data: AgentOnboarding
     const roleText = clientRole === "seller" ? "seller" : "buyer"
     const roleTextCapitalized = clientRole === "seller" ? "Seller" : "Buyer"
 
+    // Generate unsubscribe link before creating email content
+    const unsubscribeLink = await getUnsubscribeLink(agentEmail)
+
     // Different email content based on whether agent exists
     let subject: string
     let emailContent: string
@@ -643,6 +653,9 @@ export async function sendAgentOnboardingNotificationEmail(data: AgentOnboarding
           <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
             Best regards,<br>
             The TryCrib Team
+          </p>
+          <p style="margin-top: 20px; color: #9ca3af; font-size: 12px; text-align: center;">
+            <a href="${unsubscribeLink}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe from marketing emails</a> (transactional emails will still be sent)
           </p>
         </div>
       `
@@ -696,7 +709,7 @@ export async function sendAgentOnboardingNotificationEmail(data: AgentOnboarding
             The TryCrib Team
           </p>
           <p style="margin-top: 20px; color: #9ca3af; font-size: 12px; text-align: center;">
-            <a href="${await getUnsubscribeLink(agentEmail)}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe from marketing emails</a> (transactional emails will still be sent)
+            <a href="${unsubscribeLink}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe from marketing emails</a> (transactional emails will still be sent)
           </p>
         </div>
       `

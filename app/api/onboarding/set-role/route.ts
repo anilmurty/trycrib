@@ -217,15 +217,23 @@ export async function POST(request: Request) {
     // Check if agentInfo exists, is not null/undefined, and has an email
     const hasAgentInfo = agentInfo && typeof agentInfo === 'object' && agentInfo.email
     
+    console.log("Agent email check:", {
+      hasInvitation,
+      hasAgentInfo,
+      role,
+      agentInfo: agentInfo ? { email: agentInfo.email, name: agentInfo.name } : null,
+      willSendEmail: !hasInvitation && hasAgentInfo && (role === "buyer" || role === "seller")
+    })
+    
     if (!hasInvitation && hasAgentInfo && (role === "buyer" || role === "seller")) {
       console.log("Sending agent onboarding notification email...")
       try {
         // Check if agent exists in the system
-        const { data: agentProfile } = await serviceSupabase
+        const { data: agentProfile, error: agentProfileError } = await serviceSupabase
           .from("profiles")
           .select("id, email, full_name")
           .eq("email", agentInfo.email.toLowerCase())
-          .single()
+          .maybeSingle()
 
         const agentExists = !!agentProfile
         const agentName = agentProfile?.full_name || agentInfo.name || null
@@ -233,7 +241,8 @@ export async function POST(request: Request) {
         console.log("Agent profile check:", { 
           agentEmail: agentInfo.email, 
           agentExists, 
-          agentName 
+          agentName,
+          agentProfileError: agentProfileError ? JSON.stringify(agentProfileError) : null
         })
 
         // Send notification email to agent
@@ -247,14 +256,20 @@ export async function POST(request: Request) {
         })
 
         console.log(`Successfully sent onboarding notification email to agent ${agentInfo.email} (exists: ${agentExists}), email ID: ${emailResult.id}`)
-      } catch (emailError) {
+      } catch (emailError: any) {
         // Log error but don't fail the onboarding process
         console.error("Error sending agent onboarding notification email:", emailError)
         console.error("Email error details:", JSON.stringify(emailError, null, 2))
+        console.error("Email error message:", emailError?.message)
+        console.error("Email error stack:", emailError?.stack)
       }
     } else {
       console.log("Skipping agent email:", {
-        reason: hasInvitation ? "has invitation" : !agentInfo ? "no agentInfo" : !agentInfo.email ? "no agent email" : `role is ${role}`
+        reason: hasInvitation ? "has invitation" : !agentInfo ? "no agentInfo" : !agentInfo.email ? "no agent email" : `role is ${role}`,
+        hasInvitation,
+        hasAgentInfo,
+        role,
+        agentInfoEmail: agentInfo?.email
       })
     }
 
