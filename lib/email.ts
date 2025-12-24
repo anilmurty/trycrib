@@ -385,6 +385,9 @@ export async function sendInviteClientEmail(data: InviteClientEmailData) {
       throw new Error("RESEND_API_KEY environment variable is not set")
     }
 
+    // Generate unsubscribe link before creating email content
+    const unsubscribeLink = await getUnsubscribeLink(clientEmail)
+
     console.log("Sending client invitation email via Resend:", {
       to: clientEmail,
       from: process.env.RESEND_FROM_EMAIL || "TryCrib <noreply@trycrib.com>",
