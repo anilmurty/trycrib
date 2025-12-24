@@ -70,11 +70,12 @@ export async function POST(request: Request) {
       }
     }
 
-    // Construct base URL
+    // Construct base URL for property links (keep dynamic for local dev)
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
     const propertyUrl = property_id ? `${baseUrl}/properties/${property_id}` : null
-    const loginUrl = `${baseUrl}/auth?tab=login`
-    const signupUrl = `${baseUrl}/auth?tab=signup&role=agent`
+    // Use production URL for auth links
+    const loginUrl = `https://www.trycrib.com/auth?tab=login`
+    const signupUrl = `https://www.trycrib.com/auth?tab=signup&role=agent`
 
     // Create email content (without buyer information)
     const emailContent = `

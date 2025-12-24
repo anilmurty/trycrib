@@ -166,10 +166,9 @@ export async function sendStayRequestEmail(data: StayRequestEmailData) {
       subject: `Stay Request: ${propertyTitle}`,
     })
 
-    // Construct base URL for CTA links
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
-    const loginUrl = `${baseUrl}/auth?tab=login`
-    const signupUrl = `${baseUrl}/auth?tab=signup&role=agent`
+    // Use production URL for auth links
+    const loginUrl = `https://www.trycrib.com/auth?tab=login`
+    const signupUrl = `https://www.trycrib.com/auth?tab=signup&role=agent`
 
     const emailContent = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -275,10 +274,9 @@ export async function sendPropertyListingRequestEmail(data: PropertyListingReque
       subject: `Property Listing Request: ${propertyAddress}`,
     })
 
-    // Construct base URL for CTA links
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
-    const loginUrl = `${baseUrl}/auth?tab=login`
-    const signupUrl = `${baseUrl}/auth?tab=signup&role=agent`
+    // Use production URL for auth links
+    const loginUrl = `https://www.trycrib.com/auth?tab=login`
+    const signupUrl = `https://www.trycrib.com/auth?tab=signup&role=agent`
     const dashboardUrl = `${baseUrl}/dashboard/seller`
 
     const emailContent = `
@@ -393,9 +391,8 @@ export async function sendInviteClientEmail(data: InviteClientEmailData) {
       role: clientRole,
     })
 
-    // Construct base URL for CTA links
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
-    const signupUrl = `${baseUrl}/auth?tab=signup`
+    // Use production URL for auth links
+    const signupUrl = `https://www.trycrib.com/auth?tab=signup`
 
     // Tailor email content based on role
     const isSeller = clientRole === "seller"
@@ -514,9 +511,8 @@ export async function sendConfirmAgentEmail(data: ConfirmAgentEmailData) {
       subject: `${agentFirstName} wants to work with you on TryCrib`,
     })
 
-    // Construct base URL for CTA links
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
-    const settingsUrl = `${baseUrl}/settings`
+    // Use production URL for auth links
+    const settingsUrl = `https://www.trycrib.com/settings`
 
     const isSeller = clientRole === "seller"
     const roleText = isSeller ? "seller" : "buyer"
@@ -608,10 +604,9 @@ export async function sendAgentOnboardingNotificationEmail(data: AgentOnboarding
       throw new Error("RESEND_API_KEY environment variable is not set")
     }
 
-    // Construct base URL for CTA links
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
-    const loginUrl = `${baseUrl}/auth?tab=login`
-    const signupUrl = `${baseUrl}/auth?tab=signup&role=agent`
+    // Use production URL for auth links
+    const loginUrl = `https://www.trycrib.com/auth?tab=login`
+    const signupUrl = `https://www.trycrib.com/auth?tab=signup&role=agent`
     const dashboardUrl = `${baseUrl}/dashboard/agent`
 
     const roleText = clientRole === "seller" ? "seller" : "buyer"
