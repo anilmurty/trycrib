@@ -24,12 +24,16 @@ export function FAQSection() {
       answer: "All stay requests are routed through the buyer's real estate agent, who then schedules a time that works for both parties, if necessary by coordinating with the seller's agent (who communicates with the seller) to figure out scheduling."
     },
     {
+      question: "How long are typical stays?",
+      answer: "A stay is typically for a portion of a day (6-12 hours) or one night. The intention is not to be a vacation rental but rather allow the buyers to experience the home for a longer duration than a typical showing allows for."
+    },
+    {
       question: "How does one list their home?",
       answer: "The platform is seeded with a relatively small set of listings that are based on publicly available MLS data. Seller's looking to list their home may search for their home and initiate a request from there or alternatively indicate their address if the home isn't already on the platform. The request will be routed to the seller's agent, who will edit the listing, set a nightly price and set up a schedule. The platform provides a way for seller's and agents to collaborate on listings and once things look good, the listing is published which makes it available for buyers to request stays."
     },
     {
       question: "How much do stays cost?",
-      answer: "The stay cost is decided by the Seller (working with their agent) and depends on the home. Generally speaking, the more expensive the home, the higher the per night cost. \n\n TryCrib homes generally list for 2-3x the price of a comparable home listed on short-term rental platforms."
+      answer: "The stay cost is decided by the Seller (working with their agent) and depends on the home. Generally speaking, the more expensive the home, the higher the per night cost. \n\n TryCrib homes generally list for 2-3x the price of a comparable home listed on short-term rental platforms. This, along with buyer qualifications implies that only the most serious buyers generally make stay requests."
     },
     {
       question: "Is there a platform fee or subscription cost?",
