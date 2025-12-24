@@ -616,7 +616,8 @@ export async function sendAgentOnboardingNotificationEmail(data: AgentOnboarding
 
     if (agentExists) {
       // Agent is already in the system - just notify them
-      subject = `${clientName} has added you as agent in TryCrib`
+      const roleLabel = clientRole === "seller" ? "seller" : "buyer"
+      subject = `${clientName} (${roleLabel}) has added you as agent in TryCrib`
       
       emailContent = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -647,7 +648,8 @@ export async function sendAgentOnboardingNotificationEmail(data: AgentOnboarding
       `
     } else {
       // Agent is not in the system - invite them to join
-      subject = `${clientName} wants to work with you on TryCrib`
+      const roleLabel = clientRole === "seller" ? "seller" : "buyer"
+      subject = `${clientName} (${roleLabel}) wants to work with you on TryCrib`
       
       emailContent = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
