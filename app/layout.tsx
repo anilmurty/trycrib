@@ -23,8 +23,8 @@ export default function RootLayout({
   const gaId = process.env.NEXT_PUBLIC_GA_ID
 
   return (
-    <html lang="en">
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
+      <html lang="en">
+        <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         {gaId && (
           <>
             <Script
@@ -62,7 +62,7 @@ export default function RootLayout({
           </Suspense>
           <Analytics />
         </ClerkProvider>
-      </body>
-    </html>
+        </body>
+      </html>
   )
 }

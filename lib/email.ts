@@ -1,5 +1,7 @@
 import "server-only"
 import { Resend } from "resend"
+import { createClient } from "@/lib/supabase/server"
+import crypto from "crypto"
 
 // Initialize Resend client lazily
 function getResendClient() {
@@ -8,6 +10,104 @@ function getResendClient() {
     throw new Error("RESEND_API_KEY environment variable is not set")
   }
   return new Resend(apiKey)
+}
+
+/**
+ * Generate or get unsubscribe token for a user
+ */
+async function getUnsubscribeToken(email: string, userId?: string): Promise<string | null> {
+  try {
+    const supabase = await createClient()
+    
+    // Try to find user by email or userId
+    let query = supabase.from("profiles").select("id, unsubscribe_token")
+    
+    if (userId) {
+      query = query.eq("id", userId)
+    } else {
+      query = query.eq("email", email)
+    }
+    
+    const { data: profile } = await query.single()
+    
+    if (profile?.unsubscribe_token) {
+      return profile.unsubscribe_token
+    }
+    
+    // Generate token if doesn't exist
+    if (profile?.id) {
+      const token = crypto
+        .createHash("sha256")
+        .update(`${profile.id}${email}trycrib-unsubscribe-secret`)
+        .digest("hex")
+      
+      // Save token to database
+      await supabase
+        .from("profiles")
+        .update({ unsubscribe_token: token })
+        .eq("id", profile.id)
+      
+      return token
+    }
+    
+    return null
+  } catch (error) {
+    console.error("Error generating unsubscribe token:", error)
+    return null
+  }
+}
+
+/**
+ * Generate unsubscribe link for an email
+ */
+async function getUnsubscribeLink(email: string, userId?: string): Promise<string> {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+  const token = await getUnsubscribeToken(email, userId)
+  
+  if (token) {
+    return `${baseUrl}/unsubscribe?token=${token}`
+  }
+  
+  // Fallback to email-based unsubscribe if token not available
+  return `${baseUrl}/unsubscribe?email=${encodeURIComponent(email)}`
+}
+
+/**
+ * Check if a user has unsubscribed from marketing emails
+ * Use this function before sending marketing emails (not transactional emails)
+ */
+export async function isUnsubscribed(email: string, userId?: string): Promise<boolean> {
+  try {
+    const supabase = await createClient()
+    
+    let query = supabase.from("profiles").select("email_unsubscribed")
+    
+    if (userId) {
+      query = query.eq("id", userId)
+    } else {
+      query = query.eq("email", email)
+    }
+    
+    const { data: profile } = await query.single()
+    
+    return profile?.email_unsubscribed === true
+  } catch (error) {
+    console.error("Error checking unsubscribe status:", error)
+    // If we can't check, allow the email to be sent (fail open)
+    return false
+  }
+}
+
+/**
+ * Helper function to send marketing emails
+ * This function checks unsubscribe status before sending
+ * Example usage:
+ *   if (await shouldSendMarketingEmail(recipientEmail)) {
+ *     await sendMarketingEmail(...)
+ *   }
+ */
+export async function shouldSendMarketingEmail(email: string, userId?: string): Promise<boolean> {
+  return !(await isUnsubscribed(email, userId))
 }
 
 interface StayRequestEmailData {
@@ -109,6 +209,9 @@ export async function sendStayRequestEmail(data: StayRequestEmailData) {
           Best regards,<br>
           The TryCrib Team
         </p>
+        <p style="margin-top: 20px; color: #9ca3af; font-size: 12px; text-align: center;">
+          <a href="${await getUnsubscribeLink(agentEmail)}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe from marketing emails</a> (transactional emails will still be sent)
+        </p>
       </div>
     `
 
@@ -150,6 +253,9 @@ export async function sendStayRequestEmail(data: StayRequestEmailData) {
 export async function sendPropertyListingRequestEmail(data: PropertyListingRequestEmailData) {
   try {
     const { agentEmail, agentName, sellerName, sellerEmail, propertyAddress, propertyCity, propertyState, propertyZip, requestType, propertyImage, propertyUrl, message } = data
+
+    // Note: This is a transactional email, so we don't check unsubscribe status
+    // Unsubscribe only applies to marketing emails
 
     // Validate Resend API key
     if (!process.env.RESEND_API_KEY) {
@@ -213,6 +319,9 @@ export async function sendPropertyListingRequestEmail(data: PropertyListingReque
         <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
           Best regards,<br>
           The TryCrib Team
+        </p>
+        <p style="margin-top: 20px; color: #9ca3af; font-size: 12px; text-align: center;">
+          <a href="${await getUnsubscribeLink(agentEmail)}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe from marketing emails</a> (transactional emails will still be sent)
         </p>
       </div>
     `
@@ -329,6 +438,9 @@ export async function sendInviteClientEmail(data: InviteClientEmailData) {
           Best regards,<br>
           The TryCrib Team
         </p>
+        <p style="margin-top: 20px; color: #9ca3af; font-size: 12px; text-align: center;">
+          <a href="${await getUnsubscribeLink(clientEmail)}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe from marketing emails</a> (transactional emails will still be sent)
+        </p>
       </div>
     `
 
@@ -381,6 +493,9 @@ export async function sendConfirmAgentEmail(data: ConfirmAgentEmailData) {
   try {
     const { agentFirstName, agentEmail, agentName, clientFirstName, clientLastName, clientEmail, clientRole } = data
 
+    // Note: This is a transactional email, so we don't check unsubscribe status
+    // Unsubscribe only applies to marketing emails
+
     // Validate Resend API key
     if (!process.env.RESEND_API_KEY) {
       throw new Error("RESEND_API_KEY environment variable is not set")
@@ -423,6 +538,9 @@ export async function sendConfirmAgentEmail(data: ConfirmAgentEmailData) {
         <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
           Best regards,<br>
           The TryCrib Team
+        </p>
+        <p style="margin-top: 20px; color: #9ca3af; font-size: 12px; text-align: center;">
+          <a href="${await getUnsubscribeLink(clientEmail)}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe from marketing emails</a> (transactional emails will still be sent)
         </p>
       </div>
     `
@@ -474,6 +592,9 @@ interface AgentOnboardingNotificationEmailData {
 export async function sendAgentOnboardingNotificationEmail(data: AgentOnboardingNotificationEmailData) {
   try {
     const { agentEmail, agentName, clientName, clientEmail, clientRole, agentExists } = data
+
+    // Note: This is a transactional email, so we don't check unsubscribe status
+    // Unsubscribe only applies to marketing emails
 
     // Validate Resend API key
     if (!process.env.RESEND_API_KEY) {
@@ -571,6 +692,9 @@ export async function sendAgentOnboardingNotificationEmail(data: AgentOnboarding
           <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
             Best regards,<br>
             The TryCrib Team
+          </p>
+          <p style="margin-top: 20px; color: #9ca3af; font-size: 12px; text-align: center;">
+            <a href="${await getUnsubscribeLink(agentEmail)}" style="color: #9ca3af; text-decoration: underline;">Unsubscribe from marketing emails</a> (transactional emails will still be sent)
           </p>
         </div>
       `

@@ -88,7 +88,7 @@ export function HeroSection() {
             </Button>
           </div>
 
-          {activeTab === "buyers" ? (
+            {activeTab === "buyers" ? (
             <>
               <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-200">
                 Experience living in your potential new home before making an offer.
@@ -99,11 +99,11 @@ export function HeroSection() {
                 <Link href="/auth?tab=signup" className="cursor-pointer">
                   <Button className="rounded-full px-8 bg-blue-600 text-white hover:bg-blue-700">
                     Book a stay
-                  </Button>
+                </Button>
                 </Link>
               </div>
             </>
-          ) : (
+            ) : (
             <>
               <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-200">
                 Increase serious offers and reduce casual viewings, while offsetting staging & holding costs.
@@ -116,7 +116,7 @@ export function HeroSection() {
                 </Link>
               </div>
             </>
-          )}
+            )}
         </div>
       </div>
 

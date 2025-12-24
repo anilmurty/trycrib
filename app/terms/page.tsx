@@ -10,7 +10,7 @@ export default function TermsPage() {
         <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="mb-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">TryCrib – Terms of Service</h1>
-            <p className="text-lg text-gray-600">Last Updated: December 15, 2025</p>
+            <p className="text-lg text-gray-600">Last Updated: Dec 23, 2025</p>
           </div>
 
           <div className="prose prose-lg max-w-none">
