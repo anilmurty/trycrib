@@ -1,11 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 import { useSearchParams } from "next/navigation"
 
-export default function UnsubscribePage() {
+function UnsubscribeContent() {
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
   const email = searchParams.get("email")
