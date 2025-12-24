@@ -1,27 +1,55 @@
+import { Home, TrendingUp, Users } from "lucide-react"
+
 export function WhyTryCribSection() {
+  const benefits = [
+    {
+      icon: Home,
+      title: "For Buyers",
+      description: "Eliminate the biggest financial risk of your life by experiencing a home's true character before you make an offer. Test the commute, neighborhood, and daily living experience to make confident purchasing decisions."
+    },
+    {
+      icon: TrendingUp,
+      title: "For Sellers",
+      description: "Attract committed buyers and earn income during the listing period to offset carrying costs like staging, property taxes, utilities, and interest payments. Showcase your home to the most serious buyers."
+    },
+    {
+      icon: Users,
+      title: "For Agents",
+      description: "Offer a powerful marketing tool that makes your listings stand out and attract serious buyers. Convert hesitant buyers into confident ones with shorter sales cycles and stronger offers."
+    }
+  ]
+
   return (
-    <section className="bg-gradient-to-b from-white to-slate-50 py-16 sm:py-16">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
-          <h2 className="text-4xl font-bold text-gray-900 mb-6 text-balance">Why TryCrib, Why Now</h2>
-          <div className="max-w-3xl mx-auto space-y-6">
-            <p className="text-lg text-gray-700 leading-relaxed">
-              You get to try most things in life before you commit to them. From something as basic as clothes and shoes to who you decide to share your life with - you can experience it before you commit. And if you are like most people, a home purchase represents the greatest risk, the largest purchase and one of the biggest commitments you will make. And yet, for some reason, you are asked to make the decision without ever really getting to experience it, outside of one or two showings that typically last 30-60mins.
-            </p>
-            <p className="text-lg text-gray-700 leading-relaxed">
-              If you are looking to sell a home in 2026 (or you are a real estate agent) then you are faced with arguably one of the slowest housing markets in a couple decades. As such, anything you can do, to give buyers the confidence that they're making an informed and well thought out decision goes a long way. The icing on the cake? getting your home to pay for its own holding costs (staging, property taxes, utilities, interest payments) while it is listed to sell. Sounds like a no brainer, doesn't it?
-            </p>
-          </div>
-          
-          {/* CTA Section */}
-          <div className="mt-8 text-center">
-            <a
-              href="/auth?tab=signup"
-              className="inline-flex items-center justify-center rounded-full border-2 border-gray-300 bg-white px-8 py-3 text-base font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-colors cursor-pointer"
-            >
-              Explore More
-            </a>
-          </div>
+    <section className="bg-gradient-to-b from-white to-slate-50 py-16 sm:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">Why TryCrib</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          {benefits.map((benefit, index) => {
+            const Icon = benefit.icon
+            return (
+              <div
+                key={index}
+                className="bg-white rounded-lg p-6 sm:p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center">
+                      <Icon className="h-6 w-6 text-blue-600" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mt-1">
+                    {benefit.title}
+                  </h3>
+                </div>
+                <p className="text-base text-slate-600 leading-relaxed">
+                  {benefit.description}
+                </p>
+              </div>
+            )
+          })}
         </div>
       </div>
     </section>
