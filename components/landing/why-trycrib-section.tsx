@@ -4,17 +4,17 @@ export function WhyTryCribSection() {
   const benefits = [
     {
       icon: Home,
-      title: "For Buyers",
+      title: "Buyers",
       description: "Eliminate the biggest financial risk of your life by experiencing a home's true character before you make an offer. Test the commute, neighborhood, and daily living experience to make confident purchasing decisions."
     },
     {
       icon: TrendingUp,
-      title: "For Sellers",
+      title: "Sellers",
       description: "Attract committed buyers and earn income during the listing period to offset carrying costs like staging, property taxes, utilities, and interest payments. Showcase your home to the most serious buyers."
     },
     {
       icon: Users,
-      title: "For Agents",
+      title: "Agents",
       description: "Offer a powerful marketing tool that makes your listings stand out and attract serious buyers. Convert hesitant buyers into confident ones with shorter sales cycles and stronger offers."
     }
   ]
@@ -23,7 +23,7 @@ export function WhyTryCribSection() {
     <section className="bg-gradient-to-b from-white to-slate-50 py-16 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Why TryCrib</h2>
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">Why use TryCrib?</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
