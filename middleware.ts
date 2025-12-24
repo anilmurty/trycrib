@@ -28,11 +28,12 @@ export default clerkMiddleware(async (auth, request) => {
         unauthenticatedUrl: "/auth?tab=login",
       })
     } catch (error: any) {
-      // NEXT_REDIRECT is Clerk's way of handling redirects - let it pass through
+      // NEXT_REDIRECT is Clerk's way of handling redirects
       // The digest format is: 'NEXT_REDIRECT;replace;/auth?tab=login;307;'
       if (error?.digest?.includes('NEXT_REDIRECT') || error?.clerk_digest === 'CLERK_PROTECT_REDIRECT_TO_URL') {
-        // Re-throw to let Next.js handle the redirect properly
-        throw error
+        // Extract redirect URL from error or use default
+        const redirectUrl = error?.redirectUrl || '/auth?tab=login'
+        return NextResponse.redirect(new URL(redirectUrl, request.url))
       }
       
       // Handle cancellation and other auth errors gracefully
