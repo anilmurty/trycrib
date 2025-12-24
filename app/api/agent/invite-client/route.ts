@@ -101,7 +101,8 @@ export async function POST(request: Request) {
 
       return NextResponse.json({ 
         success: true,
-        message: "Invitation sent successfully"
+        message: `We've invited ${firstName} to join TryCrib`,
+        clientFirstName: firstName
       })
     } catch (emailError: any) {
       console.error("Error sending invitation email:", emailError)

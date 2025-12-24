@@ -63,7 +63,10 @@ export function InviteClientModal({
         throw new Error(error.error || 'Failed to send invitation')
       }
 
-      toast.success("Invitation sent successfully!")
+      const result = await response.json()
+      const successMessage = result.message || `We've invited ${firstName} to join TryCrib`
+      toast.success(successMessage)
+      
       // Reset form
       setFirstName("")
       setLastName("")
