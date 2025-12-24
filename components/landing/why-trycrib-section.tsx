@@ -1,21 +1,28 @@
-import { Home, TrendingUp, Users } from "lucide-react"
+import { Home, TrendingUp, User } from "lucide-react"
 
 export function WhyTryCribSection() {
   const benefits = [
     {
       icon: Home,
       title: "Buyers",
-      description: "Eliminate the biggest financial risk of your life by experiencing a home's true character before you make an offer."
+      description: "Eliminate the biggest financial risk of your life by experiencing a home's true character before you make an offer.",
+      iconColor: "text-blue-600",
+      bgColor: "bg-blue-50"
     },
     {
       icon: TrendingUp,
       title: "Sellers",
-      description: "Attract committed buyers and earn income during the listing period to offset carrying costs like staging, property taxes, utilities, and interest payments."
+      description: "Attract committed buyers and earn income during the listing period to offset carrying costs like staging, property taxes, utilities, and interest payments.",
+      iconColor: "text-[#059669]",
+      bgColor: "bg-green-50"
     },
     {
-      icon: Users,
+      icon: User,
       title: "Agents",
-      description: "Offer a powerful marketing tool that makes your listings stand out and attract serious buyers. Convert hesitant buyers into confident ones with shorter sales cycles and stronger offers."
+      description: "Offer a powerful marketing tool that makes your listings stand out and attract serious buyers. Convert hesitant buyers into confident ones with shorter sales cycles and stronger offers.",
+      iconColor: "text-blue-600",
+      bgColor: "bg-blue-50",
+      isDualIcon: true
     }
   ]
 
@@ -36,8 +43,15 @@ export function WhyTryCribSection() {
               >
                 <div className="flex items-start gap-4 mb-4">
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center">
-                      <Icon className="h-6 w-6 text-blue-600" />
+                    <div className={`w-12 h-12 rounded-lg ${benefit.bgColor} flex items-center justify-center relative`}>
+                      {benefit.isDualIcon ? (
+                        <>
+                          <User className="h-6 w-6 text-blue-600 absolute left-1" />
+                          <User className="h-6 w-6 text-[#059669] absolute right-1" />
+                        </>
+                      ) : (
+                        <Icon className={`h-6 w-6 ${benefit.iconColor}`} />
+                      )}
                     </div>
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mt-1">
