@@ -5,12 +5,12 @@ export function WhyTryCribSection() {
     {
       icon: Home,
       title: "Buyers",
-      description: "Eliminate the biggest financial risk of your life by experiencing a home's true character before you make an offer. Test the commute, neighborhood, and daily living experience to make confident purchasing decisions."
+      description: "Eliminate the biggest financial risk of your life by experiencing a home's true character before you make an offer."
     },
     {
       icon: TrendingUp,
       title: "Sellers",
-      description: "Attract committed buyers and earn income during the listing period to offset carrying costs like staging, property taxes, utilities, and interest payments. Showcase your home to the most serious buyers."
+      description: "Attract committed buyers and earn income during the listing period to offset carrying costs like staging, property taxes, utilities, and interest payments."
     },
     {
       icon: Users,
