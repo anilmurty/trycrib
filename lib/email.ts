@@ -62,7 +62,8 @@ async function getUnsubscribeToken(email: string, userId?: string): Promise<stri
  */
 async function getUnsubscribeLink(email: string, userId?: string): Promise<string> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+    // Use production URL for unsubscribe links
+    const baseUrl = 'https://www.trycrib.com'
     const token = await getUnsubscribeToken(email, userId)
     
     if (token) {
@@ -74,7 +75,7 @@ async function getUnsubscribeLink(email: string, userId?: string): Promise<strin
   } catch (error) {
     console.error("Error generating unsubscribe link:", error)
     // Return fallback link even if token generation fails
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+    const baseUrl = 'https://www.trycrib.com'
     return `${baseUrl}/unsubscribe?email=${encodeURIComponent(email)}`
   }
 }
@@ -277,7 +278,7 @@ export async function sendPropertyListingRequestEmail(data: PropertyListingReque
     // Use production URL for auth links
     const loginUrl = `https://www.trycrib.com/auth?tab=login`
     const signupUrl = `https://www.trycrib.com/auth?tab=signup&role=agent`
-    const dashboardUrl = `${baseUrl}/dashboard/seller`
+    const dashboardUrl = `https://www.trycrib.com/dashboard/seller`
 
     const emailContent = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -607,7 +608,7 @@ export async function sendAgentOnboardingNotificationEmail(data: AgentOnboarding
     // Use production URL for auth links
     const loginUrl = `https://www.trycrib.com/auth?tab=login`
     const signupUrl = `https://www.trycrib.com/auth?tab=signup&role=agent`
-    const dashboardUrl = `${baseUrl}/dashboard/agent`
+    const dashboardUrl = `https://www.trycrib.com/dashboard/agent`
 
     const roleText = clientRole === "seller" ? "seller" : "buyer"
     const roleTextCapitalized = clientRole === "seller" ? "Seller" : "Buyer"
