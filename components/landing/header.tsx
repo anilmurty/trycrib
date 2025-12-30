@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { useUser, useClerk } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
@@ -74,15 +73,8 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="cursor-pointer">
-          <Image
-            src="/grey-111827-logo.jpg"
-            alt="TryCrib"
-            width={600}
-            height={200}
-            className="h-40 w-auto"
-            priority
-          />
+        <Link href="/" className="text-3xl font-bold text-gray-900 cursor-pointer">
+          TryCrib
         </Link>
 
         {/* Always render nav structure to prevent hydration mismatch */}
