@@ -78,9 +78,9 @@ export function Header() {
           <Image
             src="/grey-111827-logo.jpg"
             alt="TryCrib"
-            width={120}
-            height={40}
-            className="h-8 w-auto"
+            width={600}
+            height={200}
+            className="h-40 w-auto"
             priority
           />
         </Link>
