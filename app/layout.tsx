@@ -13,6 +13,21 @@ export const metadata: Metadata = {
   title: "TryCrib",
   description: "Try before you buy - Experience homes before making an offer",
   generator: "v0.app",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  openGraph: {
+    title: "TryCrib",
+    description: "Try before you buy - Experience homes before making an offer",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TryCrib",
+    description: "Try before you buy - Experience homes before making an offer",
+    images: ["/og-image.png"],
+  },
 }
 
 export default function RootLayout({
