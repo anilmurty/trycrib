@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
+import { useUser } from "@clerk/nextjs"
 import { ChevronLeft, ChevronRight, Search, Filter, DollarSign } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
@@ -47,6 +48,7 @@ export function PropertiesList() {
   const [sortBy, setSortBy] = useState<"created_at" | "listing_price" | "price_per_night">("created_at")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
 
+  const { isSignedIn } = useUser()
   const supabase = createClient()
 
   const fetchProperties = async () => {
@@ -207,7 +209,7 @@ export function PropertiesList() {
         <>
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {properties.map((property) => (
-              <Link key={property.id} href={`/properties/${property.id}`} className="cursor-pointer">
+              <Link key={property.id} href={isSignedIn ? `/properties/${property.id}` : `/auth?tab=login&redirect=/properties/${property.id}`} className="cursor-pointer">
                 <Card className="overflow-hidden border-0 shadow-md hover:shadow-xl transition-shadow cursor-pointer">
                   <div className="aspect-[16/9] relative bg-gray-200 rounded-t-lg overflow-hidden">
                     {(property.images && property.images.length > 0) || (property.original_image_urls && property.original_image_urls.length > 0) ? (

@@ -22,6 +22,11 @@ export default function AuthPage() {
       setActiveTab(tab)
     }
   }, [searchParams])
+
+  const getRedirectUrl = () => {
+    const redirect = searchParams.get('redirect')
+    return redirect && redirect.startsWith('/') ? redirect : '/dashboard'
+  }
   const { isLoaded: signInLoaded, signIn, setActive: setSignInActive } = useSignIn()
   const { isLoaded: signUpLoaded, signUp, setActive: setSignUpActive } = useSignUp()
   const router = useRouter()
@@ -60,7 +65,7 @@ export default function AuthPage() {
 
       if (result.status === "complete") {
         await setSignUpActive({ session: result.createdSessionId })
-        router.push("/dashboard")
+        router.push(getRedirectUrl())
       }
     } catch (err: any) {
       setSignUpError(err.errors?.[0]?.message || "An error occurred during sign up")
@@ -84,7 +89,7 @@ export default function AuthPage() {
 
       if (result.status === "complete") {
         await setSignInActive({ session: result.createdSessionId })
-        router.push("/dashboard")
+        router.push(getRedirectUrl())
       }
     } catch (err: any) {
       setSignInError(err.errors?.[0]?.message || "Invalid email or password")
@@ -100,7 +105,7 @@ export default function AuthPage() {
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: "/sso-callback",
-        redirectUrlComplete: "/dashboard",
+        redirectUrlComplete: getRedirectUrl(),
       })
     } catch (err: any) {
       // Ignore CAPTCHA warnings - Clerk falls back to Invisible CAPTCHA automatically
@@ -117,7 +122,7 @@ export default function AuthPage() {
       await signUp.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: "/sso-callback",
-        redirectUrlComplete: "/dashboard",
+        redirectUrlComplete: getRedirectUrl(),
       })
     } catch (err: any) {
       // Ignore CAPTCHA warnings - Clerk falls back to Invisible CAPTCHA automatically
