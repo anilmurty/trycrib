@@ -12,8 +12,7 @@ export default function HomePage() {
       <Header />
       <main className="flex-1">
         <HeroSection />
-        {/* Hidden: Featured Properties section */}
-        {/* <FeaturedProperties /> */}
+        <FeaturedProperties />
         <WhyTryCribSection />
         <HowItWorksContent />
         <FAQSection />
