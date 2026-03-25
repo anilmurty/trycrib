@@ -79,10 +79,13 @@ export function Header() {
           <Image src="/logo.svg" alt="TryCrib" width={140} height={45} priority />
         </Link>
 
-        {/* Desktop nav */}
+        {/* Desktop nav - centered */}
         <nav className="hidden items-center gap-8 md:flex">
-          <Link href="/properties" className="text-lg font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
+          <Link href="/properties" className="text-sm font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
             Browse Properties
+          </Link>
+          <Link href="/#how-it-works" className="text-sm font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
+            How it Works
           </Link>
         </nav>
 
@@ -135,9 +138,6 @@ export function Header() {
             </>
           ) : (
             <>
-              <Link href="/#how-it-works" className="text-sm text-gray-600 hover:text-gray-900 cursor-pointer">
-                How it Works
-              </Link>
               <button
                 onClick={() => setContactModalOpen(true)}
                 className="text-sm text-gray-600 hover:text-gray-900 cursor-pointer"

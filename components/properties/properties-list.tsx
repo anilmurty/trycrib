@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
 import { useUser } from "@clerk/nextjs"
+import { useRouter } from "next/navigation"
 import { ChevronLeft, ChevronRight, Search, Filter, DollarSign } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
@@ -49,6 +50,7 @@ export function PropertiesList() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
 
   const { isSignedIn } = useUser()
+  const router = useRouter()
   const supabase = createClient()
 
   const fetchProperties = async () => {
@@ -209,7 +211,7 @@ export function PropertiesList() {
         <>
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {properties.map((property) => (
-              <Link key={property.id} href={isSignedIn ? `/properties/${property.id}` : `/auth?tab=login&redirect=/properties/${property.id}`} className="cursor-pointer">
+              <Link key={property.id} href={`/properties/${property.id}`} className="cursor-pointer">
                 <Card className="overflow-hidden border-0 shadow-md hover:shadow-xl transition-shadow cursor-pointer">
                   <div className="aspect-[16/9] relative bg-gray-200 rounded-t-lg overflow-hidden">
                     {(property.images && property.images.length > 0) || (property.original_image_urls && property.original_image_urls.length > 0) ? (
@@ -245,16 +247,35 @@ export function PropertiesList() {
                         {property.address}
                       </p>
                     )}
-                    
-                    {/* Property Info */}
-                    {property.listing_price && (
-                      <div className="mt-1 flex items-center gap-2">
-                        <DollarSign className="h-4 w-4 text-gray-500" />
-                        <span className="text-sm text-gray-600">
-                          Listed at ${property.listing_price.toLocaleString()}
-                        </span>
-                      </div>
-                    )}
+
+                    {/* Property Info and Request Stay */}
+                    <div className="mt-1 flex items-center justify-between">
+                      {property.listing_price ? (
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-4 w-4 text-gray-500" />
+                          <span className="text-sm text-gray-600">
+                            Listed at ${property.listing_price.toLocaleString()}
+                          </span>
+                        </div>
+                      ) : (
+                        <div />
+                      )}
+                      <Button
+                        size="sm"
+                        className="bg-blue-600 hover:bg-blue-700 text-xs"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          if (isSignedIn) {
+                            router.push(`/properties/${property.id}`)
+                          } else {
+                            router.push(`/auth?tab=login&redirect=/properties/${property.id}`)
+                          }
+                        }}
+                      >
+                        Request Stay
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               </Link>
